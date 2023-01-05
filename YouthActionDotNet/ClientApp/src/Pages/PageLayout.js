@@ -22,7 +22,10 @@ export default class DatapageLayout extends React.Component {
         expansionContent: "",
         expansionComponent: "",
         popUpContent: "",
-        data: this.props.data
+        data: this.props.data,
+        itemsPerPage: 20,
+        currentPage: 1,
+        pageNumbers: [],
     }
     constructor(props) {
         super(props)
@@ -37,8 +40,21 @@ export default class DatapageLayout extends React.Component {
         document.title = this.props.settings.title;
         window.addEventListener("resize", this.resize.bind(this));
         this.resize();
+
+        const pageNumbers = [];
+        for (let i = 1; i <= Math.ceil(this.state.data.length / this.state.itemsPerPage); i++) {
+            pageNumbers.push(i);
+        }
+
         this.setState({
-            data: this.props.data
+            data: this.props.data,
+            pageNumbers: pageNumbers
+        })
+    }
+
+    pageNumberClick = (number) => {
+        this.setState({
+            currentPage: number
         })
     }
 
@@ -131,6 +147,9 @@ export default class DatapageLayout extends React.Component {
         if(this.state.content === ""){
             return <div></div>
         }
+        const indexOfLastItem = this.state.currentPage * this.state.itemsPerPage;
+        const indexOfFirstItem = indexOfLastItem - this.state.itemsPerPage;
+        const currentItems = this.state.data.slice(indexOfFirstItem, indexOfLastItem);
         return (
             <div className="d-flex flex-column container-fluid listPageContainer">
                 {this.props.error !== "" && 
@@ -170,13 +189,19 @@ export default class DatapageLayout extends React.Component {
                             </HeaderRow>
                             {this.state.data && 
                             
-                            this.state.data.map((row, index) => {      
+                            currentItems.map((row, index) => {      
                                 return <ExpandableRow updateHandle={this.props.updateHandle} values={row} fieldSettings={this.props.fieldSettings} key={index} settings={settings} headers={this.props.headers} setExpansionContent={this.setExpansionContent} handleSeeMore={this.handleSeeMore} handleClose={this.handleClose} popUpContent={this.state.popUpContent}>
-                                    {this.props.children? this.props.children[index]: ""}
+                                    {this.props.children? this.props.children[index + ((this.state.currentPage - 1) * this.state.itemsPerPage)]: ""}
                                 </ExpandableRow>
                             })}
                         </ListTable>
+                        
                     </div>
+                    {this.state.pageNumbers.map((page, index) => {
+                        return <li key={index} className={this.state.currentPage === page ? "active" : ""}>
+                            <a href="#" onClick={() => this.handleClick(page)}>{page}</a>
+                        </li>
+                    })}
                     <SizedBox height={"56px"}></SizedBox>
                 </div>
                 <BottomMenu actions={
