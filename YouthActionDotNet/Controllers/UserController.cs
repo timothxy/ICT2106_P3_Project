@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -41,6 +42,23 @@ namespace YouthActionDotNet.Controllers
             return user;
         }
 
+        // POST: api/User/Login
+        [HttpPost("Login")]
+        public async Task<ActionResult<String>> LoginUser(User user)
+        {
+            SHA256 sha256 = SHA256.Create();
+            var secretPw = Convert.ToHexString(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(user.Password)));
+            sha256.Dispose();
+
+            var validLoginUser = _context.Users.Where(u => u.username == user.username && u.Password == secretPw).FirstOrDefault();
+            if (validLoginUser == null)
+            {
+                return JsonConvert.SerializeObject(new { success = false, message = "Invalid Username or Password" });
+            }
+            return JsonConvert.SerializeObject(new { success = true, message = "Login Successful", user=validLoginUser });
+        }
+        
+        // GET: api/User/All
         [HttpGet("All")]
         public async Task<ActionResult<String>> GetAllUsers()
         {
@@ -79,13 +97,18 @@ namespace YouthActionDotNet.Controllers
             return NoContent();
         }
 
-        // POST: api/User
+        // POST: api/User/Create
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<ActionResult<String>> PostUser(User user)
         {   
             //check if user exists
-            var userPL = _context.Users.Where(u => u.username == user.username).FirstOrDefault();
+            SHA256 sha256 = SHA256.Create();
+            var secretPw = Convert.ToHexString(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(user.Password)));
+
+            user.Password = secretPw;
+            sha256.Dispose();
+            var userPL = await _context.Users.Where(u => u.username == user.username).FirstOrDefaultAsync();
             if(userPL != null){
                 return JsonConvert.SerializeObject(new {success=false,message="User Already Exists"});
             }
@@ -121,7 +144,7 @@ namespace YouthActionDotNet.Controllers
 
         // GET: api/User/Settings/
         [HttpGet("Settings")]
-        public async Task<ActionResult<String>> GetUserSettings()
+        public string GetUserSettings()
         {
             Settings settings = new Settings();
             settings.ColumnSettings = new Dictionary<string, ColumnHeader>();

@@ -396,7 +396,10 @@ class AddEntry extends React.Component{
 
     handleCourseCreation = async () => {
         await this.createCourse(this.state.courseToAdd).then((content) => {
-            this.props.requestRefresh();
+            if (content.status === "success") {
+            } else {
+                console.log(content);
+            }
         })
     }
 

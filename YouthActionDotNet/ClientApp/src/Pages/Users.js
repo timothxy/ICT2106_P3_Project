@@ -17,7 +17,7 @@ export default class Users extends React.Component {
         accentColor: "#94795d",
         textColor: "#ffffff",
         textColorInvert: "#606060",
-        api: "/api/User",
+        api: "/api/User/",
     }
 
     async componentDidMount(){
@@ -41,7 +41,7 @@ export default class Users extends React.Component {
     }
 
     getSettings = async () => {
-        return fetch(this.settings.api + "/Settings" , {
+        return fetch(this.settings.api + "Settings" , {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -53,7 +53,7 @@ export default class Users extends React.Component {
     }
 
     getContent = async () =>{
-        return fetch( this.settings.api + "/All" , {
+        return fetch( this.settings.api + "All" , {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -66,8 +66,8 @@ export default class Users extends React.Component {
 
     update = async (data) =>{
         console.log(data);
-        return fetch(this.settings.api + "update" , {
-            method: "POST",
+        return fetch(this.settings.api + data.UserId , {
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -79,7 +79,6 @@ export default class Users extends React.Component {
 
     handleUpdate = async (data) =>{
         await this.update(data).then((content)=>{
-            console.log(content);
             if(content.success){
                 this.setState({
                     error:"",

@@ -9,7 +9,7 @@ const loginSteps = {0: "login", 1: "register",2: "forgot"}
 
 
 async function loginUser(credentials) {
-  return fetch('/users/login', {
+  return fetch('/api/User/Login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -20,7 +20,7 @@ async function loginUser(credentials) {
 
 
 async function registerUser(credentials){
-  return fetch('/api/User', {
+  return fetch('/api/User/Create', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
