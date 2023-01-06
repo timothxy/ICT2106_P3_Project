@@ -52,7 +52,23 @@ export default class DatapageLayout extends React.Component {
         })
     }
 
+    rerenderPageNums = (e) => {
+        const pageNumbers = [];
+        for (let i = 1; i <= Math.ceil(this.state.data.length / e); i++) {
+            pageNumbers.push(i);
+        }
+
+        this.setState({
+            pageNumbers: pageNumbers
+        })
+    }
+
     pageNumberClick = (number) => {
+
+        if (number < 1 || number > this.state.pageNumbers.length) {
+            return;
+        }
+
         this.setState({
             currentPage: number
         })
@@ -197,11 +213,71 @@ export default class DatapageLayout extends React.Component {
                         </ListTable>
                         
                     </div>
-                    {this.state.pageNumbers.map((page, index) => {
-                        return <li key={index} className={this.state.currentPage === page ? "active" : ""}>
-                            <a href="#" onClick={() => this.handleClick(page)}>{page}</a>
-                        </li>
-                    })}
+                    <div className="d-flex justify-content-end page-nums-container">
+                        <div className="items-per-page">
+                            <StdInput
+                                sameLine={true}
+                                type="dropdown"
+                                label="Items per page"
+                                value={this.state.itemsPerPage}
+                                onChange={(label,e) => 
+                                    {
+                                        this.setState({ itemsPerPage: parseInt(e) })
+                                        this.rerenderPageNums( parseInt(e));
+                                    }}
+                                options={[
+                                    {value: 5,label: "5"},
+                                    {value: 10,label: "10"},
+                                    {value: 15,label: "15"},
+                                    {value: 20,label: "20"},
+                                    {value: 25,label: "25"},
+                                    {value: 30,label: "30"},
+                                    {value: 35,label: "35"},
+                                    {value: 40,label: "40"},
+                                ]}
+                                enabled={true}
+                            >
+                            </StdInput>
+                        </div>
+                        
+                        <ul className="page-nums">
+                            <li className={"page-direction prev " + (this.state.currentPage === 1 ? "disabled" : "")}>
+                                <a href="#" onClick={() => this.pageNumberClick(this.state.currentPage - 1)}><i className="bi bi-chevron-left"></i></a>
+                            </li>
+                            {this.state.pageNumbers > 5 ? 
+                                this.state.pageNumbers.map((number, index) => {
+                                    if(this.state.currentPage > 3){
+                                        if(number > this.state.currentPage - 3 && number < this.state.currentPage + 3){
+                                            return (
+                                                <li key={number} className={"page-num " + (this.state.currentPage === number ? "active" : "")}>
+                                                    <a href="#" onClick={() => this.pageNumberClick(number)}>{number}</a>
+                                                </li>
+                                            )
+                                        }
+                                    }else{
+                                        if(number < 7){
+                                            return (
+                                                <li key={number} className={"page-num " + (this.state.currentPage === number ? "active" : "")}>
+                                                    <a href="#" onClick={() => this.pageNumberClick(number)}>{number}</a>
+                                                </li>
+                                            )
+                                        }
+                                    }
+                                })
+                            :
+                                this.state.pageNumbers.map((number, index) => {
+                                    return (
+                                        <li key={number} className={"page-num " + (this.state.currentPage === number ? "active" : "")}>
+                                            <a href="#" onClick={() => this.pageNumberClick(number)}>{number}</a>
+                                        </li>
+                                    )
+                                })
+                            }
+                            <li className={"page-direction next " + (this.state.currentPage === this.state.pageNumbers.length ? "disabled" : "")}>
+                                <a href="#" onClick={() => this.pageNumberClick(this.state.currentPage + 1)}><i className="bi bi-chevron-right"></i></a>
+                            </li>
+                        </ul>
+                    </div>
                     <SizedBox height={"56px"}></SizedBox>
                 </div>
                 <BottomMenu actions={

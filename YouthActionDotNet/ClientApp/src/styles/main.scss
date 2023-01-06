@@ -1333,9 +1333,11 @@ nav {
         
     }
     &.same-line{
+        flex-wrap: nowrap;
         &>.inputBox-Label{
             width: 50%;
             margin-bottom: 0px;
+            white-space: nowrap;
         }
     }
 
@@ -2922,6 +2924,60 @@ nav {
 .indexLayout {
     gap: 15px 0px
 }
+
+.page-nums-container{
+    padding:15px 0px;
+    align-items: center;
+    .items-per-page{
+        flex-wrap: nowrap;
+        .inputBox-Label{
+            width: 85%;
+            margin-right: 15px;
+        }
+    }
+    .page-nums{
+        padding:15px 0px;
+        list-style-type: none;
+        display:flex;
+        justify-content: center;
+        
+        margin: 0;
+        .page-num{
+            a{
+                color: black;
+                padding: 8px 16px;
+                text-decoration: none;
+                transition: background-color .3s;
+                border: 1px solid #ddd;
+                margin: 0 4px;
+                &:hover{
+                    background-color: #ddd;
+                }
+            }
+        }
+            
+        .page-direction{
+            a{
+                color: black;
+                padding: 8px 16px;
+                text-decoration: none;
+                transition: background-color .3s;
+                border: 1px solid #ddd;
+                margin: 0 4px;
+                &:hover{
+                    background-color: #ddd;
+                }
+            }
+    
+            .disabled{
+                color: #ddd;
+                cursor: not-allowed;
+            }
+        }
+    }
+}
+
+
 
 .Multistep-Container {
     display: flex;
