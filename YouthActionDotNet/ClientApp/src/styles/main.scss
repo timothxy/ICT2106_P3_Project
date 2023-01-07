@@ -3182,6 +3182,80 @@ nav {
     }
 }
 
+.generate-spreadsheet{
+    display:grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap:15px;
+    @media screen and (max-width: $sm){
+        grid-template-columns: repeat(1, minmax(0,1fr));
+    }
+
+    .column-order{
+        display:flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        .column{
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            border-bottom: 1px solid $primary;
+            width: 100%;
+            .column-order-buttons{
+                display:flex;
+
+            }
+            .column-name{
+                margin: 10px;
+            }
+        }
+    }
+
+    .generate-actions{
+        display:flex;
+        flex-direction: column;
+        gap:15px;
+        align-items: center;
+        justify-content: space-between;
+        a{
+            text-transform: uppercase;
+            text-decoration: none;
+            position: relative;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            color: $chimericBlack;
+            transition: 0.3s;
+            font-weight: normal;
+            cursor: pointer;
+
+            &:after {
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                height: 2px;
+                background-color: $primary;
+
+                transform: scaleX(0);
+                transform-origin: right;
+                transition: transform 0.3s ease-in;
+            }
+
+            &:hover {
+                color: $primary;
+                font-weight: bold;
+
+                &:after {
+                    transform: scaleX(1);
+                    transform-origin: left;
+                }
+            }
+        }
+
+    }
+}
+
 .listMapper{
     display: flex;
     flex-direction: column;

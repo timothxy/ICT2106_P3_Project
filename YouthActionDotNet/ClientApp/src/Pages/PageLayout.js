@@ -4,6 +4,7 @@ import {Loading} from "../Components/appCommon";
 import { StdInput } from "../Components/input";
 import SlideDrawer, { DrawerItemNonLink } from "../Components/sideNav";
 import { Cell, ListTable, HeaderRow, ExpandableRow } from "../Components/tableComponents";
+import {CSVLink} from "react-csv";
 
 export const searchSuggestions = [
 ]
@@ -179,7 +180,7 @@ export default class DatapageLayout extends React.Component {
                         [
                             { label: "Add " + this.props.settings.title, onClick: () => { this.setExpansionContent("add") } },
                             { label: "Delete " + this.props.settings.title, onClick: () => { this.setExpansionContent("del") } },
-                            { label: "Generate Spreadsheet", onClick: () => { this.setExpansionContent("cs") } },
+                            { label: "Generate Spreadsheet", onClick: () => { this.setExpansionContent("gs") } },
                         ]
                     } 
                     requestRefresh={this.props.requestRefresh} 
@@ -193,6 +194,7 @@ export default class DatapageLayout extends React.Component {
                     handleClose={this.expand}
                     handleSearchCallBack = {this.handleSearchCallBack}
                     tagUpdate = {this.handleSearchCallBack}
+                    data={this.state.data}
                     ></TableHeader>
                     <TableFooter settings={this.props.settings} toggle={this.drawerToggleClickHandler} showBottomMenu={this.state.showBottomMenu}></TableFooter>
                     <DivSpacing spacing={1}></DivSpacing>
@@ -384,7 +386,7 @@ export class TableHeader extends React.Component {
                                     actions={this.props.actions}></TableQuickAction></div>}
                     </div>
                 </div>
-                <HeaderExpansion settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings={this.props.fieldSettings} expanded={this.props.expanded} component={this.props.component} handleClose={this.props.handleClose}>
+                <HeaderExpansion settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings={this.props.fieldSettings} expanded={this.props.expanded} component={this.props.component} handleClose={this.props.handleClose} data = {this.props.data}>
                 </HeaderExpansion>
                 <DivSpacing spacing={1}></DivSpacing>
                 <TagsBox showlabel={true} enableDeleteAll={true} className=" p-2" deleteAllTags={this.deleteAllTags}>
@@ -416,6 +418,14 @@ export class HeaderExpansion extends React.Component {
                 return(
                     <HeaderExpansionPane handleClose={this.props.handleClose} title={"Delete Entry"}>
                         <DeleteEntry settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings = {this.props.fieldSettings}></DeleteEntry>
+                    </HeaderExpansionPane>
+                )
+            }
+
+            if (this.props.component === "gs") {
+                return (
+                    <HeaderExpansionPane handleClose={this.props.handleClose} title={"Generate Spreadsheet"}>
+                        <GenerateSpreadsheet settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings = {this.props.fieldSettings} data={this.props.data}></GenerateSpreadsheet>
                     </HeaderExpansionPane>
                 )
             }
@@ -586,9 +596,97 @@ class DeleteEntry extends React.Component{
                 <StdButton type={"submit"}>Submit</StdButton>
             
                 </form>
-                </div>
+            </div>
         )
     }
+}
+
+class GenerateSpreadsheet extends React.Component{
+    state={
+        columns: [],
+        spreadsheetReady: false,
+    }
+    
+    componentDidMount(){
+        let columns = [];
+        for(var i = 0; i < Object.keys(this.props.fieldSettings).length; i++){
+            columns.push(
+                {
+                    label: Object.keys(this.props.fieldSettings)[i],
+                    key: Object.keys(this.props.fieldSettings)[i],
+                }
+            );
+        }
+        this.setState({
+            columns: columns
+        });
+    }
+
+    reOrderColumns = (index, direction) => {
+        var tempColumns = this.state.columns;
+        if(direction === "up"){
+            if(index > 0){
+                var temp = tempColumns[index];
+                tempColumns[index] = tempColumns[index - 1];
+                tempColumns[index - 1] = temp;
+            }
+        } else {
+            if(index < tempColumns.length - 1){
+                var temp = tempColumns[index];
+                tempColumns[index] = tempColumns[index + 1];
+                tempColumns[index + 1] = temp;
+            }
+        }
+        this.setState({
+            columns: tempColumns
+        });
+    }
+
+    generateSpreadsheet = () =>{
+        this.setState({
+            spreadsheetReady : false
+        })
+
+        // Fake loading time to show false sense of progress
+        setTimeout(() => {
+            this.setState({
+                spreadsheetReady : true
+            })}, 1000);
+    }
+
+    render(){
+        return (
+            <div className="container-fluid generate-spreadsheet">
+                <div className="column-order">
+                    {this.state.columns.map((column, index) => {
+                        return <div className="column">
+                            <div className="column-order-buttons">
+                                <IconButton className={"invert"} icon={<i className="bi bi-arrow-up"></i>} onClick={() => this.reOrderColumns(index, "up")}></IconButton>
+                                <IconButton className={"invert"} icon={<i className="bi bi-arrow-down"></i>} onClick={() => this.reOrderColumns(index, "down")}></IconButton>
+                            </div>
+                            <div className="column-name">{column.label}</div>
+                        </div>
+                    })}     
+                </div>
+                <div className="generate-actions">
+                    <StdButton onClick={() => this.generateSpreadsheet()}>
+                        Generate Spreadsheet
+                    </StdButton>
+
+                    {this.state.spreadsheetReady ?
+                    
+                    <CSVLink data={this.props.data} className={"forget-password"} headers={this.state.columns} filename={this.props.settings.title + ".csv"}>Download</CSVLink>
+                    :
+                    <div className="spinner-border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                    }    
+                </div>
+            </div>
+        )
+    }
+
+    
 }
 
 class ColumnSettings extends React.Component {

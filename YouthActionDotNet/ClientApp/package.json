@@ -11,10 +11,12 @@
     "oidc-client": "^1.9.0",
     "qr-scanner": "^1.4.2",
     "react": "^18.2.0",
+    "react-csv": "^2.2.2",
     "react-dom": "^18.1.0",
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^6.3.0",
     "reactstrap": "^9.1.5",
+    "readable-stream": "^4.3.0",
     "resolve-url-loader": "^5.0.0",
     "rimraf": "^2.6.2"
   },

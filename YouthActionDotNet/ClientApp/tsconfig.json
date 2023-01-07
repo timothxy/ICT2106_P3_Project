@@ -18,7 +18,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react",
+    "paths": {
+      "csv-stringify": ["../node_modules/csv-stringify/lib/index.js"]
+    }
   },
   "include": [
     "src"
