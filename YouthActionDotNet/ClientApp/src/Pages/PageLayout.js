@@ -285,8 +285,8 @@ export default class DatapageLayout extends React.Component {
                 <BottomMenu actions={
                     [
                         { label: "Add " + this.props.settings.title, onClick: () => { this.setExpansionContent("add") } },
-                        { label: "Delete " + this.props.settings.title, onClick: () => { this.setExpansionContent("cs") } },
-                        { label: "Generate Spreadsheet", onClick: () => { this.setExpansionContent("cs") } },
+                        { label: "Delete " + this.props.settings.title, onClick: () => { this.setExpansionContent("del") } },
+                        { label: "Generate Spreadsheet", onClick: () => { this.setExpansionContent("gs") } },
                     ]
                 } settings={this.settings} show={this.state.drawerOpen} showBottomMenu={this.state.showBottomMenu} handles={this.setExpansionContent}></BottomMenu>
             </div>
