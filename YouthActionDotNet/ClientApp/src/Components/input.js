@@ -312,7 +312,9 @@ export class StdInput extends React.Component {
     if (this.state.enabled) {
       return (
         <div className={"inputBox " + (this.props.sameLine ? "same-line" : "")}>
-          <div className="inputBox-Label">{this.props.label}</div>
+          {this.props.label !== "hidden" && (
+            <div className="inputBox-Label">{this.props.label}</div>
+          )}
           {this.props.type === "text" && (
             <StdTextBox
               updateValue={this.updateValue}

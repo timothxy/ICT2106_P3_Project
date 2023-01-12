@@ -218,9 +218,8 @@ export default class DatapageLayout extends React.Component {
                     <div className="d-flex justify-content-end page-nums-container">
                         <div className="items-per-page">
                             <StdInput
-                                sameLine={true}
                                 type="dropdown"
-                                label="Items per page"
+                                label="hidden"
                                 value={this.state.itemsPerPage}
                                 onChange={(label,e) => 
                                     {
@@ -228,14 +227,14 @@ export default class DatapageLayout extends React.Component {
                                         this.rerenderPageNums( parseInt(e));
                                     }}
                                 options={[
-                                    {value: 5,label: "5"},
-                                    {value: 10,label: "10"},
-                                    {value: 15,label: "15"},
-                                    {value: 20,label: "20"},
-                                    {value: 25,label: "25"},
-                                    {value: 30,label: "30"},
-                                    {value: 35,label: "35"},
-                                    {value: 40,label: "40"},
+                                    {value: 5,label: "5 Per Page"},
+                                    {value: 10,label: "10 Per Page"},
+                                    {value: 15,label: "15 Per Page"},
+                                    {value: 20,label: "20 Per Page"},
+                                    {value: 25,label: "25 Per Page"},
+                                    {value: 30,label: "30 Per Page"},
+                                    {value: 35,label: "35 Per Page"},
+                                    {value: 40,label: "40 Per Page"},
                                 ]}
                                 enabled={true}
                             >

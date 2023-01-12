@@ -149,11 +149,13 @@ namespace YouthActionDotNet.Controllers
             Settings settings = new Settings();
             settings.ColumnSettings = new Dictionary<string, ColumnHeader>();
             settings.FieldSettings = new Dictionary<string, InputType>();
+            
             settings.ColumnSettings.Add("UserId", new ColumnHeader { displayHeader = "User Id" });
             settings.ColumnSettings.Add("username", new ColumnHeader { displayHeader = "Username" });
             settings.ColumnSettings.Add("Email", new ColumnHeader { displayHeader = "Email" });
             settings.ColumnSettings.Add("Password", new ColumnHeader { displayHeader = "Password" });
             settings.ColumnSettings.Add("Role", new ColumnHeader { displayHeader = "Role" });
+            
             settings.FieldSettings.Add("UserId", new InputType { type = "number", displayLabel = "User Id", editable = false, primaryKey = true });
             settings.FieldSettings.Add("username", new InputType { type = "text", displayLabel = "Username", editable = true, primaryKey = false });
             settings.FieldSettings.Add("Email", new InputType { type = "text", displayLabel = "Email", editable = true, primaryKey = false });
