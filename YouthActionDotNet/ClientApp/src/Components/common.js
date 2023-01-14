@@ -1556,6 +1556,7 @@ export class WeekView extends React.Component{
         )
     }
 }
+
 WeekView.defaultProps = {
     startTime: "08:00",
     endTime: "21:00",

@@ -13,6 +13,7 @@ import userImg from "./Assets/nav/user.png";
 import logoutImg from "./Assets/nav/logout.png";
 
 import Users from './Pages/Users';
+import ServiceCenters from './Pages/Employee/ServiceCenters';
 
 /* function getToken() {  
   const tokenString = sessionStorage.getItem('token');
@@ -72,12 +73,14 @@ export default function App() {
               
               <DrawerSection label={"Modules"}>
                 <DrawerItem label="Users" to={"/"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="Service Center" to={"/ServiceCenters"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Logout" to={"/Logout"} logo={logoutImg}></DrawerItem>
               </DrawerSection>
             </SlideDrawer>
             
             <Routes>
               <Route path="/" element={<Users user={token}/>}/>
+              <Route path="/ServiceCenters" element={<ServiceCenters user={token}/>}/>
               <Route path="/Logout" element={<Logout logout={logout}></Logout>}/>
             </Routes>
           </header>

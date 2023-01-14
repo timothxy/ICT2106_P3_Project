@@ -1,8 +1,8 @@
 
 import React from "react"
-import DatapageLayout from "./PageLayout"
+import DatapageLayout from "../PageLayout"
 
-export default class Users extends React.Component {
+export default class ServiceCenters extends React.Component {
     state={
         content:null,
         headers:[],
@@ -12,12 +12,12 @@ export default class Users extends React.Component {
     }
 
     settings ={
-        title:"Users",
+        title:"Service Center",
         primaryColor: "#a6192e",
         accentColor: "#94795d",
         textColor: "#ffffff",
         textColorInvert: "#606060",
-        api: "/api/User/",
+        api: "/api/ServiceCenter/",
     }
 
     async componentDidMount(){
@@ -71,7 +71,7 @@ export default class Users extends React.Component {
 
     update = async (data) =>{
         console.log(data);
-        return fetch(this.settings.api + data.UserId , {
+        return fetch(this.settings.api + data.id , {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

@@ -619,6 +619,7 @@ class StdDateBox extends React.Component {
     this.props.updateValue(e.target.value);
   };
 
+  
   componentDidUpdate(prevProps){
     if(prevProps.value !==  this.props.value){
       this.setState({
