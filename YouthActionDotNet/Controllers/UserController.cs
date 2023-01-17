@@ -162,7 +162,9 @@ namespace YouthActionDotNet.Controllers
             settings.FieldSettings.Add("Password", new InputType { type = "text", displayLabel = "Password", editable = true, primaryKey = false });
             settings.FieldSettings.Add("Role", new DropdownInputType { type = "dropdown", displayLabel = "Role", editable = true, primaryKey = false, options = new List<DropdownOption> {
                 new DropdownOption { value = "Admin", label = "Admin" },
-                new DropdownOption { value = "User", label = "User" }
+                new DropdownOption { value = "Employee", label = "Employee" },
+                new DropdownOption { value = "Volunteer", label = "Volunteer" },
+                new DropdownOption { value = "Donor", label = "Donor" },
             } });
             return JsonConvert.SerializeObject(settings);
         }
