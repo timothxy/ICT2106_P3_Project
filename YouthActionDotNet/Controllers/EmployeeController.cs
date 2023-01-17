@@ -10,7 +10,6 @@ using YouthActionDotNet.Data;
 using System.Security.Cryptography;
 using YouthActionDotNet.Models;
 
-
 namespace YouthActionDotNet.Controllers
 {
     [Route("api/[controller]")]
@@ -18,6 +17,8 @@ namespace YouthActionDotNet.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly DBContext _context;
+        JsonSerializerSettings settings = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
+
 
         public EmployeeController(DBContext context)
         {
@@ -45,14 +46,14 @@ namespace YouthActionDotNet.Controllers
         public async Task<ActionResult<String>> GetAllEmployees()
         {
             var employees = await _context.Employee.ToListAsync();
-            return JsonConvert.SerializeObject(new {success = true, data = employees, message = "Employees Successfully Retrieved"});
+            return JsonConvert.SerializeObject(new {success = true, data = employees, message = "Employees Successfully Retrieved"},settings);
         }
 
         //To update the employee
         // PUT: api/Employee/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(int id, Employee employee)
+        public async Task<IActionResult> PutEmployee(string id, Employee employee)
         {
             if (id != employee.UserId)
             {
@@ -85,7 +86,9 @@ namespace YouthActionDotNet.Controllers
         [HttpPost("Create")]
         public async Task<ActionResult<String>> PostUser(Employee employee)
         {   
+            
             //check if user exists
+            employee.UserId = Guid.NewGuid().ToString();
             SHA256 sha256 = SHA256.Create();
             var secretPw = Convert.ToHexString(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(employee.Password)));
 
@@ -96,12 +99,12 @@ namespace YouthActionDotNet.Controllers
                 return JsonConvert.SerializeObject(new {success=false,message="User Already Exists"});
             }
             
-            _context.Users.Add(employee);
+            _context.Employee.Add(employee);
             await _context.SaveChangesAsync();
 
             CreatedAtAction("GetUser", new { id = employee.UserId }, employee);
             //return the user in json format
-            return JsonConvert.SerializeObject(new {success=true,message="User Successfully Created", employee});
+            return JsonConvert.SerializeObject(new {success=true,message="User Successfully Created", data = employee},settings);
         }
 
         // To delete an employee
@@ -121,7 +124,7 @@ namespace YouthActionDotNet.Controllers
             return NoContent();
         }
 
-        private bool EmployeeExists(int id)
+        private bool EmployeeExists(string id)
         {
             return _context.Employee.Any(e => e.UserId == id);
         }
@@ -147,7 +150,9 @@ namespace YouthActionDotNet.Controllers
             settings.FieldSettings.Add("Password", new InputType { type = "text", displayLabel = "Password", editable = true, primaryKey = false });
             settings.FieldSettings.Add("Role", new DropdownInputType { type = "dropdown", displayLabel = "Role", editable = true, primaryKey = false, options = new List<DropdownOption> {
                 new DropdownOption { value = "Admin", label = "Admin" },
-                new DropdownOption { value = "User", label = "User" }
+                new DropdownOption { value = "Employee", label = "Employee" },
+                new DropdownOption { value = "Volunteer", label = "Volunteer" },
+                new DropdownOption { value = "Donor", label = "Donor" },
             } });
             settings.FieldSettings.Add("EmployeeNationalId", new InputType { type = "text", displayLabel = "National Id", editable = true, primaryKey = false, toolTip = "E.g. AB123456C" });
             settings.FieldSettings.Add("BankName", new InputType { type = "text", displayLabel = "Bank Name", editable = true, primaryKey = false });

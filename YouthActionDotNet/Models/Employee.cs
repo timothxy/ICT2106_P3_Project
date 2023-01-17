@@ -1,12 +1,10 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace YouthActionDotNet.Models
 {
     public class Employee: User
     {
-        [ForeignKey("UserId")]
-        public string EmployeeId { get; set; }
-
         public string EmployeeNationalId { get; set; }
 
         public string BankName { get; set; }
@@ -20,5 +18,8 @@ namespace YouthActionDotNet.Models
         public string EmployeeType { get; set; }
 
         public string EmployeeRole { get; set; }
+        
+        [JsonIgnore]
+        public virtual User User { get; set; }
     }
 }

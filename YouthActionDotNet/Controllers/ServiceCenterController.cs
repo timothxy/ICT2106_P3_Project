@@ -133,7 +133,18 @@ namespace YouthActionDotNet.Controllers
             settings.FieldSettings.Add("id", new InputType { type = "number", displayLabel = "ID", editable = false, primaryKey = true });
             settings.FieldSettings.Add("ServiceCenterName", new InputType { type = "text", displayLabel = "Service Center Name", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ServiceCenterAddress", new InputType { type = "text", displayLabel = "Service Center Address", editable = true, primaryKey = false });
-            settings.FieldSettings.Add("RegionalDirectorId", new InputType { type = "number", displayLabel = "Regional Director ID", editable = true, primaryKey = false });
+
+            var allEmployees = _context.Employee.Where(u => u.EmployeeRole == "Regional Director").ToList();
+            settings.FieldSettings.Add("RegionalDirectorId", new DropdownInputType { 
+                type = "dropdown", 
+                displayLabel = "Regional Director", 
+                editable = true, 
+                primaryKey = false, 
+                options = allEmployees.Select(
+                    e => new DropdownOption { 
+                        value = e.UserId, 
+                        label = e.username }).ToList() 
+                     });
 
             return JsonConvert.SerializeObject(settings);
         }

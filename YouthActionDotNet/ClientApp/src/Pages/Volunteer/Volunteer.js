@@ -2,7 +2,7 @@
 import React from "react"
 import DatapageLayout from "../PageLayout"
 
-export default class Employees extends React.Component {
+export default class Volunteer extends React.Component {
     state={
         content:null,
         headers:[],
@@ -12,12 +12,12 @@ export default class Employees extends React.Component {
     }
 
     settings ={
-        title:"Employees",
+        title:"Volunteer",
         primaryColor: "#a6192e",
         accentColor: "#94795d",
         textColor: "#ffffff",
         textColorInvert: "#606060",
-        api: "/api/Employee/",
+        api: "/api/Volunteer/",
     }
 
     async componentDidMount(){

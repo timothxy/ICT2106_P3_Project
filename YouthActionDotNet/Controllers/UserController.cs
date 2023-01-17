@@ -66,7 +66,7 @@ namespace YouthActionDotNet.Controllers
         // PUT: api/User/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<ActionResult<String>> PutUser(int id, User user)
+        public async Task<ActionResult<String>> PutUser(string id, User user)
         {
             if (id != user.UserId)
             {
@@ -101,6 +101,7 @@ namespace YouthActionDotNet.Controllers
         public async Task<ActionResult<String>> PostUser(User user)
         {   
             //check if user exists
+            user.UserId = Guid.NewGuid().ToString();
             SHA256 sha256 = SHA256.Create();
             var secretPw = Convert.ToHexString(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(user.Password)));
 
@@ -136,7 +137,7 @@ namespace YouthActionDotNet.Controllers
             return NoContent();
         }
 
-        private bool UserExists(int id)
+        private bool UserExists(string id)
         {
             return _context.Users.Any(e => e.UserId == id);
         }
