@@ -1307,8 +1307,42 @@ nav {
         margin-bottom: 15px;
         text-transform: uppercase;
         font-weight: bold;
-        &:after{
-            content: ":";
+        display:flex;
+        justify-content: space-between;
+
+        .inputToolTip{
+            position: relative;
+
+            .bi{
+                color: $chimericBlack;
+                transition: 0.3s linear;
+            }
+
+            .inputToolTip-text{
+                position:absolute;
+                z-index: 100;
+                background-color: $chimericBlack;
+                box-shadow: 0 0 5px rgba($chimericBlack,0.5);
+                display:none;
+                right: 0;
+                top:100%;
+                margin-top: 5px;
+                padding:10px;
+                border-radius: $borderRadius;
+                color: white;
+                white-space: nowrap;
+                max-width: 125px;
+            }
+
+            &:hover{
+
+                .bi{
+                    color: $primary;
+                }
+                .inputToolTip-text{
+                    display:block;
+                }
+            }
         }
     }
     &>.stdInputGroup{

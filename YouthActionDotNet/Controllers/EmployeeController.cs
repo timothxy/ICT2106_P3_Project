@@ -24,13 +24,7 @@ namespace YouthActionDotNet.Controllers
             _context = context;
         }
 
-        // GET: api/Employee
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployee()
-        {
-            return await _context.Employee.ToListAsync();
-        }
-
+        // To get a single employee
         // GET: api/Employee/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Employee>> GetEmployee(int id)
@@ -45,6 +39,16 @@ namespace YouthActionDotNet.Controllers
             return employee;
         }
 
+        // To get all employees
+        // GET: api/Employee/All
+        [HttpGet("All")]
+        public async Task<ActionResult<String>> GetAllEmployees()
+        {
+            var employees = await _context.Employee.ToListAsync();
+            return JsonConvert.SerializeObject(new {success = true, data = employees, message = "Employees Successfully Retrieved"});
+        }
+
+        //To update the employee
         // PUT: api/Employee/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -76,17 +80,31 @@ namespace YouthActionDotNet.Controllers
             return NoContent();
         }
 
-        // POST: api/Employee
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
-        {
-            _context.Employee.Add(employee);
+        // To to create a new employee
+        // GET: api/Employee/Create
+        [HttpPost("Create")]
+        public async Task<ActionResult<String>> PostUser(Employee employee)
+        {   
+            //check if user exists
+            SHA256 sha256 = SHA256.Create();
+            var secretPw = Convert.ToHexString(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(employee.Password)));
+
+            employee.Password = secretPw;
+            sha256.Dispose();
+            var userPL = await _context.Users.Where(u => u.username == employee.username).FirstOrDefaultAsync();
+            if(userPL != null){
+                return JsonConvert.SerializeObject(new {success=false,message="User Already Exists"});
+            }
+            
+            _context.Users.Add(employee);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEmployee", new { id = employee.UserId }, employee);
+            CreatedAtAction("GetUser", new { id = employee.UserId }, employee);
+            //return the user in json format
+            return JsonConvert.SerializeObject(new {success=true,message="User Successfully Created", employee});
         }
 
+        // To delete an employee
         // DELETE: api/Employee/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(int id)
@@ -108,35 +126,8 @@ namespace YouthActionDotNet.Controllers
             return _context.Employee.Any(e => e.UserId == id);
         }
 
-        [HttpGet("All")]
-        public async Task<ActionResult<String>> GetAllEmployees()
-        {
-            var employees = await _context.Employee.ToListAsync();
-            return JsonConvert.SerializeObject(new {success = true, data = employees, message = "Employees Successfully Retrieved"});
-        }
-
-        [HttpPost("Create")]
-        public async Task<ActionResult<String>> PostUser(Employee user)
-        {   
-            //check if user exists
-            SHA256 sha256 = SHA256.Create();
-            var secretPw = Convert.ToHexString(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(user.Password)));
-
-            user.Password = secretPw;
-            sha256.Dispose();
-            var userPL = await _context.Users.Where(u => u.username == user.username).FirstOrDefaultAsync();
-            if(userPL != null){
-                return JsonConvert.SerializeObject(new {success=false,message="User Already Exists"});
-            }
-            
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            CreatedAtAction("GetUser", new { id = user.UserId }, user);
-            //return the user in json format
-            return JsonConvert.SerializeObject(new {success=true,message="User Successfully Created", user});
-        }
-
+        // To provide front end which fields are to be displayed
+        // GET: api/Employee/Settings
         [HttpGet("Settings")]
         public string GetEmployeeSettings(){
 
@@ -144,7 +135,7 @@ namespace YouthActionDotNet.Controllers
             settings.ColumnSettings = new Dictionary<string, ColumnHeader>();
             settings.FieldSettings = new Dictionary<string, InputType>();
             
-            settings.ColumnSettings.Add("EmployeeId", new ColumnHeader { displayHeader = "User Id" });
+            settings.ColumnSettings.Add("UserId", new ColumnHeader { displayHeader = "User Id" });
             settings.ColumnSettings.Add("username", new ColumnHeader { displayHeader = "Username" });
             settings.ColumnSettings.Add("Email", new ColumnHeader { displayHeader = "Email" });
             settings.ColumnSettings.Add("Password", new ColumnHeader { displayHeader = "Password" });
@@ -158,7 +149,7 @@ namespace YouthActionDotNet.Controllers
                 new DropdownOption { value = "Admin", label = "Admin" },
                 new DropdownOption { value = "User", label = "User" }
             } });
-            settings.FieldSettings.Add("EmployeeNationalId", new InputType { type = "text", displayLabel = "National Id", editable = true, primaryKey = false });
+            settings.FieldSettings.Add("EmployeeNationalId", new InputType { type = "text", displayLabel = "National Id", editable = true, primaryKey = false, toolTip = "E.g. AB123456C" });
             settings.FieldSettings.Add("BankName", new InputType { type = "text", displayLabel = "Bank Name", editable = true, primaryKey = false });
             settings.FieldSettings.Add("BankAccountNumber", new InputType { type = "text", displayLabel = "Bank Account Number", editable = true, primaryKey = false });
             settings.FieldSettings.Add("PAYE", new InputType { type = "text", displayLabel = "PAYE Number", editable = true, primaryKey = false });

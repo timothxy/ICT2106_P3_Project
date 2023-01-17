@@ -83,6 +83,7 @@ export class ExpandableRow extends React.Component {
                       onChange={this.updateHandle}
                       options={this.props.fieldSettings[field].options}
                       dateFormat={this.props.fieldSettings[field].dateFormat}
+                      toolTip={this.props.fieldSettings[field].toolTip}
                     ></StdInput>
                   );
                 })}

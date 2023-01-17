@@ -1,6 +1,7 @@
 
 import React from "react"
 import DatapageLayout from "./PageLayout"
+import { Loading } from "../Components/appCommon"
 
 export default class Users extends React.Component {
     state={
@@ -83,15 +84,21 @@ export default class Users extends React.Component {
     }
 
     handleUpdate = async (data) =>{
+        this.setState({
+            loading:true
+        })
         await this.update(data).then((content)=>{
             if(content.success){
                 this.setState({
+                    content:content,
                     error:"",
+                    loading:false,
                 })
                 return true;
             }else{
                 this.setState({
                     error:content.message,
+                    loading:false,
                 })
                 return false;
             }
@@ -113,7 +120,7 @@ export default class Users extends React.Component {
 
     render(){
         if(this.state.loading){
-            return <div>Loading</div>
+            return <Loading></Loading>
         }else{
             
         return(

@@ -21,13 +21,7 @@ namespace YouthActionDotNet.Controllers
             _context = context;
         }
 
-        // GET: api/User
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {
-            return await _context.Users.ToListAsync();
-        }
-
+        // To get a single user
         // GET: api/User/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
@@ -42,6 +36,7 @@ namespace YouthActionDotNet.Controllers
             return user;
         }
 
+        // To login the user
         // POST: api/User/Login
         [HttpPost("Login")]
         public async Task<ActionResult<String>> LoginUser(User user)
@@ -58,6 +53,7 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, message = "Login Successful", user=validLoginUser });
         }
         
+        // To get all users
         // GET: api/User/All
         [HttpGet("All")]
         public async Task<ActionResult<String>> GetAllUsers()
@@ -66,10 +62,11 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new {success = true, data = users, message = "Users Successfully Retrieved"});
         }
 
+        // To update the user
         // PUT: api/User/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<ActionResult<String>> PutUser(int id, User user)
         {
             if (id != user.UserId)
             {
@@ -81,6 +78,7 @@ namespace YouthActionDotNet.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                return await this.GetAllUsers();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -94,7 +92,7 @@ namespace YouthActionDotNet.Controllers
                 }
             }
 
-            return NoContent();
+            return JsonConvert.SerializeObject(new {success = false, message = "Unknown Error!"});
         }
 
         // POST: api/User/Create
@@ -120,7 +118,8 @@ namespace YouthActionDotNet.Controllers
             //return the user in json format
             return JsonConvert.SerializeObject(new {success=true,message="User Successfully Created", user});
         }
-
+        
+        // To delete a user
         // DELETE: api/User/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
@@ -141,7 +140,8 @@ namespace YouthActionDotNet.Controllers
         {
             return _context.Users.Any(e => e.UserId == id);
         }
-
+        
+        // To provide front end which fields are to be displayed
         // GET: api/User/Settings/
         [HttpGet("Settings")]
         public string GetUserSettings()

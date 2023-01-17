@@ -15,6 +15,7 @@ namespace YouthActionDotNet.Models
         public string displayLabel { get; set; }
         public bool editable { get; set; }   
         public bool primaryKey { get; set; }
+        public string toolTip { get; set; }
         
     }
 

@@ -96,7 +96,7 @@ export default function App() {
 class LoggedInNav extends React.Component {
 
   state = {
-    title: "MUSE"
+    title: "YouthAction"
   }
   componentDidMount() {
     window.addEventListener("resize", this.resize.bind(this));
@@ -107,11 +107,11 @@ class LoggedInNav extends React.Component {
     const md = 768;
    if(window.innerWidth >= md){
         this.setState({
-          title: "MUSE"
+          title: "YouthAction"
         })
     } else{
         this.setState({
-          title: "MUSE"
+          title: "YouthAction"
         })
     }
   }
@@ -129,7 +129,7 @@ class LoggedOutNav extends React.Component {
   render() {
     return (
       <Nav title={
-        "MUSE"
+        "YouthAction"
       } toggle={this.props.toggle} >
       </Nav>
     )
