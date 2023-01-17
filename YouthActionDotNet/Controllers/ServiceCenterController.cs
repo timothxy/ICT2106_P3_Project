@@ -146,7 +146,7 @@ namespace YouthActionDotNet.Controllers
                         label = e.username }).ToList() 
                      });
 
-            return JsonConvert.SerializeObject(settings);
+            return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
         }
 
         private bool ServiceCenterExists(int id)

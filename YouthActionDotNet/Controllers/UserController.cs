@@ -167,7 +167,7 @@ namespace YouthActionDotNet.Controllers
                 new DropdownOption { value = "Volunteer", label = "Volunteer" },
                 new DropdownOption { value = "Donor", label = "Donor" },
             } });
-            return JsonConvert.SerializeObject(settings);
+            return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
         }
     }
 }

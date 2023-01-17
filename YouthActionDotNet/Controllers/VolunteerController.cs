@@ -175,7 +175,7 @@ namespace YouthActionDotNet.Controllers
 
             
             
-            return JsonConvert.SerializeObject(settings);
+            return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
         }
     }
 }

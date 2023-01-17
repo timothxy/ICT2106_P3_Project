@@ -175,7 +175,7 @@ namespace YouthActionDotNet.Controllers
                 new DropdownOption { value = "Marketing Manager", label = "Marketing Manager"},
                 new DropdownOption { value = "Director of new Business", label = "Director of new Business"},
             } });
-            return JsonConvert.SerializeObject(settings);
+            return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
         }
     }
 }
