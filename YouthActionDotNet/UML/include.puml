@@ -1,7 +1,4 @@
 @startuml
-
-left to right direction
-
 class Program {
     + {static} Main(args:string[]) : void
     + {static} CreateHostBuilder(args:string[]) : IHostBuilder
@@ -48,18 +45,21 @@ EmployeeController --> "_context" DBContext
 EmployeeController o-> "settings" JsonSerializerSettings
 class ServiceCenterController {
     + ServiceCenterController(context:DBContext)
-    + <<async>> GetServiceCenters() : Task<ActionResult<IEnumerable<ServiceCenter>>>
-    + <<async>> GetServiceCenter(id:int) : Task<ActionResult<ServiceCenter>>
-    + <<async>> GetAllServiceCenters() : Task<ActionResult<String>>
-    + <<async>> PostCenter(serviceCenter:ServiceCenter) : Task<ActionResult<String>>
-    + <<async>> PutServiceCenter(id:int, serviceCenter:ServiceCenter) : Task<IActionResult>
-    + <<async>> PostServiceCenter(serviceCenter:ServiceCenter) : Task<ActionResult<ServiceCenter>>
-    + <<async>> DeleteServiceCenter(id:int) : Task<IActionResult>
-    + getServiceCenterSettings() : string
-    - ServiceCenterExists(id:int) : bool
+    + <<async>> Create(template:ServiceCenter) : Task<ActionResult<string>>
+    + <<async>> Get(id:string) : Task<ActionResult<string>>
+    + <<async>> All() : Task<ActionResult<string>>
+    + <<async>> Update(id:string, template:ServiceCenter) : Task<ActionResult<string>>
+    + <<async>> UpdateAndFetchAll(id:string, template:ServiceCenter) : Task<ActionResult<string>>
+    + <<async>> Delete(id:string) : Task<ActionResult<string>>
+    + Settings() : string
+    + Exists(id:string) : bool
+}
+class "IUserInterfaceCRUD`1"<T> {
 }
 ControllerBase <|-- ServiceCenterController
+"IUserInterfaceCRUD`1" "<ServiceCenter>" <|-- ServiceCenterController
 ServiceCenterController --> "_context" DBContext
+ServiceCenterController o-> "settings" JsonSerializerSettings
 class UserController {
     + UserController(context:DBContext)
     + <<async>> LoginUser(user:User) : Task<ActionResult<String>>
@@ -94,6 +94,23 @@ ControllerBase <|-- VolunteerController
 "IUserInterfaceCRUD`1" "<Volunteer>" <|-- VolunteerController
 VolunteerController --> "_context" DBContext
 VolunteerController o-> "settings" JsonSerializerSettings
+class VolunteerWorkController {
+    + VolunteerWorkController(context:DBContext)
+    + <<async>> Create(template:VolunteerWork) : Task<ActionResult<string>>
+    + <<async>> Get(id:string) : Task<ActionResult<string>>
+    + <<async>> All() : Task<ActionResult<string>>
+    + <<async>> Update(id:string, template:VolunteerWork) : Task<ActionResult<string>>
+    + <<async>> UpdateAndFetchAll(id:string, template:VolunteerWork) : Task<ActionResult<string>>
+    + <<async>> Delete(id:string) : Task<ActionResult<string>>
+    + Exists(id:string) : bool
+    + Settings() : string
+}
+class "IUserInterfaceCRUD`1"<T> {
+}
+ControllerBase <|-- VolunteerWorkController
+"IUserInterfaceCRUD`1" "<VolunteerWork>" <|-- VolunteerWorkController
+VolunteerWorkController --> "_context" DBContext
+VolunteerWorkController o-> "settings" JsonSerializerSettings
 class DBContext {
     + DBContext(options:DbContextOptions<DBContext>)
     # <<override>> OnModelCreating(modelBuilder:ModelBuilder) : void
@@ -104,8 +121,10 @@ DbContext <|-- DBContext
 DBContext --> "Users<User>" "DbSet`1"
 DBContext --> "ServiceCenters<ServiceCenter>" "DbSet`1"
 DBContext --> "Employee<Employee>" "DbSet`1"
-DBContext --> "Volunteer<YouthActionDotNet.Models.Volunteer>" "DbSet`1"
-DBContext --> "Donor<YouthActionDotNet.Models.Donor>" "DbSet`1"
+DBContext --> "Volunteer<Volunteer>" "DbSet`1"
+DBContext --> "Donor<Donor>" "DbSet`1"
+DBContext --> "VolunteerWork<VolunteerWork>" "DbSet`1"
+DBContext --> "Project<Project>" "DbSet`1"
 interface "IUserInterfaceCRUD`1"<T> {
     Create(template:T) : Task<ActionResult<string>>
     Get(id:string) : Task<ActionResult<string>>
@@ -132,6 +151,14 @@ Migration <|-- createdDonorType
 class createdDonorType <<partial>> {
     # <<override>> BuildTargetModel(modelBuilder:ModelBuilder) : void
 }
+class createdVolunteerWork <<partial>> {
+    # <<override>> Up(migrationBuilder:MigrationBuilder) : void
+    # <<override>> Down(migrationBuilder:MigrationBuilder) : void
+}
+Migration <|-- createdVolunteerWork
+class createdVolunteerWork <<partial>> {
+    # <<override>> BuildTargetModel(modelBuilder:ModelBuilder) : void
+}
 class DBContextModelSnapshot <<partial>> {
     # <<override>> BuildModel(modelBuilder:ModelBuilder) : void
 }
@@ -153,8 +180,21 @@ class Employee {
 }
 User <|-- Employee
 Employee --> "User" User
+class Project {
+    + ProjectId : string <<get>> <<set>>
+    + ProjectName : string <<get>> <<set>>
+    + ProjectDescription : string <<get>> <<set>>
+    + ProjectStartDate : string <<get>> <<set>>
+    + ProjectEndDate : string <<get>> <<set>>
+    + ProjectCompletionDate : string <<get>> <<set>>
+    + ProjectStatus : string <<get>> <<set>>
+    + ProjectType : string <<get>> <<set>>
+    + ProjectBudget : double <<get>> <<set>>
+    + ServiceCenterId : string <<get>> <<set>>
+}
+Project --> "ServiceCenter" ServiceCenter
 class ServiceCenter {
-    + id : int <<get>> <<set>>
+    + ServiceCenterId : string <<get>> <<set>>
     + ServiceCenterName : string <<get>> <<set>>
     + ServiceCenterAddress : string <<get>> <<set>>
     + RegionalDirectorId : string <<get>> <<set>>
@@ -170,16 +210,16 @@ class InputType {
     + primaryKey : bool <<get>> <<set>>
     + toolTip : string <<get>> <<set>>
 }
+class "DropdownInputType`1"<T> {
+}
 class DropdownInputType {
 }
-class DropdownInputTypeInt {
+class "DropdownOption`1"<T> {
+    + value : T <<get>> <<set>>
+    + label : string <<get>> <<set>>
 }
 class DropdownOption {
     + value : string <<get>> <<set>>
-    + label : string <<get>> <<set>>
-}
-class DropdownOptionsInt {
-    + value : int <<get>> <<set>>
     + label : string <<get>> <<set>>
 }
 class ColumnHeader {
@@ -191,10 +231,10 @@ class "List`1"<T> {
 }
 Settings --> "ColumnSettings<string,ColumnHeader>" "Dictionary`2"
 Settings --> "FieldSettings<string,InputType>" "Dictionary`2"
+InputType <|-- "DropdownInputType`1"
+"DropdownInputType`1" --> "options<DropdownOption<T>>" "List`1"
 InputType <|-- DropdownInputType
 DropdownInputType --> "options<DropdownOption>" "List`1"
-InputType <|-- DropdownInputTypeInt
-DropdownInputTypeInt --> "options<DropdownOptionsInt>" "List`1"
 class User {
     + UserId : string <<get>> <<set>>
     + username : string <<get>> <<set>>
@@ -216,6 +256,17 @@ class Volunteer {
 }
 User <|-- Volunteer
 Volunteer --> "User" User
+class VolunteerWork {
+    + VolunteerWorkId : string <<get>> <<set>>
+    + ShiftStart : string <<get>> <<set>>
+    + ShiftEnd : string <<get>> <<set>>
+    + SupervisingEmployee : string <<get>> <<set>>
+    + VolunteerId : string <<get>> <<set>>
+    + projectId : string <<get>> <<set>>
+}
+VolunteerWork --> "employee" Employee
+VolunteerWork --> "volunteer" Volunteer
+VolunteerWork --> "project" Project
 class ErrorModel {
     + ErrorModel(logger:ILogger<ErrorModel>)
     + RequestId : string <<get>> <<set>>

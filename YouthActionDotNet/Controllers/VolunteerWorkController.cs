@@ -142,6 +142,8 @@ namespace YouthActionDotNet.Controllers
             settings.FieldSettings.Add("VolunteerWorkId", new InputType {type="text", displayLabel = "Volunteer Work Id",editable = false,primaryKey=true});
             settings.FieldSettings.Add("ShiftStart", new InputType {type="datetime", displayLabel = "Shift Start",editable = true,primaryKey=false});
             settings.FieldSettings.Add("ShiftEnd", new InputType {type="datetime", displayLabel = "Shift End",editable = true, primaryKey=false});
+
+            // Fetch Volunteers and use info as dropdown options
             var allVolunteers = _context.Volunteer.Where(u => u.ApprovalStatus == "Approved").ToList();
             settings.FieldSettings.Add("VolunteerId", new DropdownInputType {
                 type="dropdown",
@@ -153,6 +155,8 @@ namespace YouthActionDotNet.Controllers
                         value = u.UserId, label = u.username
                         }).ToList()
                     });
+            
+            // Fetch projects and use info as dropdown options
             var allProjects = _context.Project.ToList();
             settings.FieldSettings.Add("projectId", new DropdownInputType {
                 type="dropdown",
@@ -164,6 +168,8 @@ namespace YouthActionDotNet.Controllers
                         value = u.ProjectId, label = u.ProjectName
                         }).ToList()
                     });
+
+            // Fetch employees and use info as dropdown options
             var allEmployees = _context.Employee.ToList();
             settings.FieldSettings.Add("SupervisingEmployee", new DropdownInputType {
                 type="dropdown",
