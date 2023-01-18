@@ -314,7 +314,7 @@ export class StdInput extends React.Component {
         <div className={"inputBox " + (this.props.sameLine ? "same-line" : "")}>
           {this.props.label !== "hidden" && (
             <div className="inputBox-Label">{this.props.label}:
-            {(this.props.toolTip !== null) && (
+            {(this.props.toolTip !== null && this.props.toolTip) && (
               <div className="inputToolTip">
                 <i class="bi bi-info-circle-fill"></i>
                 <div className="inputToolTip-text">{this.props.toolTip}</div>

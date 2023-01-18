@@ -233,7 +233,14 @@ export class LoginFormBox extends React.Component {
         <form onSubmit={this.props.handleSubmit}>
           {this.props.fields.map((field, index) => {
             return (
-              <StdInput type={field.type} key={index} enabled={true} showIndicator={false} showSaveBtn={false} label={field.label} onChange={field.onChange}></StdInput>
+              <StdInput 
+                type={field.type} 
+                key={index} 
+                enabled={true} 
+                showIndicator={false} 
+                showSaveBtn={false} 
+                label={field.label} 
+                onChange={field.onChange}></StdInput>
             )
           })}
           <div className="row-cols-md-2 row-cols-1 loginActions">
