@@ -43,13 +43,30 @@ namespace YouthActionDotNet.Controllers
             return serviceCenter;
         }
 
+        // To get all service centers
+        // GET: api/ServiceCenter/All
         [HttpGet("All")]
         public async Task<ActionResult<String>> GetAllServiceCenters()
         {
-            var serviceCenters = await _context.ServiceCenters.ToListAsync();
+            //Sample of joins
+            var serviceCenters = await _context.ServiceCenters.Join(
+                _context.Employee,
+                sc => sc.RegionalDirectorId,
+                e => e.UserId,
+                (sc, e) => new ServiceCenter
+                {
+                    id = sc.id,
+                    ServiceCenterName = sc.ServiceCenterName,
+                    ServiceCenterAddress = sc.ServiceCenterAddress,
+                    RegionalDirectorId = sc.RegionalDirectorId,
+                    RegionalDirectorName = e.username
+                }
+            ).ToListAsync();
             return JsonConvert.SerializeObject(new { success = true, message = "Service Centers Retrieved", data = serviceCenters });
         }
 
+        // To create a service center
+        // POST: api/ServiceCenter/Create
         [HttpPost("Create")]
         public async Task<ActionResult<String>> PostCenter(ServiceCenter serviceCenter)
         {
@@ -59,6 +76,7 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, message = "Service Center Created", data = serviceCenter });
         }
 
+        // To update service center
         // PUT: api/ServiceCenter/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -101,6 +119,7 @@ namespace YouthActionDotNet.Controllers
             return CreatedAtAction("GetServiceCenter", new { id = serviceCenter.id }, serviceCenter);
         }
 
+        // To delete service center
         // DELETE: api/ServiceCenter/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteServiceCenter(int id)
@@ -117,6 +136,7 @@ namespace YouthActionDotNet.Controllers
             return NoContent();
         }
 
+        // Provide frontend settings for fields of service center
         // GET: api/User/Settings/
         [HttpGet("Settings")]
         public string getServiceCenterSettings()
@@ -128,7 +148,7 @@ namespace YouthActionDotNet.Controllers
             settings.ColumnSettings.Add("id", new ColumnHeader { displayHeader = "ID" });
             settings.ColumnSettings.Add("ServiceCenterName", new ColumnHeader { displayHeader = "Service Center Name" });
             settings.ColumnSettings.Add("ServiceCenterAddress", new ColumnHeader { displayHeader = "Service Center Address" });
-            settings.ColumnSettings.Add("RegionalDirectorId", new ColumnHeader { displayHeader = "Regional Director ID" });
+            settings.ColumnSettings.Add("RegionalDirectorName", new ColumnHeader { displayHeader = "Regional Director Name" });
 
             settings.FieldSettings.Add("id", new InputType { type = "number", displayLabel = "ID", editable = false, primaryKey = true });
             settings.FieldSettings.Add("ServiceCenterName", new InputType { type = "text", displayLabel = "Service Center Name", editable = true, primaryKey = false });

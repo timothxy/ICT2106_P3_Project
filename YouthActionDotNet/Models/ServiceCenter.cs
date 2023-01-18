@@ -7,6 +7,7 @@ namespace YouthActionDotNet.Models
         public string ServiceCenterAddress { get; set; }
         public string RegionalDirectorId { get; set; }
 
+        public virtual string RegionalDirectorName { get; set; }
         public virtual Employee RegionalDirector { get; set; }
     }
 }
