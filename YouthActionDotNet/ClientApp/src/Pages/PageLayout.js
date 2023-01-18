@@ -493,7 +493,7 @@ class AddEntry extends React.Component{
 
     createCourse = async (courseToAdd) => {
         console.log(courseToAdd);
-        return fetch(this.props.settings.api + "create", {
+        return fetch(this.props.settings.api + "Create", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -531,6 +531,7 @@ class AddEntry extends React.Component{
                             options={this.props.fieldSettings[key].options}
                             dateFormat = {this.props.fieldSettings[key].dateFormat}
                             allowEmpty = {true}
+                            toolTip = {this.props.fieldSettings[key].toolTip}
                             >
                             </StdInput>)
                     }

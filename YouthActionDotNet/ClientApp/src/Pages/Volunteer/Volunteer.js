@@ -1,9 +1,8 @@
 
 import React from "react"
-import DatapageLayout from "./PageLayout"
-import { Loading } from "../Components/appCommon"
+import DatapageLayout from "../PageLayout"
 
-export default class Users extends React.Component {
+export default class Volunteer extends React.Component {
     state={
         content:null,
         headers:[],
@@ -13,12 +12,12 @@ export default class Users extends React.Component {
     }
 
     settings ={
-        title:"Users",
+        title:"Volunteer",
         primaryColor: "#a6192e",
         accentColor: "#94795d",
         textColor: "#ffffff",
         textColorInvert: "#606060",
-        api: "/api/User/",
+        api: "/api/Volunteer/",
     }
 
     async componentDidMount(){
@@ -66,13 +65,14 @@ export default class Users extends React.Component {
             },
         }).then(res => {
             console.log(res);
+            //Res = {success: true, message: "Success", data: Array(3)}
             return res.json();
         });
     }
 
     update = async (data) =>{
         console.log(data);
-        return fetch(this.settings.api + data.UserId , {
+        return fetch(this.settings.api + data.id , {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -84,21 +84,15 @@ export default class Users extends React.Component {
     }
 
     handleUpdate = async (data) =>{
-        this.setState({
-            loading:true
-        })
         await this.update(data).then((content)=>{
             if(content.success){
                 this.setState({
-                    content:content,
                     error:"",
-                    loading:false,
                 })
                 return true;
             }else{
                 this.setState({
                     error:content.message,
-                    loading:false,
                 })
                 return false;
             }
@@ -120,7 +114,7 @@ export default class Users extends React.Component {
 
     render(){
         if(this.state.loading){
-            return <Loading></Loading>
+            return <div>Loading</div>
         }else{
             
         return(

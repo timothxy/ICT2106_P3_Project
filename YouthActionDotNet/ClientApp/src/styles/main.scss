@@ -25,6 +25,8 @@ $large-font: 1.25rem;
 $extra-large-font: 1.5rem;
 $extra-extra-large-font: 2rem;
 
+$default-font: "Nunito";
+
 .borderRadius {
     border-radius: $borderRadius;
 }
@@ -204,7 +206,7 @@ $xxl : 1400px;
             >h1 {
                 font-size: 2.5rem;
                 color: white;
-                font-family: "Rubik";
+                font-family: $default-font;
             }
         }
 
@@ -271,7 +273,7 @@ nav {
     padding: 0;
     margin: 0;
     color: rgb(60, 60, 60) !important;
-    font-family: "Rubik";
+    font-family: $default-font;
     font-weight: 700;
 }
 
@@ -285,7 +287,7 @@ nav {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%) rotateX(180deg);
-        font-family: "Rubik";
+        font-family: $default-font;
         font-weight: 700;
         animation: invertSwap 10s linear forwards infinite;
         opacity: 1;
@@ -460,6 +462,11 @@ nav {
     src: url("../Assets/fonts/Rubik-VariableFont_wght.ttf")
 }
 
+@font-face{
+    font-family: "Nunito";
+    src: url("../Assets/fonts/Nunito-VariableFont_wght.ttf")
+}
+
 @font-face {
     font-family: NotoColorEmojiLimited;
     unicode-range: U+1F1E6-1F1FF;
@@ -481,7 +488,7 @@ nav {
 
     @for $i from 1 through 6 {
         h#{$i} {
-            font-family: "Rubik";
+            font-family: $default-font;
             font-weight: 900;
             margin-bottom: 0;
         }
@@ -1027,7 +1034,7 @@ nav {
             border-top-right-radius: $borderRadius;
             padding: 10px;
             font-weight: 700;
-            font-family: "Rubik";
+            font-family: $default-font;
             color: white;
         }
 
@@ -1072,7 +1079,7 @@ nav {
 
             span {
                 font-weight: 700;
-                font-family: "Rubik";
+                font-family: $default-font;
                 font-size: 1.2rem;
             }
         }
@@ -1413,7 +1420,7 @@ nav {
             opacity: 1;
             right: 0px;
             color: white;
-            font-family: "Rubik";
+            font-family: $default-font;
             font-weight: 700;
             text-transform: uppercase;
             animation: feedbackText 1s cubic-bezier(0.175, 1, 0.32, 1.275) 0s 2 alternate both;
@@ -1643,7 +1650,7 @@ nav {
                 position:absolute;
                 right:36px;
                 text-transform: uppercase;
-                font-family: "Rubik";
+                font-family: $default-font;
                 font-weight: 700;
             }
             ~.editLock{
@@ -1719,7 +1726,7 @@ nav {
             opacity: 1;
             right: 0px;
             color: white;
-            font-family: "Rubik";
+            font-family: $default-font;
             font-weight: 700;
             text-transform: uppercase;
             animation: feedbackText 1s cubic-bezier(0.175, 1, 0.32, 1.275) 0s 2 alternate both;
@@ -2022,7 +2029,7 @@ nav {
         &>.dropdown-group {
             >.groupHeader {
                 color: $primary;
-                font-family: "Rubik";
+                font-family: $default-font;
                 font-weight: 700;
                 font-size: 1.4rem;
                 padding: 15px;
@@ -2549,7 +2556,7 @@ nav {
 .tableTitle {
     height: 56px;
     font-size: 2rem;
-    font-family: "Rubik";
+    font-family: $default-font;
     font-weight: 700;
     white-space: nowrap;
     background-color: rgba(#e4eefe, 0.0);
@@ -2608,7 +2615,7 @@ nav {
             &>span {
 
                 font-weight: 700;
-                font-family: "Rubik";
+                font-family: $default-font;
             }
 
             &:hover {
@@ -2646,7 +2653,7 @@ nav {
         &>.tagboxLabel {
             width: 125px;
             font-weight: 700;
-            font-family: "Rubik";
+            font-family: $default-font;
         }
     }
 
@@ -3095,7 +3102,7 @@ nav {
             font-size: 2.5rem;
             font-weight: bold;
             color: $primary;
-            font-family: "Rubik";
+            font-family: $default-font;
         }
     }
 
@@ -3339,7 +3346,7 @@ nav {
     padding: 10px 10px;
     appearance: none;
     text-transform: uppercase;
-    font-family: "Rubik";
+    font-family: $default-font;
     font-weight: 700;
     outline: none;
     border-radius: $borderRadius;

@@ -65,6 +65,7 @@ export default class Employees extends React.Component {
             },
         }).then(res => {
             console.log(res);
+            //Res = {success: true, message: "Success", data: Array(3)}
             return res.json();
         });
     }
@@ -119,8 +120,8 @@ export default class Employees extends React.Component {
         return(
             <DatapageLayout 
                 settings={this.settings}
-                fieldSettings={this.state.settings.FieldSettings} 
-                headers={this.state.settings.ColumnSettings} 
+                fieldSettings={this.state.settings.data.FieldSettings} 
+                headers={this.state.settings.data.ColumnSettings} 
                 data={this.state.content.data}
                 updateHandle = {this.handleUpdate}
                 requestRefresh = {this.requestRefresh}
