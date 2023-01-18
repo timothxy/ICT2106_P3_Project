@@ -45,7 +45,7 @@ namespace YouthActionDotNet.Controllers
             _context.Project.Add(template);
             await _context.SaveChangesAsync();
 
-            CreatedAtAction("GetProject", new { id = template.ProjectId }, template);
+            CreatedAtAction("Get", new { id = template.ProjectId }, template);
             // return user in json format
             return JsonConvert.SerializeObject(new { success = true, message = "Project Created", data = template });
         }
@@ -248,17 +248,22 @@ namespace YouthActionDotNet.Controllers
             settings.ColumnSettings.Add("ProjectBudget", new ColumnHeader { displayHeader = "Project Budget" });
             settings.ColumnSettings.Add("ServiceCenterId", new ColumnHeader { displayHeader = "Service Center Id" });
 
-            settings.FieldSettings.Add("ProjectId", new InputType { type = "number", displayLabel = "Project Id", editable = false, primaryKey = true });
+            settings.FieldSettings.Add("ProjectId", new InputType { type = "text", displayLabel = "Project Id", editable = false, primaryKey = true });
             settings.FieldSettings.Add("ProjectName", new InputType { type = "text", displayLabel = "Project Name", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ProjectDescription", new InputType { type = "text", displayLabel = "EmaiProject Descriptionl", editable = true, primaryKey = false });
-            settings.FieldSettings.Add("ProjectStartDate", new InputType { type = "text", displayLabel = "Project Start Date", editable = true, primaryKey = false });
-            settings.FieldSettings.Add("ProjectEndDate", new InputType { type = "text", displayLabel = "Project End Date", editable = true, primaryKey = false });
-            settings.FieldSettings.Add("ProjectCompletionDate", new InputType { type = "text", displayLabel = "Project Completion Date", editable = true, primaryKey = false });
+            settings.FieldSettings.Add("ProjectStartDate", new InputType { type = "datetime", displayLabel = "Project Start Date", editable = true, primaryKey = false });
+            settings.FieldSettings.Add("ProjectEndDate", new InputType { type = "datetime", displayLabel = "Project End Date", editable = true, primaryKey = false });
+            settings.FieldSettings.Add("ProjectCompletionDate", new InputType { type = "datetime", displayLabel = "Project Completion Date", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ProjectStatus", new InputType { type = "text", displayLabel = "Project Status", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ProjectBudget", new InputType { type = "number", displayLabel = "Project Budget", editable = true, primaryKey = false });
 
             var serviceCenters = _context.ServiceCenters.ToList();
-            settings.FieldSettings.Add("ServiceCenterId", new DropdownInputType { type = "dropdown", displayLabel = "Service Center", editable = true, primaryKey = false, options = serviceCenters.Select(x => new DropdownOption { value = x.ServiceCenterId, label = x.ServiceCenterName }).ToList()});
+            settings.FieldSettings.Add("ServiceCenterId", new DropdownInputType { 
+                type = "dropdown", 
+                displayLabel = "Service Center", 
+                editable = true, 
+                primaryKey = false, 
+                options = serviceCenters.Select(x => new DropdownOption { value = x.ServiceCenterId, label = x.ServiceCenterName }).ToList()});
 
             return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
         }
