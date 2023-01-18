@@ -72,7 +72,7 @@ export default class Employees extends React.Component {
 
     update = async (data) =>{
         console.log(data);
-        return fetch(this.settings.api + data.id , {
+        return fetch(this.settings.api + data.UserId , {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
