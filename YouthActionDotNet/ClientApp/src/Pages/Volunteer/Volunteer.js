@@ -1,6 +1,7 @@
 
 import React from "react"
 import DatapageLayout from "../PageLayout"
+import { Loading } from "../../Components/appCommon"
 
 export default class Volunteer extends React.Component {
     state={
@@ -40,10 +41,6 @@ export default class Volunteer extends React.Component {
         })
     }
 
-    test = (abc, def) => { 
-
-    }
-
     getSettings = async () => {
         // fetches http://...:5001/api/User/Settings
         return fetch(this.settings.api + "Settings" , {
@@ -72,7 +69,7 @@ export default class Volunteer extends React.Component {
 
     update = async (data) =>{
         console.log(data);
-        return fetch(this.settings.api + data.UserId , {
+        return fetch(this.settings.api + "UpdateAndFetch/" + data.UserId , {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -114,7 +111,7 @@ export default class Volunteer extends React.Component {
 
     render(){
         if(this.state.loading){
-            return <div>Loading</div>
+            return <Loading/>
         }else{
             
         return(

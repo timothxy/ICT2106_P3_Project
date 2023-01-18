@@ -14,7 +14,7 @@ namespace YouthActionDotNet.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeeController : ControllerBase
+    public class EmployeeController : ControllerBase, IUserInterfaceCRUD<Employee>
     {
         private readonly DBContext _context;
         JsonSerializerSettings settings = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
@@ -25,115 +25,115 @@ namespace YouthActionDotNet.Controllers
             _context = context;
         }
 
-        // To get a single employee
-        // GET: api/Employee/5
+        [HttpPost("Create")]
+        public async Task<ActionResult<string>> Create(Employee template)
+        {
+            template.UserId = Guid.NewGuid().ToString();
+            //check if user exists
+            SHA256 sha256 = SHA256.Create();
+            var secretPw = Convert.ToHexString(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(template.Password)));
+
+            template.Password = secretPw;
+            sha256.Dispose();
+            var userPL = await _context.Users.Where(u => u.username == template.username).FirstOrDefaultAsync();
+            if(userPL != null){
+                return JsonConvert.SerializeObject(new {success=false,message="Volunteer Already Exists"},settings);
+            }
+            
+            _context.Employee.Add(template);
+            await _context.SaveChangesAsync();
+
+            CreatedAtAction("GetUser", new { id = template.UserId }, template);
+            //return the user in json format
+            return JsonConvert.SerializeObject(new {success=true,message="User Successfully Created", data = template},settings);
+        }
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<Employee>> GetEmployee(int id)
+        public async Task<ActionResult<string>> Get(string id)
         {
             var employee = await _context.Employee.FindAsync(id);
-
             if (employee == null)
             {
-                return NotFound();
+                return JsonConvert.SerializeObject(new {success = false, message = "Employee Not Found"});
             }
-
-            return employee;
+            return JsonConvert.SerializeObject(new {success = true, data = employee, message = "Employee Successfully Retrieved"});
         }
 
-        // To get all employees
-        // GET: api/Employee/All
-        [HttpGet("All")]
-        public async Task<ActionResult<String>> GetAllEmployees()
-        {
-            var employees = await _context.Employee.ToListAsync();
-            return JsonConvert.SerializeObject(new {success = true, data = employees, message = "Employees Successfully Retrieved"},settings);
-        }
-
-        //To update the employee
-        // PUT: api/Employee/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(string id, Employee employee)
+        public async Task<ActionResult<string>> Update(string id, Employee template)
         {
-            if (id != employee.UserId)
-            {
-                return BadRequest();
+            if(id != template.UserId){
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Id Mismatch" });
             }
-
-            _context.Entry(employee).State = EntityState.Modified;
-
+            _context.Entry(template).State = EntityState.Modified;
             try
             {
                 await _context.SaveChangesAsync();
+                return JsonConvert.SerializeObject(new { success = true, data = template, message = "Volunteer Successfully Updated" });
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EmployeeExists(id))
+                if (!Exists(id))
                 {
-                    return NotFound();
+                    return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Not Found" });
                 }
                 else
                 {
                     throw;
                 }
             }
-
-            return NoContent();
         }
-
-        // To to create a new employee
-        // GET: api/Employee/Create
-        [HttpPost("Create")]
-        public async Task<ActionResult<String>> PostUser(Employee employee)
-        {   
-            
-            //check if user exists
-            employee.UserId = Guid.NewGuid().ToString();
-            SHA256 sha256 = SHA256.Create();
-            var secretPw = Convert.ToHexString(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(employee.Password)));
-
-            employee.Password = secretPw;
-            sha256.Dispose();
-            var userPL = await _context.Users.Where(u => u.username == employee.username).FirstOrDefaultAsync();
-            if(userPL != null){
-                return JsonConvert.SerializeObject(new {success=false,message="User Already Exists"});
+        
+        [HttpPut("UpdateAndFetch/{id}")]
+        public async Task<ActionResult<string>> UpdateAndFetchAll(string id, Employee template)
+        {
+            if(id != template.UserId){
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Id Mismatch" });
             }
-            
-            _context.Employee.Add(employee);
-            await _context.SaveChangesAsync();
-
-            CreatedAtAction("GetUser", new { id = employee.UserId }, employee);
-            //return the user in json format
-            return JsonConvert.SerializeObject(new {success=true,message="User Successfully Created", data = employee},settings);
+            _context.Entry(template).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+                return await All();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!Exists(id))
+                {
+                    return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Not Found" });
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
-        // To delete an employee
-        // DELETE: api/Employee/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEmployee(int id)
+        public async Task<ActionResult<string>> Delete(string id)
         {
             var employee = await _context.Employee.FindAsync(id);
             if (employee == null)
             {
-                return NotFound();
+                return JsonConvert.SerializeObject(new {success = false, message = "Employee Not Found"});
             }
-
+        
             _context.Employee.Remove(employee);
             await _context.SaveChangesAsync();
-
-            return NoContent();
+            return JsonConvert.SerializeObject(new {success = true, message = "Employee Successfully Deleted"});
         }
 
-        private bool EmployeeExists(string id)
+        [HttpGet("All")]
+        public async Task<ActionResult<string>> All()
         {
-            return _context.Employee.Any(e => e.UserId == id);
+            var employees = await _context.Employee.ToListAsync();
+            return JsonConvert.SerializeObject(new {success = true, data = employees, message = "Employees Successfully Retrieved"},settings);
+        
         }
 
-        // To provide front end which fields are to be displayed
-        // GET: api/Employee/Settings
         [HttpGet("Settings")]
-        public string GetEmployeeSettings(){
-
+        public string Settings()
+        {
             Settings settings = new Settings();
             settings.ColumnSettings = new Dictionary<string, ColumnHeader>();
             settings.FieldSettings = new Dictionary<string, InputType>();
@@ -176,6 +176,11 @@ namespace YouthActionDotNet.Controllers
                 new DropdownOption { value = "Director of new Business", label = "Director of new Business"},
             } });
             return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
+        }
+
+        public bool Exists(string id)
+        {
+            return _context.Employee.Any(e => e.UserId == id);
         }
     }
 }

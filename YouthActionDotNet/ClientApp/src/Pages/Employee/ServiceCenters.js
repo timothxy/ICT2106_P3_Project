@@ -1,6 +1,7 @@
 
 import React from "react"
 import DatapageLayout from "../PageLayout"
+import { Loading } from "../../Components/appCommon"
 
 export default class ServiceCenters extends React.Component {
     state={
@@ -71,7 +72,7 @@ export default class ServiceCenters extends React.Component {
 
     update = async (data) =>{
         console.log(data);
-        return fetch(this.settings.api + data.id , {
+        return fetch(this.settings.api + "UpdateAndFetch/" + data.ServiceCenterId , {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -113,7 +114,7 @@ export default class ServiceCenters extends React.Component {
 
     render(){
         if(this.state.loading){
-            return <div>Loading</div>
+            return <Loading/>
         }else{
             
         return(

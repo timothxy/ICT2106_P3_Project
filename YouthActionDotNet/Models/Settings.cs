@@ -19,21 +19,21 @@ namespace YouthActionDotNet.Models
         
     }
 
+    public class DropdownInputType<T> : InputType where T : class{
+        public List<DropdownOption<T>> options { get; set; }
+    }
+    
     public class DropdownInputType : InputType{
         public List<DropdownOption> options { get; set; }
     }
 
-    public class DropdownInputTypeInt : InputType{
-        public List<DropdownOptionsInt> options { get; set; }
+    public class DropdownOption<T> where T : class{
+        public T value { get; set; }
+        public string label { get; set; }
     }
 
     public class DropdownOption{
         public string value { get; set; }
-        public string label { get; set; }
-    }
-
-    public class DropdownOptionsInt{
-        public int value { get; set; }
         public string label { get; set; }
     }
 
