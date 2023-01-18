@@ -256,7 +256,9 @@ namespace YouthActionDotNet.Controllers
             settings.FieldSettings.Add("ProjectCompletionDate", new InputType { type = "text", displayLabel = "Project Completion Date", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ProjectStatus", new InputType { type = "text", displayLabel = "Project Status", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ProjectBudget", new InputType { type = "number", displayLabel = "Project Budget", editable = true, primaryKey = false });
-            settings.FieldSettings.Add("ServiceCenterId", new InputType { type = "number", displayLabel = "Service Center Id", editable = true, primaryKey = false });
+
+            var serviceCenters = _context.ServiceCenters.ToList();
+            settings.FieldSettings.Add("ServiceCenterId", new DropdownInputType { type = "dropdown", displayLabel = "Service Center", editable = true, primaryKey = false, options = serviceCenters.Select(x => new DropdownOption { value = x.ServiceCenterId, label = x.ServiceCenterName }).ToList()});
 
             return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
         }
