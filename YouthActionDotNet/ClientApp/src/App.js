@@ -131,7 +131,7 @@ class LoggedInNav extends React.Component {
   render() {
 
     return (
-      <Nav user={this.props.user} title={this.state.title
+      <Nav user={this.props.data} title={this.state.title
       } toggle={this.props.toggle} show={this.props.show}>
       </Nav>
     )

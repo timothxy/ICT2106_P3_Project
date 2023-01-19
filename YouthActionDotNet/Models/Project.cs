@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 
@@ -5,6 +6,10 @@ namespace YouthActionDotNet.Models
 {
     public class Project
     {
+        public Project()
+        {
+            this.ProjectId = Guid.NewGuid().ToString();
+        }
         public string ProjectId { get; set; }
 
         public string ProjectName { get; set; }

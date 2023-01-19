@@ -7,7 +7,6 @@ namespace YouthActionDotNet.Data{
 
         public DBContext(){
             DbContextOptions<DBContext> options = new DbContextOptions<DBContext>();
-            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

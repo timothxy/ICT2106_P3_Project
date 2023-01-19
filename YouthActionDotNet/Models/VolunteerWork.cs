@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 
@@ -5,6 +6,10 @@ namespace YouthActionDotNet.Models
 {
     public class VolunteerWork
     {
+        VolunteerWork()
+        {
+            this.VolunteerWorkId = Guid.NewGuid().ToString();
+        }
         public string VolunteerWorkId { get; set; }
 
         public string ShiftStart { get; set; }

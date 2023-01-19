@@ -34,7 +34,6 @@ namespace YouthActionDotNet.Controllers
         [HttpPost("Create")]
         public async Task<ActionResult<string>> Create(ServiceCenter template)
         {
-            template.ServiceCenterId = Guid.NewGuid().ToString();
             var serviceCenter = await unitOfWork.ServiceCenterRepository.InsertAsync(template);
             return JsonConvert.SerializeObject(new { success = true, message = "Service Center Created", data = serviceCenter }, settings);
         }
@@ -65,7 +64,7 @@ namespace YouthActionDotNet.Controllers
             await unitOfWork.ServiceCenterRepository.UpdateAsync(template);
             try
             {
-                unitOfWork.Commit();
+                await unitOfWork.ServiceCenterRepository.SaveAsync();
                 return JsonConvert.SerializeObject(new { success = true, message = "Service Center Updated", data = template }, settings);
 
             }
@@ -91,7 +90,7 @@ namespace YouthActionDotNet.Controllers
             await unitOfWork.ServiceCenterRepository.UpdateAsync(template);
             try
             {
-                unitOfWork.Commit();
+                await unitOfWork.ServiceCenterRepository.SaveAsync();
                 var serviceCenter = await unitOfWork.ServiceCenterRepository.GetAllAsync();
                 return JsonConvert.SerializeObject(new { success = true, data = serviceCenter, message = "Service Center Updated" });
             }

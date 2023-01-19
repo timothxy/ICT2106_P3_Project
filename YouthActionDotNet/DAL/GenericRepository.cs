@@ -5,10 +5,11 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using YouthActionDotNet.Data;
+using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.DAL
 {
-    public class GenericRepository<TEntity> where TEntity: class{
+    public class GenericRepository<TEntity> : IGenericDataRepository<TEntity> where TEntity: class {
         internal DBContext context;
         internal DbSet<TEntity> dbSet;
         
@@ -176,6 +177,16 @@ namespace YouthActionDotNet.DAL
             }catch{
                 return false;
             }
+        }
+
+        public void Save()
+        {
+            context.SaveChanges();
+        }
+
+        public async Task SaveAsync()
+        {
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -34,7 +34,6 @@ namespace YouthActionDotNet.Controllers
             if(existingEmployee != null){
                 return JsonConvert.SerializeObject(new { success = false, message = "Employee Already Exists" });
             }
-            template.UserId = Guid.NewGuid().ToString();
             template.Password = u.hashpassword(template.Password);
             await unitOfWork.EmployeeRepository.InsertAsync(template);
             unitOfWork.Commit();
@@ -62,7 +61,7 @@ namespace YouthActionDotNet.Controllers
             await unitOfWork.EmployeeRepository.UpdateAsync(template);
             try
             {
-                unitOfWork.Commit();
+                await unitOfWork.EmployeeRepository.SaveAsync();
                 return JsonConvert.SerializeObject(new { success = true, data = template, message = "Employee Successfully Updated" });
             }
             catch (DbUpdateConcurrencyException)
@@ -87,7 +86,7 @@ namespace YouthActionDotNet.Controllers
             await unitOfWork.EmployeeRepository.UpdateAsync(template);
             try
             {
-                unitOfWork.Commit();
+                await unitOfWork.EmployeeRepository.SaveAsync();
                 var employees = await unitOfWork.EmployeeRepository.GetAllAsync();
                 return JsonConvert.SerializeObject(new { success = true, data = employees, message = "Employee Successfully Updated" });
             }

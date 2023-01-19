@@ -35,7 +35,6 @@ namespace YouthActionDotNet.Controllers
         public async Task<ActionResult<string>> Create(Project template)
         {
 
-            template.ProjectId = Guid.NewGuid().ToString();
             var project = await unitOfWork.ProjectRepository.InsertAsync(template);
             return JsonConvert.SerializeObject(new { success = true, message = "Project Created", data = project }, settings);
         }
@@ -61,7 +60,7 @@ namespace YouthActionDotNet.Controllers
             await unitOfWork.ProjectRepository.UpdateAsync(template);
             try
             {
-                unitOfWork.Commit();
+                await unitOfWork.ProjectRepository.SaveAsync();
                 return JsonConvert.SerializeObject(new { success = true, data = template, message = "Project Successfully Updated" });
             }
             catch (DbUpdateConcurrencyException)
@@ -87,7 +86,7 @@ namespace YouthActionDotNet.Controllers
             await unitOfWork.ProjectRepository.UpdateAsync(template);
             try
             {
-                unitOfWork.Commit();
+                await unitOfWork.ProjectRepository.SaveAsync();
                 var projects = await unitOfWork.ProjectRepository.GetAllAsync();
                 return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Project Successfully Updated" });
             }

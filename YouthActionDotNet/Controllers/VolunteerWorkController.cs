@@ -31,7 +31,6 @@ namespace YouthActionDotNet.Controllers
         [HttpPost("Create")]
         public async Task<ActionResult<string>> Create(VolunteerWork template)
         {
-            template.VolunteerWorkId = Guid.NewGuid().ToString();
             var volunteerWork = await unitOfWork.VolunteerWorkRepository.InsertAsync(template);
             return JsonConvert.SerializeObject(new { success = true, message = "Volunteer Work Created", data = volunteerWork }, settings);
         }
@@ -64,7 +63,7 @@ namespace YouthActionDotNet.Controllers
             await unitOfWork.VolunteerWorkRepository.UpdateAsync(template);
             try
             {
-                unitOfWork.Commit();
+                await unitOfWork.VolunteerRepository.SaveAsync();
                 return JsonConvert.SerializeObject(new { success = true, message = "Volunteer Work Successfully Updated" }, settings);
             }
             catch (DbUpdateConcurrencyException)
@@ -90,7 +89,7 @@ namespace YouthActionDotNet.Controllers
             await unitOfWork.VolunteerWorkRepository.UpdateAsync(template);
             try
             {
-                unitOfWork.Commit();
+                await unitOfWork.VolunteerRepository.SaveAsync();
                 var volunteerWork = await unitOfWork.VolunteerWorkRepository.GetAllAsync();
                 return JsonConvert.SerializeObject(new { success = true, data = volunteerWork, message = "Volunteer Work Successfully Updated" }, settings);
             }

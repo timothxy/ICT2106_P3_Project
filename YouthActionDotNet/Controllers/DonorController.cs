@@ -39,7 +39,6 @@ namespace YouthActionDotNet.Controllers
             if(existingDonor != null){
                 return JsonConvert.SerializeObject(new { success = false, message = "Donor Already Exists" });
             }
-            donor.UserId = Guid.NewGuid().ToString();
             donor.Password = u.hashpassword(donor.Password);
             await unitOfWork.DonorRepository.InsertAsync(donor);
             unitOfWork.Commit();
@@ -66,7 +65,7 @@ namespace YouthActionDotNet.Controllers
             }
             unitOfWork.DonorRepository.Update(donor);
             try{
-                unitOfWork.Commit();
+                await unitOfWork.DonorRepository.SaveAsync();
                 return await Get(id);
             }
             catch (DbUpdateConcurrencyException)
@@ -90,7 +89,7 @@ namespace YouthActionDotNet.Controllers
             }
             unitOfWork.DonorRepository.Update(template);
             try{
-                unitOfWork.Commit();
+                await unitOfWork.DonorRepository.SaveAsync();
                 return await All();
             }
             catch (DbUpdateConcurrencyException)

@@ -144,9 +144,14 @@ class "GenericRepository`1"<TEntity> {
     + <<virtual>> <<async>> UpdateAsync(entityToUpdate:TEntity) : Task<bool>
     + <<virtual>> <<async>> DeleteAsync(id:object) : Task<bool>
     + <<virtual>> <<async>> DeleteAsync(entityToDelete:TEntity) : Task<bool>
+    + Save() : void
+    + <<async>> SaveAsync() : Task
+}
+class "IGenericDataRepository`1"<T> {
 }
 class "DbSet`1"<T> {
 }
+"IGenericDataRepository`1" "<TEntity>" <|-- "GenericRepository`1"
 "GenericRepository`1" --> "context" DBContext
 "GenericRepository`1" --> "dbSet<TEntity>" "DbSet`1"
 class UnitOfWork {
@@ -352,13 +357,12 @@ class u <<static>> {
     + {static} hashpassword(password:string) : string
 }
 interface "IGenericDataRepository`1"<T> {
-    GetAll() : IEnumerable<T>
+    GetAll(filter:Expression<Func<T, bool>>, orderBy:Func<IQueryable<T>, IOrderedQueryable<T>>, includeProperties:string) : IEnumerable<T>
     GetByID(id:object) : T
     Insert(obj:T) : bool
     Update(obj:T) : bool
-    UpdateAndFetch(ojb:T) : IEnumerable<T>
     Delete(id:object) : bool
-    GetSettings() : Settings
+    Delete(obj:T) : bool
     Save() : void
 }
 interface IUnitOfWork {

@@ -38,7 +38,6 @@ namespace YouthActionDotNet.Controllers
             if(existingVolunteer != null){
                 return JsonConvert.SerializeObject(new { success = false, message = "Volunteer Already Exists" });
             }
-            template.UserId = Guid.NewGuid().ToString();
             template.Password = u.hashpassword(template.Password);
             await unitOfWork.VolunteerRepository.InsertAsync(template);
             unitOfWork.Commit();
@@ -88,7 +87,7 @@ namespace YouthActionDotNet.Controllers
             }
             unitOfWork.VolunteerRepository.Update(template);
             try{
-                unitOfWork.Commit();
+                unitOfWork.VolunteerRepository.Save();
                 return await All();
             }
             catch (DbUpdateConcurrencyException)
@@ -113,7 +112,7 @@ namespace YouthActionDotNet.Controllers
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Not Found" });
             }
             unitOfWork.VolunteerRepository.Delete(volunteer);
-            unitOfWork.Commit();
+            unitOfWork.VolunteerRepository.Save();
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "Volunteer Successfully Deleted" });
         }
 

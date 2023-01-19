@@ -38,7 +38,7 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Invalid Username or Password" });
             }
-            return JsonConvert.SerializeObject(new { success = true, message = "Login Successful", user=validLoginUser });
+            return JsonConvert.SerializeObject(new { success = true, message = "Login Successful", data=validLoginUser });
         }
         
 
@@ -50,11 +50,11 @@ namespace YouthActionDotNet.Controllers
             if(existingUser != null){
                 return JsonConvert.SerializeObject(new { success = false, message = "User Already Exists" });
             }
-            template.UserId = Guid.NewGuid().ToString();
-            template.Password = u.hashpassword(template.Password);
-            await unitOfWork.UserRepository.InsertAsync(template);
-            unitOfWork.Commit();
-            var createdUser = await unitOfWork.UserRepository.GetByIDAsync(template.UserId);
+            
+            var createdUser = await unitOfWork.UserRepository.Register(template.username, template.Password);
+            if(createdUser == null){
+                return JsonConvert.SerializeObject(new { success = false, message = "Unexpected Error" });
+            }
             return JsonConvert.SerializeObject(new { success = true, data = template, message = "User Successfully Created" });
         }
 
@@ -79,7 +79,7 @@ namespace YouthActionDotNet.Controllers
             unitOfWork.UserRepository.Update(template);
             try
             {
-                unitOfWork.Commit();
+                await unitOfWork.UserRepository.SaveAsync();
                 return await Get(id);
             }
             catch (DbUpdateConcurrencyException)
@@ -105,7 +105,7 @@ namespace YouthActionDotNet.Controllers
             unitOfWork.UserRepository.Update(template);
             try
             {
-                unitOfWork.Commit();
+                await unitOfWork.UserRepository.SaveAsync();
                 return await All();
             }
             catch (DbUpdateConcurrencyException)

@@ -13,9 +13,14 @@ class "GenericRepository`1"<TEntity> {
     + <<virtual>> <<async>> UpdateAsync(entityToUpdate:TEntity) : Task<bool>
     + <<virtual>> <<async>> DeleteAsync(id:object) : Task<bool>
     + <<virtual>> <<async>> DeleteAsync(entityToDelete:TEntity) : Task<bool>
+    + Save() : void
+    + <<async>> SaveAsync() : Task
+}
+class "IGenericDataRepository`1"<T> {
 }
 class "DbSet`1"<T> {
 }
+"IGenericDataRepository`1" "<TEntity>" <|-- "GenericRepository`1"
 "GenericRepository`1" --> "context" DBContext
 "GenericRepository`1" --> "dbSet<TEntity>" "DbSet`1"
 @enduml
