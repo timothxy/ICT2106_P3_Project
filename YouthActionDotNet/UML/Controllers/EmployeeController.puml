@@ -1,6 +1,7 @@
 @startuml
 class EmployeeController {
     + EmployeeController(context:DBContext)
+<<<<<<< HEAD
     + <<async>> GetEmployee(id:int) : Task<ActionResult<Employee>>
     + <<async>> GetAllEmployees() : Task<ActionResult<String>>
     + <<async>> PutEmployee(id:string, employee:Employee) : Task<IActionResult>
@@ -10,6 +11,21 @@ class EmployeeController {
     + GetEmployeeSettings() : string
 }
 ControllerBase <|-- EmployeeController
+=======
+    + <<async>> Create(template:Employee) : Task<ActionResult<string>>
+    + <<async>> Get(id:string) : Task<ActionResult<string>>
+    + <<async>> Update(id:string, template:Employee) : Task<ActionResult<string>>
+    + <<async>> UpdateAndFetchAll(id:string, template:Employee) : Task<ActionResult<string>>
+    + <<async>> Delete(id:string) : Task<ActionResult<string>>
+    + <<async>> All() : Task<ActionResult<string>>
+    + Settings() : string
+    + Exists(id:string) : bool
+}
+class "IUserInterfaceCRUD`1"<T> {
+}
+ControllerBase <|-- EmployeeController
+"IUserInterfaceCRUD`1" "<Employee>" <|-- EmployeeController
+>>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 EmployeeController --> "_context" DBContext
 EmployeeController o-> "settings" JsonSerializerSettings
 @enduml

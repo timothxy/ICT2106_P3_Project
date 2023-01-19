@@ -1,5 +1,6 @@
 
 import React from "react"
+import { Loading } from "../../Components/appCommon"
 import DatapageLayout from "../PageLayout"
 import { Loading } from "../../Components/appCommon"
 
@@ -41,10 +42,6 @@ export default class Employees extends React.Component {
         })
     }
 
-    test = (abc, def) => { 
-
-    }
-
     getSettings = async () => {
         // fetches http://...:5001/api/User/Settings
         return fetch(this.settings.api + "Settings" , {
@@ -73,7 +70,7 @@ export default class Employees extends React.Component {
 
     update = async (data) =>{
         console.log(data);
-        return fetch(this.settings.api + data.UserId , {
+        return fetch(this.settings.api + "UpdateAndFetch/" + data.UserId , {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

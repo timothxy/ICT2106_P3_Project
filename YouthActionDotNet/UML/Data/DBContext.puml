@@ -9,5 +9,12 @@ DbContext <|-- DBContext
 DBContext --> "Users<User>" "DbSet`1"
 DBContext --> "ServiceCenters<ServiceCenter>" "DbSet`1"
 DBContext --> "Employee<Employee>" "DbSet`1"
+<<<<<<< HEAD
 DBContext --> "Volunteer<YouthActionDotNet.Models.Volunteer>" "DbSet`1"
+=======
+DBContext --> "Volunteer<Volunteer>" "DbSet`1"
+DBContext --> "Donor<Donor>" "DbSet`1"
+DBContext --> "VolunteerWork<VolunteerWork>" "DbSet`1"
+DBContext --> "Project<Project>" "DbSet`1"
+>>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 @enduml

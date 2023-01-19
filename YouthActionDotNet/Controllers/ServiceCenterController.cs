@@ -13,133 +13,107 @@ namespace YouthActionDotNet.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ServiceCenterController : ControllerBase
+    public class ServiceCenterController : ControllerBase, IUserInterfaceCRUD<ServiceCenter>
     {
         private readonly DBContext _context;
-
+        JsonSerializerSettings settings = new JsonSerializerSettings
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        };
         public ServiceCenterController(DBContext context)
         {
             _context = context;
         }
-
         // GET: api/ServiceCenter
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ServiceCenter>>> GetServiceCenters()
+        [HttpPost("Create")]
+        public async Task<ActionResult<string>> Create(ServiceCenter template)
         {
-            return await _context.ServiceCenters.ToListAsync();
+            template.ServiceCenterId = Guid.NewGuid().ToString();
+            _context.ServiceCenters.Add(template);
+            await _context.SaveChangesAsync();
+            return JsonConvert.SerializeObject(new { success = true, message = "Service Center Created", data = template });
         }
-
-        // GET: api/ServiceCenter/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ServiceCenter>> GetServiceCenter(int id)
+        [HttpGet("{$id}")]
+        public async Task<ActionResult<string>> Get(string id)
         {
             var serviceCenter = await _context.ServiceCenters.FindAsync(id);
-
             if (serviceCenter == null)
             {
-                return NotFound();
+                return JsonConvert.SerializeObject(new { success = false, message = "Service Center Not Found" });
             }
-
-            return serviceCenter;
+            return JsonConvert.SerializeObject(new { success = true, data = serviceCenter, message = "Service Center Successfully Retrieved" }, settings);
         }
 
-        // To get all service centers
-        // GET: api/ServiceCenter/All
         [HttpGet("All")]
-        public async Task<ActionResult<String>> GetAllServiceCenters()
+        public async Task<ActionResult<string>> All()
         {
-            //Sample of joins
-            var serviceCenters = await _context.ServiceCenters.Join(
-                _context.Employee,
-                sc => sc.RegionalDirectorId,
-                e => e.UserId,
-                (sc, e) => new ServiceCenter
-                {
-                    id = sc.id,
-                    ServiceCenterName = sc.ServiceCenterName,
-                    ServiceCenterAddress = sc.ServiceCenterAddress,
-                    RegionalDirectorId = sc.RegionalDirectorId,
-                    RegionalDirectorName = e.username
-                }
-            ).ToListAsync();
-            return JsonConvert.SerializeObject(new { success = true, message = "Service Centers Retrieved", data = serviceCenters });
+            var serviceCenter = await _context.ServiceCenters.ToListAsync();
+            return JsonConvert.SerializeObject(new { success = true, data = serviceCenter, message = "Service Center Successfully Retrieved" });
         }
-
-        // To create a service center
-        // POST: api/ServiceCenter/Create
-        [HttpPost("Create")]
-        public async Task<ActionResult<String>> PostCenter(ServiceCenter serviceCenter)
+        [HttpPut("{$id}")]
+        public async Task<ActionResult<string>> Update(string id, ServiceCenter template)
         {
-            _context.ServiceCenters.Add(serviceCenter);
-            await _context.SaveChangesAsync();
-
-            return JsonConvert.SerializeObject(new { success = true, message = "Service Center Created", data = serviceCenter });
-        }
-
-        // To update service center
-        // PUT: api/ServiceCenter/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutServiceCenter(int id, ServiceCenter serviceCenter)
-        {
-            if (id != serviceCenter.id)
+            if (id != template.ServiceCenterId)
             {
-                return BadRequest();
+                return JsonConvert.SerializeObject(new { success = false, message = "Service Center Not Found" });
             }
-
-            _context.Entry(serviceCenter).State = EntityState.Modified;
-
+            _context.Entry(template).State = EntityState.Modified;
             try
             {
                 await _context.SaveChangesAsync();
+                return JsonConvert.SerializeObject(new { success = true, message = "Service Center Successfully Updated", data = template },settings);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ServiceCenterExists(id))
+                if (!Exists(id))
                 {
-                    return NotFound();
+                    return JsonConvert.SerializeObject(new { success = false, message = "Service Center Not Found" });
                 }
                 else
                 {
                     throw;
                 }
             }
-
-            return NoContent();
         }
-
-        // POST: api/ServiceCenter
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<ServiceCenter>> PostServiceCenter(ServiceCenter serviceCenter)
+        [HttpPut("UpdateAndFetchAll/{$id}")]
+        public async Task<ActionResult<string>> UpdateAndFetchAll(string id, ServiceCenter template)
         {
-            _context.ServiceCenters.Add(serviceCenter);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetServiceCenter", new { id = serviceCenter.id }, serviceCenter);
+            if (id != template.ServiceCenterId)
+            {
+                return JsonConvert.SerializeObject(new { success = false, message = "Service Center Not Found" });
+            }
+            _context.Entry(template).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+                return await All();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!Exists(id))
+                {
+                    return JsonConvert.SerializeObject(new { success = false, message = "Service Center Not Found" });
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
-
-        // To delete service center
-        // DELETE: api/ServiceCenter/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteServiceCenter(int id)
+        [HttpDelete("{$id}")]
+        public async Task<ActionResult<string>> Delete(string id)
         {
             var serviceCenter = await _context.ServiceCenters.FindAsync(id);
             if (serviceCenter == null)
             {
-                return NotFound();
+                return JsonConvert.SerializeObject(new { success = false, message = "Service Center Not Found" });
             }
-
             _context.ServiceCenters.Remove(serviceCenter);
             await _context.SaveChangesAsync();
-
-            return NoContent();
+            return JsonConvert.SerializeObject(new { success = true, message = "Service Center Successfully Deleted" });
         }
-
-        // Provide frontend settings for fields of service center
-        // GET: api/User/Settings/
         [HttpGet("Settings")]
-        public string getServiceCenterSettings()
+        public string Settings()
         {
             Settings settings = new Settings();
             settings.ColumnSettings = new Dictionary<string, ColumnHeader>();
@@ -169,9 +143,9 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
         }
 
-        private bool ServiceCenterExists(int id)
+        public bool Exists(string id)
         {
-            return _context.ServiceCenters.Any(e => e.id == id);
+            return _context.ServiceCenters.Any(e => e.ServiceCenterId == id);
         }
     }
 }

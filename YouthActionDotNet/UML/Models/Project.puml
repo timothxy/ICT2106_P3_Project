@@ -1,2 +1,18 @@
 @startuml
+<<<<<<< HEAD
+=======
+class Project {
+    + ProjectId : string <<get>> <<set>>
+    + ProjectName : string <<get>> <<set>>
+    + ProjectDescription : string <<get>> <<set>>
+    + ProjectStartDate : string <<get>> <<set>>
+    + ProjectEndDate : string <<get>> <<set>>
+    + ProjectCompletionDate : string <<get>> <<set>>
+    + ProjectStatus : string <<get>> <<set>>
+    + ProjectType : string <<get>> <<set>>
+    + ProjectBudget : double <<get>> <<set>>
+    + ServiceCenterId : string <<get>> <<set>>
+}
+Project --> "ServiceCenter" ServiceCenter
+>>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 @enduml

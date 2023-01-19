@@ -41,10 +41,6 @@ export default class Volunteer extends React.Component {
         })
     }
 
-    test = (abc, def) => { 
-
-    }
-
     getSettings = async () => {
         // fetches http://...:5001/api/User/Settings
         return fetch(this.settings.api + "Settings" , {
@@ -73,7 +69,7 @@ export default class Volunteer extends React.Component {
 
     update = async (data) =>{
         console.log(data);
-        return fetch(this.settings.api + data.UserId , {
+        return fetch(this.settings.api + "UpdateAndFetch/" + data.UserId , {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

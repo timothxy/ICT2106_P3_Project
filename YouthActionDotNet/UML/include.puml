@@ -9,6 +9,7 @@ class Startup {
     + Configure(app:IApplicationBuilder, env:IWebHostEnvironment) : void
 }
 Startup --> "Configuration" IConfiguration
+<<<<<<< HEAD
 class EmployeeController {
     + EmployeeController(context:DBContext)
     + <<async>> GetEmployee(id:int) : Task<ActionResult<Employee>>
@@ -20,10 +21,45 @@ class EmployeeController {
     + GetEmployeeSettings() : string
 }
 ControllerBase <|-- EmployeeController
+=======
+class DonorController {
+    + DonorController(context:DBContext)
+    + Exists(id:string) : bool
+    + <<async>> Create(donor:Donor) : Task<ActionResult<string>>
+    + <<async>> Get(id:string) : Task<ActionResult<string>>
+    + <<async>> Update(id:string, donor:Donor) : Task<ActionResult<string>>
+    + <<async>> UpdateAndFetchAll(id:string, template:Donor) : Task<ActionResult<string>>
+    + <<async>> Delete(id:string) : Task<ActionResult<string>>
+    + <<async>> All() : Task<ActionResult<string>>
+    + Settings() : string
+}
+class "IUserInterfaceCRUD`1"<T> {
+}
+ControllerBase <|-- DonorController
+"IUserInterfaceCRUD`1" "<Donor>" <|-- DonorController
+DonorController --> "_context" DBContext
+DonorController o-> "settings" JsonSerializerSettings
+class EmployeeController {
+    + EmployeeController(context:DBContext)
+    + <<async>> Create(template:Employee) : Task<ActionResult<string>>
+    + <<async>> Get(id:string) : Task<ActionResult<string>>
+    + <<async>> Update(id:string, template:Employee) : Task<ActionResult<string>>
+    + <<async>> UpdateAndFetchAll(id:string, template:Employee) : Task<ActionResult<string>>
+    + <<async>> Delete(id:string) : Task<ActionResult<string>>
+    + <<async>> All() : Task<ActionResult<string>>
+    + Settings() : string
+    + Exists(id:string) : bool
+}
+class "IUserInterfaceCRUD`1"<T> {
+}
+ControllerBase <|-- EmployeeController
+"IUserInterfaceCRUD`1" "<Employee>" <|-- EmployeeController
+>>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 EmployeeController --> "_context" DBContext
 EmployeeController o-> "settings" JsonSerializerSettings
 class ServiceCenterController {
     + ServiceCenterController(context:DBContext)
+<<<<<<< HEAD
     + <<async>> GetServiceCenters() : Task<ActionResult<IEnumerable<ServiceCenter>>>
     + <<async>> GetServiceCenter(id:int) : Task<ActionResult<ServiceCenter>>
     + <<async>> GetAllServiceCenters() : Task<ActionResult<String>>
@@ -62,6 +98,74 @@ class VolunteerController {
 ControllerBase <|-- VolunteerController
 VolunteerController --> "_context" DBContext
 VolunteerController o-> "settings" JsonSerializerSettings
+=======
+    + <<async>> Create(template:ServiceCenter) : Task<ActionResult<string>>
+    + <<async>> Get(id:string) : Task<ActionResult<string>>
+    + <<async>> All() : Task<ActionResult<string>>
+    + <<async>> Update(id:string, template:ServiceCenter) : Task<ActionResult<string>>
+    + <<async>> UpdateAndFetchAll(id:string, template:ServiceCenter) : Task<ActionResult<string>>
+    + <<async>> Delete(id:string) : Task<ActionResult<string>>
+    + Settings() : string
+    + Exists(id:string) : bool
+}
+class "IUserInterfaceCRUD`1"<T> {
+}
+ControllerBase <|-- ServiceCenterController
+"IUserInterfaceCRUD`1" "<ServiceCenter>" <|-- ServiceCenterController
+ServiceCenterController --> "_context" DBContext
+ServiceCenterController o-> "settings" JsonSerializerSettings
+class UserController {
+    + UserController(context:DBContext)
+    + <<async>> LoginUser(user:User) : Task<ActionResult<String>>
+    + <<async>> Create(template:User) : Task<ActionResult<string>>
+    + <<async>> Get(id:string) : Task<ActionResult<string>>
+    + <<async>> Update(id:string, template:User) : Task<ActionResult<string>>
+    + <<async>> UpdateAndFetchAll(id:string, template:User) : Task<ActionResult<string>>
+    + <<async>> Delete(id:string) : Task<ActionResult<string>>
+    + <<async>> All() : Task<ActionResult<string>>
+    + Settings() : string
+    + Exists(id:string) : bool
+}
+class "IUserInterfaceCRUD`1"<T> {
+}
+ControllerBase <|-- UserController
+"IUserInterfaceCRUD`1" "<User>" <|-- UserController
+UserController --> "_context" DBContext
+class VolunteerController {
+    + VolunteerController(context:DBContext)
+    + Exists(id:string) : bool
+    + <<async>> Create(template:Volunteer) : Task<ActionResult<string>>
+    + <<async>> Get(id:string) : Task<ActionResult<string>>
+    + <<async>> Update(id:string, template:Volunteer) : Task<ActionResult<string>>
+    + <<async>> UpdateAndFetchAll(id:string, template:Volunteer) : Task<ActionResult<string>>
+    + <<async>> Delete(id:string) : Task<ActionResult<string>>
+    + <<async>> All() : Task<ActionResult<string>>
+    + Settings() : string
+}
+class "IUserInterfaceCRUD`1"<T> {
+}
+ControllerBase <|-- VolunteerController
+"IUserInterfaceCRUD`1" "<Volunteer>" <|-- VolunteerController
+VolunteerController --> "_context" DBContext
+VolunteerController o-> "settings" JsonSerializerSettings
+class VolunteerWorkController {
+    + VolunteerWorkController(context:DBContext)
+    + <<async>> Create(template:VolunteerWork) : Task<ActionResult<string>>
+    + <<async>> Get(id:string) : Task<ActionResult<string>>
+    + <<async>> All() : Task<ActionResult<string>>
+    + <<async>> Update(id:string, template:VolunteerWork) : Task<ActionResult<string>>
+    + <<async>> UpdateAndFetchAll(id:string, template:VolunteerWork) : Task<ActionResult<string>>
+    + <<async>> Delete(id:string) : Task<ActionResult<string>>
+    + Exists(id:string) : bool
+    + Settings() : string
+}
+class "IUserInterfaceCRUD`1"<T> {
+}
+ControllerBase <|-- VolunteerWorkController
+"IUserInterfaceCRUD`1" "<VolunteerWork>" <|-- VolunteerWorkController
+VolunteerWorkController --> "_context" DBContext
+VolunteerWorkController o-> "settings" JsonSerializerSettings
+>>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 class DBContext {
     + DBContext(options:DbContextOptions<DBContext>)
     # <<override>> OnModelCreating(modelBuilder:ModelBuilder) : void
@@ -72,7 +176,24 @@ DbContext <|-- DBContext
 DBContext --> "Users<User>" "DbSet`1"
 DBContext --> "ServiceCenters<ServiceCenter>" "DbSet`1"
 DBContext --> "Employee<Employee>" "DbSet`1"
+<<<<<<< HEAD
 DBContext --> "Volunteer<YouthActionDotNet.Models.Volunteer>" "DbSet`1"
+=======
+DBContext --> "Volunteer<Volunteer>" "DbSet`1"
+DBContext --> "Donor<Donor>" "DbSet`1"
+DBContext --> "VolunteerWork<VolunteerWork>" "DbSet`1"
+DBContext --> "Project<Project>" "DbSet`1"
+interface "IUserInterfaceCRUD`1"<T> {
+    Create(template:T) : Task<ActionResult<string>>
+    Get(id:string) : Task<ActionResult<string>>
+    Update(id:string, template:T) : Task<ActionResult<string>>
+    UpdateAndFetchAll(id:string, template:T) : Task<ActionResult<string>>
+    Delete(id:string) : Task<ActionResult<string>>
+    All() : Task<ActionResult<string>>
+    Settings() : string
+    Exists(id:string) : bool
+}
+>>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 class restructurev1 <<partial>> {
     # <<override>> Up(migrationBuilder:MigrationBuilder) : void
     # <<override>> Down(migrationBuilder:MigrationBuilder) : void
@@ -81,10 +202,38 @@ Migration <|-- restructurev1
 class restructurev1 <<partial>> {
     # <<override>> BuildTargetModel(modelBuilder:ModelBuilder) : void
 }
+<<<<<<< HEAD
+=======
+class createdDonorType <<partial>> {
+    # <<override>> Up(migrationBuilder:MigrationBuilder) : void
+    # <<override>> Down(migrationBuilder:MigrationBuilder) : void
+}
+Migration <|-- createdDonorType
+class createdDonorType <<partial>> {
+    # <<override>> BuildTargetModel(modelBuilder:ModelBuilder) : void
+}
+class createdVolunteerWork <<partial>> {
+    # <<override>> Up(migrationBuilder:MigrationBuilder) : void
+    # <<override>> Down(migrationBuilder:MigrationBuilder) : void
+}
+Migration <|-- createdVolunteerWork
+class createdVolunteerWork <<partial>> {
+    # <<override>> BuildTargetModel(modelBuilder:ModelBuilder) : void
+}
+>>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 class DBContextModelSnapshot <<partial>> {
     # <<override>> BuildModel(modelBuilder:ModelBuilder) : void
 }
 ModelSnapshot <|-- DBContextModelSnapshot
+<<<<<<< HEAD
+=======
+class Donor {
+    + donorName : string <<get>> <<set>>
+    + donorType : string <<get>> <<set>>
+}
+User <|-- Donor
+Donor --> "User" User
+>>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 class Employee {
     + EmployeeNationalId : string <<get>> <<set>>
     + BankName : string <<get>> <<set>>
@@ -96,8 +245,26 @@ class Employee {
 }
 User <|-- Employee
 Employee --> "User" User
+<<<<<<< HEAD
 class ServiceCenter {
     + id : int <<get>> <<set>>
+=======
+class Project {
+    + ProjectId : string <<get>> <<set>>
+    + ProjectName : string <<get>> <<set>>
+    + ProjectDescription : string <<get>> <<set>>
+    + ProjectStartDate : string <<get>> <<set>>
+    + ProjectEndDate : string <<get>> <<set>>
+    + ProjectCompletionDate : string <<get>> <<set>>
+    + ProjectStatus : string <<get>> <<set>>
+    + ProjectType : string <<get>> <<set>>
+    + ProjectBudget : double <<get>> <<set>>
+    + ServiceCenterId : string <<get>> <<set>>
+}
+Project --> "ServiceCenter" ServiceCenter
+class ServiceCenter {
+    + ServiceCenterId : string <<get>> <<set>>
+>>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
     + ServiceCenterName : string <<get>> <<set>>
     + ServiceCenterAddress : string <<get>> <<set>>
     + RegionalDirectorId : string <<get>> <<set>>
@@ -113,18 +280,31 @@ class InputType {
     + primaryKey : bool <<get>> <<set>>
     + toolTip : string <<get>> <<set>>
 }
+<<<<<<< HEAD
 class DropdownInputType {
 }
 class DropdownInputTypeInt {
+=======
+class "DropdownInputType`1"<T> {
+}
+class DropdownInputType {
+}
+class "DropdownOption`1"<T> {
+    + value : T <<get>> <<set>>
+    + label : string <<get>> <<set>>
+>>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 }
 class DropdownOption {
     + value : string <<get>> <<set>>
     + label : string <<get>> <<set>>
 }
+<<<<<<< HEAD
 class DropdownOptionsInt {
     + value : int <<get>> <<set>>
     + label : string <<get>> <<set>>
 }
+=======
+>>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 class ColumnHeader {
     + displayHeader : string <<get>> <<set>>
 }
@@ -134,10 +314,17 @@ class "List`1"<T> {
 }
 Settings --> "ColumnSettings<string,ColumnHeader>" "Dictionary`2"
 Settings --> "FieldSettings<string,InputType>" "Dictionary`2"
+<<<<<<< HEAD
 InputType <|-- DropdownInputType
 DropdownInputType --> "options<DropdownOption>" "List`1"
 InputType <|-- DropdownInputTypeInt
 DropdownInputTypeInt --> "options<DropdownOptionsInt>" "List`1"
+=======
+InputType <|-- "DropdownInputType`1"
+"DropdownInputType`1" --> "options<DropdownOption<T>>" "List`1"
+InputType <|-- DropdownInputType
+DropdownInputType --> "options<DropdownOption>" "List`1"
+>>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 class User {
     + UserId : string <<get>> <<set>>
     + username : string <<get>> <<set>>
@@ -159,6 +346,20 @@ class Volunteer {
 }
 User <|-- Volunteer
 Volunteer --> "User" User
+<<<<<<< HEAD
+=======
+class VolunteerWork {
+    + VolunteerWorkId : string <<get>> <<set>>
+    + ShiftStart : string <<get>> <<set>>
+    + ShiftEnd : string <<get>> <<set>>
+    + SupervisingEmployee : string <<get>> <<set>>
+    + VolunteerId : string <<get>> <<set>>
+    + projectId : string <<get>> <<set>>
+}
+VolunteerWork --> "employee" Employee
+VolunteerWork --> "volunteer" Volunteer
+VolunteerWork --> "project" Project
+>>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 class ErrorModel {
     + ErrorModel(logger:ILogger<ErrorModel>)
     + RequestId : string <<get>> <<set>>
@@ -169,4 +370,16 @@ class "ILogger`1"<T> {
 }
 PageModel <|-- ErrorModel
 ErrorModel --> "_logger<ErrorModel>" "ILogger`1"
+<<<<<<< HEAD
+=======
+class Pages_Error {
+    + <<async>> <<override>> ExecuteAsync() : global::System.Threading.Tasks.Task
+}
+Pages_Error --> "Model" ErrorModel
+class Pages__ViewImports {
+    + <<async>> <<override>> ExecuteAsync() : global::System.Threading.Tasks.Task
+}
+class "RazorPage`1"<T> {
+}
+>>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 @enduml

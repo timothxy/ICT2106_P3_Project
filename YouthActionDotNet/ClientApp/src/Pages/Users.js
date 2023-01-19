@@ -72,7 +72,7 @@ export default class Users extends React.Component {
 
     update = async (data) =>{
         console.log(data);
-        return fetch(this.settings.api + data.UserId , {
+        return fetch(this.settings.api + "UpdateAndFetch/" + data.UserId , {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

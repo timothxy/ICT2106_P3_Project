@@ -1,10 +1,9 @@
 
 import React from "react"
-import { Loading } from "../../Components/appCommon"
 import DatapageLayout from "../PageLayout"
 import { Loading } from "../../Components/appCommon"
 
-export default class ServiceCenters extends React.Component {
+export default class VolunteerWork extends React.Component {
     state={
         content:null,
         headers:[],
@@ -14,12 +13,12 @@ export default class ServiceCenters extends React.Component {
     }
 
     settings ={
-        title:"Service Center",
+        title:"Volunteer Work",
         primaryColor: "#a6192e",
         accentColor: "#94795d",
         textColor: "#ffffff",
         textColorInvert: "#606060",
-        api: "/api/ServiceCenter/",
+        api: "/api/VolunteerWork/",
     }
 
     async componentDidMount(){
@@ -40,10 +39,6 @@ export default class ServiceCenters extends React.Component {
         this.setState({
             loading:false,
         })
-    }
-
-    test = (abc, def) => { 
-
     }
 
     getSettings = async () => {
@@ -67,13 +62,14 @@ export default class ServiceCenters extends React.Component {
             },
         }).then(res => {
             console.log(res);
+            //Res = {success: true, message: "Success", data: Array(3)}
             return res.json();
         });
     }
 
     update = async (data) =>{
         console.log(data);
-        return fetch(this.settings.api + "UpdateAndFetch/" + data.ServiceCenterId , {
+        return fetch(this.settings.api + "UpdateAndFetch/" + data.VolunteerWorkId , {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -115,7 +111,7 @@ export default class ServiceCenters extends React.Component {
 
     render(){
         if(this.state.loading){
-            return <Loading></Loading>
+            return <Loading/>
         }else{
             
         return(
