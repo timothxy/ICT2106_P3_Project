@@ -9,6 +9,7 @@ using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
+using YouthActionDotNet.DAL;
 
 namespace YouthActionDotNet.Controllers
 {
@@ -16,70 +17,63 @@ namespace YouthActionDotNet.Controllers
     [ApiController]
     public class DonorController : ControllerBase,IUserInterfaceCRUD<Donor>
     {
-        private readonly DBContext _context;
+        private UnitOfWork unitOfWork;
         JsonSerializerSettings settings = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
 
 
         public DonorController(DBContext context)
         {
-            _context = context;
+            unitOfWork = new UnitOfWork(context);
         }
 
         public bool Exists(string id)
         {
-            return _context.Donor.Any(e => e.UserId == id);
+            return unitOfWork.DonorRepository.GetByID(id) != null;
         }
         
         [HttpPost("Create")]
         public async Task<ActionResult<string>> Create(Donor donor)
         {
-            donor.UserId = Guid.NewGuid().ToString();
-            SHA256 sha256 = SHA256.Create();
-            var secretPw = Convert.ToHexString(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(donor.Password)));
-
-            donor.Password = secretPw;
-            sha256.Dispose();
-            var userPL = await _context.Users.Where(u => u.username == donor.username).FirstOrDefaultAsync();
-            if(userPL != null){
-                return JsonConvert.SerializeObject(new {success=false,message="Donor Already Exists"},settings);
+            var donors = await unitOfWork.DonorRepository.GetAllAsync();
+            var existingDonor = donors.FirstOrDefault(d => d.UserId == donor.UserId);
+            if(existingDonor != null){
+                return JsonConvert.SerializeObject(new { success = false, message = "Donor Already Exists" });
             }
-            
-            _context.Donor.Add(donor);
-            await _context.SaveChangesAsync();
-
-            CreatedAtAction("Get", new { id = donor.UserId }, donor);
-            //return the user in json format
-            return JsonConvert.SerializeObject(new {success=true,message="User Successfully Created", data = donor},settings);
+            donor.UserId = Guid.NewGuid().ToString();
+            donor.Password = u.hashpassword(donor.Password);
+            await unitOfWork.DonorRepository.InsertAsync(donor);
+            unitOfWork.Commit();
+            var createdDonor = await unitOfWork.DonorRepository.GetByIDAsync(donor.UserId);
+            return JsonConvert.SerializeObject(new { success = true, data = donor, message = "Donor Successfully Created" });
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<string>> Get(string id)
         {   
-            var donor = await _context.Donor.FindAsync(id);
+            var donor = await unitOfWork.DonorRepository.GetByIDAsync(id);
             if (donor == null)
             {
                 return JsonConvert.SerializeObject(new {success=false,message="Donor Not Found"},settings);
             }
-            return JsonConvert.SerializeObject(new {success=true,message="Donor Found", data = donor},settings); 
+            return JsonConvert.SerializeObject(new {success=true,data=donor},settings);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<string>> Update(string id, Donor donor)
         {
-            if (id != donor.UserId){
-                return JsonConvert.SerializeObject(new {success=false,message="Bad Request"},settings);
+            if(id != donor.UserId){
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Donor Id Mismatch" });
             }
-            _context.Entry(donor).State = EntityState.Modified;
-            try
-            {
-                await _context.SaveChangesAsync();
-                return JsonConvert.SerializeObject(new {success=true,message="Donor Updated", data = donor},settings);
+            unitOfWork.DonorRepository.Update(donor);
+            try{
+                unitOfWork.Commit();
+                return await Get(id);
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!Exists(id))
                 {
-                    return JsonConvert.SerializeObject(new {success=false,message="Donor Not Found"},settings);
+                    return JsonConvert.SerializeObject(new { success = false, data = "", message = "Donor Not Found" });
                 }
                 else
                 {
@@ -92,19 +86,18 @@ namespace YouthActionDotNet.Controllers
         public async Task<ActionResult<string>> UpdateAndFetchAll(string id, Donor template)
         {
             if(id != template.UserId){
-                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Id Mismatch" });
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Donor Id Mismatch" });
             }
-            _context.Entry(template).State = EntityState.Modified;
-            try
-            {
-                await _context.SaveChangesAsync();
+            unitOfWork.DonorRepository.Update(template);
+            try{
+                unitOfWork.Commit();
                 return await All();
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!Exists(id))
                 {
-                    return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Not Found" });
+                    return JsonConvert.SerializeObject(new { success = false, data = "", message = "Donor Not Found" });
                 }
                 else
                 {
@@ -115,47 +108,32 @@ namespace YouthActionDotNet.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
-            var donor = await _context.Donor.FindAsync(id);
+            var donor = await unitOfWork.DonorRepository.GetByIDAsync(id);
             if (donor == null)
             {
-                return JsonConvert.SerializeObject(new {success=false,message="Donor Not Found"},settings);
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Donor Not Found" });
             }
-            _context.Donor.Remove(donor);
-            await _context.SaveChangesAsync();
-            return JsonConvert.SerializeObject(new {success=true,message="Donor Deleted", data = donor},settings);
+            unitOfWork.DonorRepository.Delete(donor);
+            unitOfWork.Commit();
+            return JsonConvert.SerializeObject(new { success = true, data = "", message = "Donor Successfully Deleted" });
         }
 
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
-            var donors = await _context.Donor.ToListAsync();
-            return JsonConvert.SerializeObject(new {success=true,message="All Donors fetched", data = donors},settings);
+            var donors = await unitOfWork.DonorRepository.GetAllAsync();
+            return JsonConvert.SerializeObject(new { success = true, data = donors }, settings);
         }
 
         [HttpGet("Settings")]
         public string Settings()
         {
-            Settings settings = new Settings();
-            settings.ColumnSettings = new Dictionary<string, ColumnHeader>();
-            settings.FieldSettings = new Dictionary<string, InputType>();
-            
+            Settings settings = new UserSettings();
             settings.ColumnSettings.Add("UserId", new ColumnHeader { displayHeader = "User Id" });
             settings.ColumnSettings.Add("username", new ColumnHeader { displayHeader = "Username" });
             settings.ColumnSettings.Add("Email", new ColumnHeader { displayHeader = "Email" });
             settings.ColumnSettings.Add("Password", new ColumnHeader { displayHeader = "Password" });
             settings.ColumnSettings.Add("Role", new ColumnHeader { displayHeader = "Role" });
-
-            settings.FieldSettings.Add("UserId", new InputType { type = "number", displayLabel = "User Id", editable = false, primaryKey = true });
-            settings.FieldSettings.Add("username", new InputType { type = "text", displayLabel = "Username", editable = true, primaryKey = false });
-            settings.FieldSettings.Add("Email", new InputType { type = "text", displayLabel = "Email", editable = true, primaryKey = false });
-            settings.FieldSettings.Add("Password", new InputType { type = "text", displayLabel = "Password", editable = true, primaryKey = false });
-            settings.FieldSettings.Add("Role", new DropdownInputType { type = "dropdown", displayLabel = "Role", editable = true, primaryKey = false, 
-            options = new List<DropdownOption> {
-                new DropdownOption { value = "Admin", label = "Admin" },
-                new DropdownOption { value = "Employee", label = "Employee" },
-                new DropdownOption { value = "Volunteer", label = "Volunteer" },
-                new DropdownOption { value = "Donor", label = "Donor" },
-            } });
 
             settings.FieldSettings.Add("donorName", new InputType { type = "text", displayLabel = "Donor Name", editable = true, primaryKey = false });
             settings.FieldSettings.Add("donorType", new DropdownInputType { type = "dropdown", displayLabel = "Donor Type", editable = true, primaryKey = false, options = new List<DropdownOption> {

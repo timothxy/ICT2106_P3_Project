@@ -4,15 +4,15 @@ using YouthActionDotNet.Models;
 namespace YouthActionDotNet.Data{
     public class DBContext : DbContext{
         public DBContext(DbContextOptions<DBContext> options) : base(options) { }
-        public DbSet<User> Users { get; set; }
-        public DbSet<ServiceCenter> ServiceCenters { get; set; }
-        public DbSet<Employee> Employee { get; set; }
-        public DbSet<Volunteer> Volunteer { get; set; }
-        public DbSet<Donor> Donor { get; set; }
-        public DbSet<VolunteerWork> VolunteerWork { get; set; }
-        public DbSet<Project> Project { get; set; }
+
+        public DBContext(){
+            DbContextOptions<DBContext> options = new DbContextOptions<DBContext>();
+            
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+        modelBuilder.Entity<User>().ToTable("Users");
         modelBuilder.Entity<Employee>().ToTable("Employee")
             .HasOne(e => e.User)
             .WithMany()

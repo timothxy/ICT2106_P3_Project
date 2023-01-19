@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
 using Newtonsoft.Json;
+using YouthActionDotNet.DAL;
 
 namespace YouthActionDotNet.Controllers
 {
@@ -15,8 +16,7 @@ namespace YouthActionDotNet.Controllers
     [ApiController]
     public class VolunteerWorkController : ControllerBase, IUserInterfaceCRUD<VolunteerWork>
     {
-
-        private readonly DBContext _context;
+        private UnitOfWork unitOfWork;
         JsonSerializerSettings settings = new JsonSerializerSettings
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -24,7 +24,7 @@ namespace YouthActionDotNet.Controllers
 
         public VolunteerWorkController(DBContext context)
         {
-            _context = context;
+            unitOfWork = new UnitOfWork(context);
         }
 
         // GET: api/VolunteerWork
@@ -32,15 +32,14 @@ namespace YouthActionDotNet.Controllers
         public async Task<ActionResult<string>> Create(VolunteerWork template)
         {
             template.VolunteerWorkId = Guid.NewGuid().ToString();
-            _context.VolunteerWork.Add(template);
-            await _context.SaveChangesAsync();
-            return JsonConvert.SerializeObject(new { success = true, message = "Volunteer Work Created", data = template }, settings);
+            var volunteerWork = await unitOfWork.VolunteerWorkRepository.InsertAsync(template);
+            return JsonConvert.SerializeObject(new { success = true, message = "Volunteer Work Created", data = volunteerWork }, settings);
         }
 
         [HttpGet("{$id}")]
         public async Task<ActionResult<string>> Get(string id)
         {
-            var volunteerWork = await _context.VolunteerWork.FindAsync(id);
+            var volunteerWork = await unitOfWork.VolunteerWorkRepository.GetByIDAsync(id);
             if (volunteerWork == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Volunteer Work Not Found" }, settings);
@@ -51,7 +50,7 @@ namespace YouthActionDotNet.Controllers
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
-            var volunteerWork = await _context.VolunteerWork.ToListAsync();
+            var volunteerWork = await unitOfWork.VolunteerWorkRepository.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = volunteerWork, message = "Volunteer Work Successfully Retrieved" }, settings);
         }
 
@@ -62,11 +61,11 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Volunteer Work Not Found" }, settings);
             }
-            _context.Entry(template).State = EntityState.Modified;
+            await unitOfWork.VolunteerWorkRepository.UpdateAsync(template);
             try
             {
-                await _context.SaveChangesAsync();
-                return JsonConvert.SerializeObject(new { success = true, message = "Volunteer Work Successfully Updated", data = template }, settings);
+                unitOfWork.Commit();
+                return JsonConvert.SerializeObject(new { success = true, message = "Volunteer Work Successfully Updated" }, settings);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -88,11 +87,12 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Volunteer Work Not Found" }, settings);
             }
-            _context.Entry(template).State = EntityState.Modified;
+            await unitOfWork.VolunteerWorkRepository.UpdateAsync(template);
             try
             {
-                await _context.SaveChangesAsync();
-                return await All();
+                unitOfWork.Commit();
+                var volunteerWork = await unitOfWork.VolunteerWorkRepository.GetAllAsync();
+                return JsonConvert.SerializeObject(new { success = true, data = volunteerWork, message = "Volunteer Work Successfully Updated" }, settings);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -110,19 +110,19 @@ namespace YouthActionDotNet.Controllers
         [HttpDelete("{$id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
-            var volunteerWork = await _context.VolunteerWork.FindAsync(id);
+            var volunteerWork = await unitOfWork.VolunteerWorkRepository.GetByIDAsync(id);
             if (volunteerWork == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Volunteer Work Not Found" }, settings);
             }
-            _context.VolunteerWork.Remove(volunteerWork);
-            await _context.SaveChangesAsync();
+            await unitOfWork.VolunteerWorkRepository.DeleteAsync(volunteerWork);
+            unitOfWork.Commit();
             return JsonConvert.SerializeObject(new { success = true, message = "Volunteer Work Successfully Deleted" }, settings);
         }
 
         public bool Exists(string id)
         {
-            return _context.VolunteerWork.Any(e => e.VolunteerWorkId == id);
+            return unitOfWork.VolunteerWorkRepository.GetByID(id) != null;
         }
 
         [HttpGet("Settings")]
@@ -144,7 +144,7 @@ namespace YouthActionDotNet.Controllers
             settings.FieldSettings.Add("ShiftEnd", new InputType {type="datetime", displayLabel = "Shift End",editable = true, primaryKey=false});
 
             // Fetch Volunteers and use info as dropdown options
-            var allVolunteers = _context.Volunteer.Where(u => u.ApprovalStatus == "Approved").ToList();
+            var allVolunteers = unitOfWork.VolunteerRepository.GetAll(filter: u => u.ApprovalStatus == "Approved");
             settings.FieldSettings.Add("VolunteerId", new DropdownInputType {
                 type="dropdown",
                 displayLabel = "Volunteer Id",
@@ -157,7 +157,7 @@ namespace YouthActionDotNet.Controllers
                     });
             
             // Fetch projects and use info as dropdown options
-            var allProjects = _context.Project.ToList();
+            var allProjects = unitOfWork.ProjectRepository.GetAll();
             settings.FieldSettings.Add("projectId", new DropdownInputType {
                 type="dropdown",
                 displayLabel = "Project Id",
@@ -170,7 +170,7 @@ namespace YouthActionDotNet.Controllers
                     });
 
             // Fetch employees and use info as dropdown options
-            var allEmployees = _context.Employee.ToList();
+            var allEmployees = unitOfWork.EmployeeRepository.GetAll();
             settings.FieldSettings.Add("SupervisingEmployee", new DropdownInputType {
                 type="dropdown",
                 displayLabel = "Supervising Employee",

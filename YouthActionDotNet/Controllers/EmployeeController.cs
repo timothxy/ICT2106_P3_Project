@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using YouthActionDotNet.Data;
 using System.Security.Cryptography;
 using YouthActionDotNet.Models;
+using YouthActionDotNet.DAL;
 
 namespace YouthActionDotNet.Controllers
 {
@@ -16,66 +17,59 @@ namespace YouthActionDotNet.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase, IUserInterfaceCRUD<Employee>
     {
-        private readonly DBContext _context;
-        JsonSerializerSettings settings = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
+        private UnitOfWork unitOfWork;
 
 
         public EmployeeController(DBContext context)
         {
-            _context = context;
+            unitOfWork = new UnitOfWork(context);
+        
         }
 
         [HttpPost("Create")]
         public async Task<ActionResult<string>> Create(Employee template)
         {
-            template.UserId = Guid.NewGuid().ToString();
-            //check if user exists
-            SHA256 sha256 = SHA256.Create();
-            var secretPw = Convert.ToHexString(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(template.Password)));
-
-            template.Password = secretPw;
-            sha256.Dispose();
-            var userPL = await _context.Users.Where(u => u.username == template.username).FirstOrDefaultAsync();
-            if(userPL != null){
-                return JsonConvert.SerializeObject(new {success=false,message="Volunteer Already Exists"},settings);
+            var employees = await unitOfWork.EmployeeRepository.GetAllAsync();
+            var existingEmployee = employees.FirstOrDefault(e => e.username == template.username);
+            if(existingEmployee != null){
+                return JsonConvert.SerializeObject(new { success = false, message = "Employee Already Exists" });
             }
-            
-            _context.Employee.Add(template);
-            await _context.SaveChangesAsync();
-
-            CreatedAtAction("GetUser", new { id = template.UserId }, template);
-            //return the user in json format
-            return JsonConvert.SerializeObject(new {success=true,message="User Successfully Created", data = template},settings);
+            template.UserId = Guid.NewGuid().ToString();
+            template.Password = u.hashpassword(template.Password);
+            await unitOfWork.EmployeeRepository.InsertAsync(template);
+            unitOfWork.Commit();
+            var createdEmployee = await unitOfWork.EmployeeRepository.GetByIDAsync(template.UserId);
+            return JsonConvert.SerializeObject(new { success = true, data = template, message = "Employee Successfully Created" });
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<string>> Get(string id)
         {
-            var employee = await _context.Employee.FindAsync(id);
+            var employee = await unitOfWork.EmployeeRepository.GetByIDAsync(id);
             if (employee == null)
             {
-                return JsonConvert.SerializeObject(new {success = false, message = "Employee Not Found"});
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Employee Not Found" });
             }
-            return JsonConvert.SerializeObject(new {success = true, data = employee, message = "Employee Successfully Retrieved"});
+            return JsonConvert.SerializeObject(new { success = true, data = employee, message = "Employee Successfully Retrieved" });
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<string>> Update(string id, Employee template)
         {
             if(id != template.UserId){
-                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Id Mismatch" });
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Employee Id Mismatch" });
             }
-            _context.Entry(template).State = EntityState.Modified;
+            await unitOfWork.EmployeeRepository.UpdateAsync(template);
             try
             {
-                await _context.SaveChangesAsync();
-                return JsonConvert.SerializeObject(new { success = true, data = template, message = "Volunteer Successfully Updated" });
+                unitOfWork.Commit();
+                return JsonConvert.SerializeObject(new { success = true, data = template, message = "Employee Successfully Updated" });
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!Exists(id))
                 {
-                    return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Not Found" });
+                    return JsonConvert.SerializeObject(new { success = false, data = "", message = "Employee Not Found" });
                 }
                 else
                 {
@@ -88,19 +82,20 @@ namespace YouthActionDotNet.Controllers
         public async Task<ActionResult<string>> UpdateAndFetchAll(string id, Employee template)
         {
             if(id != template.UserId){
-                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Id Mismatch" });
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Employee Id Mismatch" });
             }
-            _context.Entry(template).State = EntityState.Modified;
+            await unitOfWork.EmployeeRepository.UpdateAsync(template);
             try
             {
-                await _context.SaveChangesAsync();
-                return await All();
+                unitOfWork.Commit();
+                var employees = await unitOfWork.EmployeeRepository.GetAllAsync();
+                return JsonConvert.SerializeObject(new { success = true, data = employees, message = "Employee Successfully Updated" });
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!Exists(id))
                 {
-                    return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Not Found" });
+                    return JsonConvert.SerializeObject(new { success = false, data = "", message = "Employee Not Found" });
                 }
                 else
                 {
@@ -112,48 +107,33 @@ namespace YouthActionDotNet.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
-            var employee = await _context.Employee.FindAsync(id);
+            var employee = await unitOfWork.EmployeeRepository.GetByIDAsync(id);
             if (employee == null)
             {
-                return JsonConvert.SerializeObject(new {success = false, message = "Employee Not Found"});
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Employee Not Found" });
             }
-        
-            _context.Employee.Remove(employee);
-            await _context.SaveChangesAsync();
-            return JsonConvert.SerializeObject(new {success = true, message = "Employee Successfully Deleted"});
+            await unitOfWork.EmployeeRepository.DeleteAsync(employee);
+            unitOfWork.Commit();
+            return JsonConvert.SerializeObject(new { success = true, data = "", message = "Employee Successfully Deleted" });    
         }
 
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
-            var employees = await _context.Employee.ToListAsync();
-            return JsonConvert.SerializeObject(new {success = true, data = employees, message = "Employees Successfully Retrieved"},settings);
-        
+            var employees = await unitOfWork.EmployeeRepository.GetAllAsync();
+            return JsonConvert.SerializeObject(new { success = true, data = employees, message = "Employees Successfully Retrieved" });
         }
 
         [HttpGet("Settings")]
         public string Settings()
         {
-            Settings settings = new Settings();
-            settings.ColumnSettings = new Dictionary<string, ColumnHeader>();
-            settings.FieldSettings = new Dictionary<string, InputType>();
-            
+            Settings settings = new UserSettings();
             settings.ColumnSettings.Add("UserId", new ColumnHeader { displayHeader = "User Id" });
             settings.ColumnSettings.Add("username", new ColumnHeader { displayHeader = "Username" });
             settings.ColumnSettings.Add("Email", new ColumnHeader { displayHeader = "Email" });
             settings.ColumnSettings.Add("Password", new ColumnHeader { displayHeader = "Password" });
             settings.ColumnSettings.Add("Role", new ColumnHeader { displayHeader = "Role" });
             
-            settings.FieldSettings.Add("UserId", new InputType { type = "number", displayLabel = "User Id", editable = false, primaryKey = true });
-            settings.FieldSettings.Add("username", new InputType { type = "text", displayLabel = "Username", editable = true, primaryKey = false });
-            settings.FieldSettings.Add("Email", new InputType { type = "text", displayLabel = "Email", editable = true, primaryKey = false });
-            settings.FieldSettings.Add("Password", new InputType { type = "text", displayLabel = "Password", editable = true, primaryKey = false });
-            settings.FieldSettings.Add("Role", new DropdownInputType { type = "dropdown", displayLabel = "Role", editable = true, primaryKey = false, options = new List<DropdownOption> {
-                new DropdownOption { value = "Admin", label = "Admin" },
-                new DropdownOption { value = "Employee", label = "Employee" },
-                new DropdownOption { value = "Volunteer", label = "Volunteer" },
-                new DropdownOption { value = "Donor", label = "Donor" },
-            } });
             settings.FieldSettings.Add("EmployeeNationalId", new InputType { type = "text", displayLabel = "National Id", editable = true, primaryKey = false, toolTip = "E.g. AB123456C" });
             settings.FieldSettings.Add("BankName", new InputType { type = "text", displayLabel = "Bank Name", editable = true, primaryKey = false });
             settings.FieldSettings.Add("BankAccountNumber", new InputType { type = "text", displayLabel = "Bank Account Number", editable = true, primaryKey = false });
@@ -168,6 +148,7 @@ namespace YouthActionDotNet.Controllers
             } });
             settings.FieldSettings.Add("EmployeeRole", new DropdownInputType { type = "dropdown", displayLabel = "Role", editable = true, primaryKey = false, options = new List<DropdownOption> {
                 new DropdownOption { value = "Regional Director", label = "Regional Director" },
+                new DropdownOption { value = "Service Center Manager", label = "Service Center Manager" },
                 new DropdownOption { value = "Full Time Worker", label = "Full Time Worker"},
                 new DropdownOption { value = "Cheif Executive", label = "Cheif Executive"},
                 new DropdownOption { value = "Finance Director", label = "Finance Director"},
@@ -180,7 +161,7 @@ namespace YouthActionDotNet.Controllers
 
         public bool Exists(string id)
         {
-            return _context.Employee.Any(e => e.UserId == id);
+            return unitOfWork.EmployeeRepository.GetByIDAsync(id) != null;
         }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using YouthActionDotNet.DAL;
 using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
 
@@ -16,18 +17,18 @@ namespace YouthActionDotNet.Controllers
     [ApiController]
     public class ProjectController : ControllerBase, IUserInterfaceCRUD<Project>
     {
-        private readonly DBContext _context;
+        private UnitOfWork unitOfWork;
 
         JsonSerializerSettings settings = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
 
         public ProjectController(DBContext context)
         {
-            _context = context;
+            unitOfWork = new UnitOfWork(context);
         }
 
         public bool Exists(string id)
         {
-            return _context.Project.Any(e => e.ProjectId == id);
+            return unitOfWork.ProjectRepository.GetByID(id) != null;
         }
 
         [HttpPost("Create")]
@@ -35,127 +36,19 @@ namespace YouthActionDotNet.Controllers
         {
 
             template.ProjectId = Guid.NewGuid().ToString();
-
-            var project = await _context.Project.Where(x => x.ProjectName == template.ProjectName).FirstOrDefaultAsync();
-            if (project != null)
-            {
-                return JsonConvert.SerializeObject(new { success = false, message = "Project Already Exists" }, settings);
-            }
-
-            _context.Project.Add(template);
-            await _context.SaveChangesAsync();
-
-            CreatedAtAction("Get", new { id = template.ProjectId }, template);
-            // return user in json format
-            return JsonConvert.SerializeObject(new { success = true, message = "Project Created", data = template });
-        }
-
-        // GET: api/Project
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Project>>> GetProject()
-        {
-            return await _context.Project.ToListAsync();
-        }
-
-        // GET: api/Project/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Project>> GetProject(string id)
-        {
-            var project = await _context.Project.FindAsync(id);
-
-            if (project == null)
-            {
-                return NotFound();
-            }
-
-            return project;
-        }
-
-        // PUT: api/Project/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProject(string id, Project project)
-        {
-            if (id != project.ProjectId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(project).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!Exists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Project
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Project>> PostProject(Project project)
-        {
-            _context.Project.Add(project);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (Exists(project.ProjectId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetProject", new { id = project.ProjectId }, project);
-        }
-
-        // DELETE: api/Project/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProject(string id)
-        {
-            var project = await _context.Project.FindAsync(id);
-            if (project == null)
-            {
-                return NotFound();
-            }
-
-            _context.Project.Remove(project);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            var project = await unitOfWork.ProjectRepository.InsertAsync(template);
+            return JsonConvert.SerializeObject(new { success = true, message = "Project Created", data = project }, settings);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<string>> Get(string id)
         {
-            var project = _context.Project.FindAsync(id);
-
+            var project = await unitOfWork.ProjectRepository.GetByIDAsync(id);
             if (project == null)
             {
-                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Project Not Found" });
-
+                return JsonConvert.SerializeObject(new { success = false, message = "Project Not Found" });
             }
-
             return JsonConvert.SerializeObject(new { success = true, data = project, message = "Project Successfully Retrieved" });
-
         }
 
         [HttpPut("{id}")]
@@ -165,10 +58,10 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Project Id Mismatch" });
             }
-            _context.Entry(template).State = EntityState.Modified;
+            await unitOfWork.ProjectRepository.UpdateAsync(template);
             try
             {
-                await _context.SaveChangesAsync();
+                unitOfWork.Commit();
                 return JsonConvert.SerializeObject(new { success = true, data = template, message = "Project Successfully Updated" });
             }
             catch (DbUpdateConcurrencyException)
@@ -191,11 +84,12 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Project Id Mismatch" });
             }
-            _context.Entry(template).State = EntityState.Modified;
+            await unitOfWork.ProjectRepository.UpdateAsync(template);
             try
             {
-                await _context.SaveChangesAsync();
-                return await All();
+                unitOfWork.Commit();
+                var projects = await unitOfWork.ProjectRepository.GetAllAsync();
+                return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Project Successfully Updated" });
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -213,20 +107,20 @@ namespace YouthActionDotNet.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
-            var project = await _context.Project.FindAsync(id);
+            var project = await unitOfWork.ProjectRepository.GetByIDAsync(id);
             if (project == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Project Not Found" });
             }
-            _context.Project.Remove(project);
-            await _context.SaveChangesAsync();
-            return JsonConvert.SerializeObject(new { success = true, data = project, message = "Project Successfully Deleted" });
+            await unitOfWork.ProjectRepository.DeleteAsync(id);
+            unitOfWork.Commit();
+            return JsonConvert.SerializeObject(new { success = true, data = "", message = "Project Successfully Deleted" });
         }
 
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
-            var projects = await _context.Project.ToListAsync();
+            var projects = await unitOfWork.ProjectRepository.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Projects Successfully Retrieved" });
         }
 
@@ -257,7 +151,7 @@ namespace YouthActionDotNet.Controllers
             settings.FieldSettings.Add("ProjectStatus", new InputType { type = "text", displayLabel = "Project Status", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ProjectBudget", new InputType { type = "number", displayLabel = "Project Budget", editable = true, primaryKey = false });
 
-            var serviceCenters = _context.ServiceCenters.ToList();
+            var serviceCenters = unitOfWork.ServiceCenterRepository.GetAll();
             settings.FieldSettings.Add("ServiceCenterId", new DropdownInputType { 
                 type = "dropdown", 
                 displayLabel = "Service Center", 

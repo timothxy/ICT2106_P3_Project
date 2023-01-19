@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Data.Sqlite;
 using YouthActionDotNet.Data;
 using Microsoft.EntityFrameworkCore;
+using YouthActionDotNet.DAL;
 
 namespace YouthActionDotNet
 {
@@ -32,6 +33,7 @@ namespace YouthActionDotNet
 
             services.AddDbContext<DBContext>(options => options.UseSqlite(connectionString));
             SQLitePCL.Batteries.Init();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddMvc();
             services.AddControllersWithViews();
