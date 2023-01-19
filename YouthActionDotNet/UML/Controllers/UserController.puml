@@ -1,18 +1,7 @@
 @startuml
 class UserController {
+    - <<readonly>> _context : DBContext
     + UserController(context:DBContext)
-<<<<<<< HEAD
-    + <<async>> GetUser(id:int) : Task<ActionResult<User>>
-    + <<async>> LoginUser(user:User) : Task<ActionResult<String>>
-    + <<async>> GetAllUsers() : Task<ActionResult<String>>
-    + <<async>> PutUser(id:string, user:User) : Task<ActionResult<String>>
-    + <<async>> PostUser(user:User) : Task<ActionResult<String>>
-    + <<async>> DeleteUser(id:int) : Task<IActionResult>
-    - UserExists(id:string) : bool
-    + GetUserSettings() : string
-}
-ControllerBase <|-- UserController
-=======
     + <<async>> LoginUser(user:User) : Task<ActionResult<String>>
     + <<async>> Create(template:User) : Task<ActionResult<string>>
     + <<async>> Get(id:string) : Task<ActionResult<string>>
@@ -23,10 +12,6 @@ ControllerBase <|-- UserController
     + Settings() : string
     + Exists(id:string) : bool
 }
-class "IUserInterfaceCRUD`1"<T> {
-}
 ControllerBase <|-- UserController
 "IUserInterfaceCRUD`1" "<User>" <|-- UserController
->>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
-UserController --> "_context" DBContext
 @enduml

@@ -14,8 +14,9 @@ import logoutImg from "./Assets/nav/logout.png";
 
 import Users from './Pages/Users';
 import Employees from './Pages/Employee/Employees';
-import ServiceCenters from './Pages/Employee/ServiceCenters';
 import Volunteer from './Pages/Volunteer/Volunteer';
+import Donors from './Pages/Donor/Donor';
+import ServiceCenters from './Pages/Employee/ServiceCenters';
 import VolunteerWork from './Pages/Volunteer/VolunteerWork';
 import Project from './Pages/Project/Project';
 
@@ -80,6 +81,7 @@ export default function App() {
                 <DrawerItem label="Employees" to={"/Employees"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Volunteers" to={"/Volunteers"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Volunteer Work" to={"/VolunteerWork"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="Donors" to={"/Donors"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Service Center" to={"/ServiceCenters"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Project" to={"/Project"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Logout" to={"/Logout"} logo={logoutImg}></DrawerItem>
@@ -90,6 +92,7 @@ export default function App() {
               <Route path="/" element={<Users user={token}/>}/>
               <Route path="/Employees" element={<Employees user={token}/>}/>
               <Route path="/Volunteers" element={<Volunteer user={token}/>}/>
+              <Route path="/Donors" element={<Donors user={token}></Donors>}/>
               <Route path="/VolunteerWork" element={<VolunteerWork user={token}/>}/>
               <Route path="/ServiceCenters" element={<ServiceCenters user={token}/>}/>
               <Route path="/Project" element={<Project user={token}/>}/>

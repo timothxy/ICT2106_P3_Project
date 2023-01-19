@@ -3,7 +3,7 @@ import React from "react"
 import { Loading } from "../../Components/appCommon"
 import DatapageLayout from "../PageLayout"
 
-export default class Employees extends React.Component {
+export default class Donors extends React.Component {
     state={
         content:null,
         headers:[],

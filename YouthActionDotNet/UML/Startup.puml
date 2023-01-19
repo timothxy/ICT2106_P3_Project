@@ -1,8 +1,8 @@
 @startuml
 class Startup {
     + Startup(configuration:IConfiguration)
+    + Configuration : IConfiguration <<get>> <<set>>
     + ConfigureServices(services:IServiceCollection) : void
     + Configure(app:IApplicationBuilder, env:IWebHostEnvironment) : void
 }
-Startup --> "Configuration" IConfiguration
 @enduml

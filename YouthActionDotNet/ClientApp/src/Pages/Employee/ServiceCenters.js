@@ -2,7 +2,6 @@
 import React from "react"
 import { Loading } from "../../Components/appCommon"
 import DatapageLayout from "../PageLayout"
-import { Loading } from "../../Components/appCommon"
 
 export default class ServiceCenters extends React.Component {
     state={

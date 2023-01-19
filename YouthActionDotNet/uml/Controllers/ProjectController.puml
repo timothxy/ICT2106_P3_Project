@@ -1,0 +1,22 @@
+@startuml
+class ProjectController {
+    - <<readonly>> _context : DBContext
+    settings : JsonSerializerSettings
+    + ProjectController(context:DBContext)
+    + Exists(id:string) : bool
+    + <<async>> Create(template:Project) : Task<ActionResult<string>>
+    + <<async>> GetProject() : Task<ActionResult<IEnumerable<Project>>>
+    + <<async>> GetProject(id:string) : Task<ActionResult<Project>>
+    + <<async>> PutProject(id:string, project:Project) : Task<IActionResult>
+    + <<async>> PostProject(project:Project) : Task<ActionResult<Project>>
+    + <<async>> DeleteProject(id:string) : Task<IActionResult>
+    + <<async>> Get(id:string) : Task<ActionResult<string>>
+    + <<async>> Update(id:string, template:Project) : Task<ActionResult<string>>
+    + <<async>> UpdateAndFetchAll(id:string, template:Project) : Task<ActionResult<string>>
+    + <<async>> Delete(id:string) : Task<ActionResult<string>>
+    + <<async>> All() : Task<ActionResult<string>>
+    + Settings() : string
+}
+ControllerBase <|-- ProjectController
+"IUserInterfaceCRUD`1" "<Project>" <|-- ProjectController
+@enduml

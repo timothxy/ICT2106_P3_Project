@@ -1,20 +1,8 @@
 @startuml
 class ServiceCenterController {
+    - <<readonly>> _context : DBContext
+    settings : JsonSerializerSettings
     + ServiceCenterController(context:DBContext)
-<<<<<<< HEAD
-    + <<async>> GetServiceCenters() : Task<ActionResult<IEnumerable<ServiceCenter>>>
-    + <<async>> GetServiceCenter(id:int) : Task<ActionResult<ServiceCenter>>
-    + <<async>> GetAllServiceCenters() : Task<ActionResult<String>>
-    + <<async>> PostCenter(serviceCenter:ServiceCenter) : Task<ActionResult<String>>
-    + <<async>> PutServiceCenter(id:int, serviceCenter:ServiceCenter) : Task<IActionResult>
-    + <<async>> PostServiceCenter(serviceCenter:ServiceCenter) : Task<ActionResult<ServiceCenter>>
-    + <<async>> DeleteServiceCenter(id:int) : Task<IActionResult>
-    + getServiceCenterSettings() : string
-    - ServiceCenterExists(id:int) : bool
-}
-ControllerBase <|-- ServiceCenterController
-ServiceCenterController --> "_context" DBContext
-=======
     + <<async>> Create(template:ServiceCenter) : Task<ActionResult<string>>
     + <<async>> Get(id:string) : Task<ActionResult<string>>
     + <<async>> All() : Task<ActionResult<string>>
@@ -24,11 +12,6 @@ ServiceCenterController --> "_context" DBContext
     + Settings() : string
     + Exists(id:string) : bool
 }
-class "IUserInterfaceCRUD`1"<T> {
-}
 ControllerBase <|-- ServiceCenterController
 "IUserInterfaceCRUD`1" "<ServiceCenter>" <|-- ServiceCenterController
-ServiceCenterController --> "_context" DBContext
-ServiceCenterController o-> "settings" JsonSerializerSettings
->>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 @enduml

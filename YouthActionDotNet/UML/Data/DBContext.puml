@@ -1,20 +1,14 @@
 @startuml
 class DBContext {
     + DBContext(options:DbContextOptions<DBContext>)
+    + Users : DbSet<User> <<get>> <<set>>
+    + ServiceCenters : DbSet<ServiceCenter> <<get>> <<set>>
+    + Employee : DbSet<Employee> <<get>> <<set>>
+    + Volunteer : DbSet<Volunteer> <<get>> <<set>>
+    + Donor : DbSet<Donor> <<get>> <<set>>
+    + VolunteerWork : DbSet<VolunteerWork> <<get>> <<set>>
+    + Project : DbSet<Project> <<get>> <<set>>
     # <<override>> OnModelCreating(modelBuilder:ModelBuilder) : void
 }
-class "DbSet`1"<T> {
-}
 DbContext <|-- DBContext
-DBContext --> "Users<User>" "DbSet`1"
-DBContext --> "ServiceCenters<ServiceCenter>" "DbSet`1"
-DBContext --> "Employee<Employee>" "DbSet`1"
-<<<<<<< HEAD
-DBContext --> "Volunteer<YouthActionDotNet.Models.Volunteer>" "DbSet`1"
-=======
-DBContext --> "Volunteer<Volunteer>" "DbSet`1"
-DBContext --> "Donor<Donor>" "DbSet`1"
-DBContext --> "VolunteerWork<VolunteerWork>" "DbSet`1"
-DBContext --> "Project<Project>" "DbSet`1"
->>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 @enduml

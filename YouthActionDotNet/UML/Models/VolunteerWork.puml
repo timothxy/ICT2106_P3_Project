@@ -6,8 +6,8 @@ class VolunteerWork {
     + SupervisingEmployee : string <<get>> <<set>>
     + VolunteerId : string <<get>> <<set>>
     + projectId : string <<get>> <<set>>
+    + <<virtual>> employee : Employee <<get>> <<set>>
+    + <<virtual>> volunteer : Volunteer <<get>> <<set>>
+    + <<virtual>> project : Project <<get>> <<set>>
 }
-VolunteerWork --> "employee" Employee
-VolunteerWork --> "volunteer" Volunteer
-VolunteerWork --> "project" Project
 @enduml

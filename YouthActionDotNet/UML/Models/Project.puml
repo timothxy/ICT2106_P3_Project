@@ -1,6 +1,4 @@
 @startuml
-<<<<<<< HEAD
-=======
 class Project {
     + ProjectId : string <<get>> <<set>>
     + ProjectName : string <<get>> <<set>>
@@ -12,7 +10,6 @@ class Project {
     + ProjectType : string <<get>> <<set>>
     + ProjectBudget : double <<get>> <<set>>
     + ServiceCenterId : string <<get>> <<set>>
+    + <<virtual>> ServiceCenter : ServiceCenter <<get>> <<set>>
 }
-Project --> "ServiceCenter" ServiceCenter
->>>>>>> 3630b6e7bcddc3330fe4c74e6cfaf9fd3a7b50a8
 @enduml
