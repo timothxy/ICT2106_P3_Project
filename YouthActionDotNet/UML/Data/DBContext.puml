@@ -1,13 +1,7 @@
 @startuml
 class DBContext {
     + DBContext(options:DbContextOptions<DBContext>)
-    + Users : DbSet<User> <<get>> <<set>>
-    + ServiceCenters : DbSet<ServiceCenter> <<get>> <<set>>
-    + Employee : DbSet<Employee> <<get>> <<set>>
-    + Volunteer : DbSet<Volunteer> <<get>> <<set>>
-    + Donor : DbSet<Donor> <<get>> <<set>>
-    + VolunteerWork : DbSet<VolunteerWork> <<get>> <<set>>
-    + Project : DbSet<Project> <<get>> <<set>>
+    + DBContext()
     # <<override>> OnModelCreating(modelBuilder:ModelBuilder) : void
 }
 DbContext <|-- DBContext

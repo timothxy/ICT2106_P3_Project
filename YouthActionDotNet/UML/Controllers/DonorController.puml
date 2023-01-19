@@ -1,7 +1,5 @@
 @startuml
 class DonorController {
-    - <<readonly>> _context : DBContext
-    settings : JsonSerializerSettings
     + DonorController(context:DBContext)
     + Exists(id:string) : bool
     + <<async>> Create(donor:Donor) : Task<ActionResult<string>>
@@ -12,6 +10,10 @@ class DonorController {
     + <<async>> All() : Task<ActionResult<string>>
     + Settings() : string
 }
+class "IUserInterfaceCRUD`1"<T> {
+}
 ControllerBase <|-- DonorController
 "IUserInterfaceCRUD`1" "<Donor>" <|-- DonorController
+DonorController --> "unitOfWork" UnitOfWork
+DonorController o-> "settings" JsonSerializerSettings
 @enduml

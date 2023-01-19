@@ -1,7 +1,5 @@
 @startuml
 class VolunteerWorkController {
-    - <<readonly>> _context : DBContext
-    settings : JsonSerializerSettings
     + VolunteerWorkController(context:DBContext)
     + <<async>> Create(template:VolunteerWork) : Task<ActionResult<string>>
     + <<async>> Get(id:string) : Task<ActionResult<string>>
@@ -12,6 +10,10 @@ class VolunteerWorkController {
     + Exists(id:string) : bool
     + Settings() : string
 }
+class "IUserInterfaceCRUD`1"<T> {
+}
 ControllerBase <|-- VolunteerWorkController
 "IUserInterfaceCRUD`1" "<VolunteerWork>" <|-- VolunteerWorkController
+VolunteerWorkController --> "unitOfWork" UnitOfWork
+VolunteerWorkController o-> "settings" JsonSerializerSettings
 @enduml

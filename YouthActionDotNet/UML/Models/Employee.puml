@@ -7,7 +7,7 @@ class Employee {
     + DateJoined : string <<get>> <<set>>
     + EmployeeType : string <<get>> <<set>>
     + EmployeeRole : string <<get>> <<set>>
-    + <<virtual>> User : User <<get>> <<set>>
 }
 User <|-- Employee
+Employee --> "User" User
 @enduml

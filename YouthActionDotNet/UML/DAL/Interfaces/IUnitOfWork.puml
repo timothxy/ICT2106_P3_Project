@@ -1,0 +1,8 @@
+@startuml
+interface IUnitOfWork {
+    BeginTransaction() : void
+    Commit() : void
+    Rollback() : void
+    Dispose() : void
+}
+@enduml

@@ -1,0 +1,5 @@
+@startuml
+class u <<static>> {
+    + {static} hashpassword(password:string) : string
+}
+@enduml

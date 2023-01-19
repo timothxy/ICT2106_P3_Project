@@ -1,8 +1,7 @@
 @startuml
 class ServiceCenterController {
-    - <<readonly>> _context : DBContext
-    settings : JsonSerializerSettings
     + ServiceCenterController(context:DBContext)
+    + Exists(id:string) : bool
     + <<async>> Create(template:ServiceCenter) : Task<ActionResult<string>>
     + <<async>> Get(id:string) : Task<ActionResult<string>>
     + <<async>> All() : Task<ActionResult<string>>
@@ -10,8 +9,11 @@ class ServiceCenterController {
     + <<async>> UpdateAndFetchAll(id:string, template:ServiceCenter) : Task<ActionResult<string>>
     + <<async>> Delete(id:string) : Task<ActionResult<string>>
     + Settings() : string
-    + Exists(id:string) : bool
+}
+class "IUserInterfaceCRUD`1"<T> {
 }
 ControllerBase <|-- ServiceCenterController
 "IUserInterfaceCRUD`1" "<ServiceCenter>" <|-- ServiceCenterController
+ServiceCenterController --> "unitOfWork" UnitOfWork
+ServiceCenterController o-> "settings" JsonSerializerSettings
 @enduml

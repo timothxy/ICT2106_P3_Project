@@ -8,7 +8,7 @@ class Volunteer {
     + CriminalHistoryDesc : string <<get>> <<set>>
     + ApprovalStatus : string <<get>> <<set>>
     + ApprovedBy : string <<get>> <<set>>
-    + <<virtual>> User : User <<get>> <<set>>
 }
 User <|-- Volunteer
+Volunteer --> "User" User
 @enduml

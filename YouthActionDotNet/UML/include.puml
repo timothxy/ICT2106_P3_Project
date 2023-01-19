@@ -1,17 +1,18 @@
 @startuml
+
+left to right direction
+
 class Program {
     + {static} Main(args:string[]) : void
     + {static} CreateHostBuilder(args:string[]) : IHostBuilder
 }
 class Startup {
     + Startup(configuration:IConfiguration)
-    + Configuration : IConfiguration <<get>> <<set>>
     + ConfigureServices(services:IServiceCollection) : void
     + Configure(app:IApplicationBuilder, env:IWebHostEnvironment) : void
 }
+Startup --> "Configuration" IConfiguration
 class DonorController {
-    - <<readonly>> _context : DBContext
-    settings : JsonSerializerSettings
     + DonorController(context:DBContext)
     + Exists(id:string) : bool
     + <<async>> Create(donor:Donor) : Task<ActionResult<string>>
@@ -22,11 +23,13 @@ class DonorController {
     + <<async>> All() : Task<ActionResult<string>>
     + Settings() : string
 }
+class "IUserInterfaceCRUD`1"<T> {
+}
 ControllerBase <|-- DonorController
 "IUserInterfaceCRUD`1" "<Donor>" <|-- DonorController
+DonorController --> "unitOfWork" UnitOfWork
+DonorController o-> "settings" JsonSerializerSettings
 class EmployeeController {
-    - <<readonly>> _context : DBContext
-    settings : JsonSerializerSettings
     + EmployeeController(context:DBContext)
     + <<async>> Create(template:Employee) : Task<ActionResult<string>>
     + <<async>> Get(id:string) : Task<ActionResult<string>>
@@ -37,19 +40,15 @@ class EmployeeController {
     + Settings() : string
     + Exists(id:string) : bool
 }
+class "IUserInterfaceCRUD`1"<T> {
+}
 ControllerBase <|-- EmployeeController
 "IUserInterfaceCRUD`1" "<Employee>" <|-- EmployeeController
+EmployeeController --> "unitOfWork" UnitOfWork
 class ProjectController {
-    - <<readonly>> _context : DBContext
-    settings : JsonSerializerSettings
     + ProjectController(context:DBContext)
     + Exists(id:string) : bool
     + <<async>> Create(template:Project) : Task<ActionResult<string>>
-    + <<async>> GetProject() : Task<ActionResult<IEnumerable<Project>>>
-    + <<async>> GetProject(id:string) : Task<ActionResult<Project>>
-    + <<async>> PutProject(id:string, project:Project) : Task<IActionResult>
-    + <<async>> PostProject(project:Project) : Task<ActionResult<Project>>
-    + <<async>> DeleteProject(id:string) : Task<IActionResult>
     + <<async>> Get(id:string) : Task<ActionResult<string>>
     + <<async>> Update(id:string, template:Project) : Task<ActionResult<string>>
     + <<async>> UpdateAndFetchAll(id:string, template:Project) : Task<ActionResult<string>>
@@ -57,12 +56,15 @@ class ProjectController {
     + <<async>> All() : Task<ActionResult<string>>
     + Settings() : string
 }
+class "IUserInterfaceCRUD`1"<T> {
+}
 ControllerBase <|-- ProjectController
 "IUserInterfaceCRUD`1" "<Project>" <|-- ProjectController
+ProjectController --> "unitOfWork" UnitOfWork
+ProjectController o-> "settings" JsonSerializerSettings
 class ServiceCenterController {
-    - <<readonly>> _context : DBContext
-    settings : JsonSerializerSettings
     + ServiceCenterController(context:DBContext)
+    + Exists(id:string) : bool
     + <<async>> Create(template:ServiceCenter) : Task<ActionResult<string>>
     + <<async>> Get(id:string) : Task<ActionResult<string>>
     + <<async>> All() : Task<ActionResult<string>>
@@ -70,13 +72,16 @@ class ServiceCenterController {
     + <<async>> UpdateAndFetchAll(id:string, template:ServiceCenter) : Task<ActionResult<string>>
     + <<async>> Delete(id:string) : Task<ActionResult<string>>
     + Settings() : string
-    + Exists(id:string) : bool
+}
+class "IUserInterfaceCRUD`1"<T> {
 }
 ControllerBase <|-- ServiceCenterController
 "IUserInterfaceCRUD`1" "<ServiceCenter>" <|-- ServiceCenterController
+ServiceCenterController --> "unitOfWork" UnitOfWork
+ServiceCenterController o-> "settings" JsonSerializerSettings
 class UserController {
-    - <<readonly>> _context : DBContext
     + UserController(context:DBContext)
+    + Exists(id:string) : bool
     + <<async>> LoginUser(user:User) : Task<ActionResult<String>>
     + <<async>> Create(template:User) : Task<ActionResult<string>>
     + <<async>> Get(id:string) : Task<ActionResult<string>>
@@ -85,13 +90,13 @@ class UserController {
     + <<async>> Delete(id:string) : Task<ActionResult<string>>
     + <<async>> All() : Task<ActionResult<string>>
     + Settings() : string
-    + Exists(id:string) : bool
+}
+class "IUserInterfaceCRUD`1"<T> {
 }
 ControllerBase <|-- UserController
 "IUserInterfaceCRUD`1" "<User>" <|-- UserController
+UserController --> "unitOfWork" UnitOfWork
 class VolunteerController {
-    - <<readonly>> _context : DBContext
-    settings : JsonSerializerSettings
     + VolunteerController(context:DBContext)
     + Exists(id:string) : bool
     + <<async>> Create(template:Volunteer) : Task<ActionResult<string>>
@@ -102,11 +107,13 @@ class VolunteerController {
     + <<async>> All() : Task<ActionResult<string>>
     + Settings() : string
 }
+class "IUserInterfaceCRUD`1"<T> {
+}
 ControllerBase <|-- VolunteerController
 "IUserInterfaceCRUD`1" "<Volunteer>" <|-- VolunteerController
+VolunteerController --> "unitOfWork" UnitOfWork
+VolunteerController o-> "settings" JsonSerializerSettings
 class VolunteerWorkController {
-    - <<readonly>> _context : DBContext
-    settings : JsonSerializerSettings
     + VolunteerWorkController(context:DBContext)
     + <<async>> Create(template:VolunteerWork) : Task<ActionResult<string>>
     + <<async>> Get(id:string) : Task<ActionResult<string>>
@@ -117,17 +124,71 @@ class VolunteerWorkController {
     + Exists(id:string) : bool
     + Settings() : string
 }
+class "IUserInterfaceCRUD`1"<T> {
+}
 ControllerBase <|-- VolunteerWorkController
 "IUserInterfaceCRUD`1" "<VolunteerWork>" <|-- VolunteerWorkController
+VolunteerWorkController --> "unitOfWork" UnitOfWork
+VolunteerWorkController o-> "settings" JsonSerializerSettings
+class "GenericRepository`1"<TEntity> {
+    + GenericRepository(context:DBContext)
+    + <<virtual>> GetAll(filter:Expression<Func<TEntity, bool>>, orderBy:Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>, includeProperties:string) : IEnumerable<TEntity>
+    + <<virtual>> GetByID(id:object) : TEntity
+    + <<virtual>> Insert(entity:TEntity) : bool
+    + <<virtual>> Update(entityToUpdate:TEntity) : bool
+    + <<virtual>> Delete(id:object) : bool
+    + <<virtual>> Delete(entityToDelete:TEntity) : bool
+    + <<virtual>> <<async>> GetAllAsync(filter:Expression<Func<TEntity, bool>>, orderBy:Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>, includeProperties:string) : Task<IEnumerable<TEntity>>
+    + <<virtual>> <<async>> GetByIDAsync(id:object) : Task<TEntity>
+    + <<virtual>> <<async>> InsertAsync(entity:TEntity) : Task<bool>
+    + <<virtual>> <<async>> UpdateAsync(entityToUpdate:TEntity) : Task<bool>
+    + <<virtual>> <<async>> DeleteAsync(id:object) : Task<bool>
+    + <<virtual>> <<async>> DeleteAsync(entityToDelete:TEntity) : Task<bool>
+}
+class "DbSet`1"<T> {
+}
+"GenericRepository`1" --> "context" DBContext
+"GenericRepository`1" --> "dbSet<TEntity>" "DbSet`1"
+class UnitOfWork {
+    + UnitOfWork(context:DBContext)
+    + BeginTransaction() : void
+    + Commit() : void
+    + Dispose() : void
+    + Rollback() : void
+}
+class "GenericRepository`1"<T> {
+}
+IUnitOfWork <|-- UnitOfWork
+IDisposable <|-- UnitOfWork
+UnitOfWork --> "context" DBContext
+UnitOfWork --> "employeeRepository<Employee>" "GenericRepository`1"
+UnitOfWork --> "donorRepository<Donor>" "GenericRepository`1"
+UnitOfWork --> "projectRepository<Project>" "GenericRepository`1"
+UnitOfWork --> "serviceCenterRepository<ServiceCenter>" "GenericRepository`1"
+UnitOfWork --> "userRepository" UserRepository
+UnitOfWork --> "volunteerRepository<Volunteer>" "GenericRepository`1"
+UnitOfWork --> "volunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
+UnitOfWork --> "EmployeeRepository<Employee>" "GenericRepository`1"
+UnitOfWork --> "DonorRepository<Donor>" "GenericRepository`1"
+UnitOfWork --> "ProjectRepository<Project>" "GenericRepository`1"
+UnitOfWork --> "ServiceCenterRepository<ServiceCenter>" "GenericRepository`1"
+UnitOfWork --> "UserRepository" UserRepository
+UnitOfWork --> "VolunteerRepository<Volunteer>" "GenericRepository`1"
+UnitOfWork --> "VolunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
+class UserRepository {
+    + UserRepository(context:DBContext)
+    + <<virtual>> <<async>> Login(username:string, password:string) : Task<User>
+}
+class "GenericRepository`1"<T> {
+}
+class "DbSet`1"<T> {
+}
+"GenericRepository`1" "<User>" <|-- UserRepository
+UserRepository --> "context" DBContext
+UserRepository --> "dbSet<User>" "DbSet`1"
 class DBContext {
     + DBContext(options:DbContextOptions<DBContext>)
-    + Users : DbSet<User> <<get>> <<set>>
-    + ServiceCenters : DbSet<ServiceCenter> <<get>> <<set>>
-    + Employee : DbSet<Employee> <<get>> <<set>>
-    + Volunteer : DbSet<Volunteer> <<get>> <<set>>
-    + Donor : DbSet<Donor> <<get>> <<set>>
-    + VolunteerWork : DbSet<VolunteerWork> <<get>> <<set>>
-    + Project : DbSet<Project> <<get>> <<set>>
+    + DBContext()
     # <<override>> OnModelCreating(modelBuilder:ModelBuilder) : void
 }
 DbContext <|-- DBContext
@@ -172,9 +233,9 @@ ModelSnapshot <|-- DBContextModelSnapshot
 class Donor {
     + donorName : string <<get>> <<set>>
     + donorType : string <<get>> <<set>>
-    + <<virtual>> User : User <<get>> <<set>>
 }
 User <|-- Donor
+Donor --> "User" User
 class Employee {
     + EmployeeNationalId : string <<get>> <<set>>
     + BankName : string <<get>> <<set>>
@@ -183,9 +244,9 @@ class Employee {
     + DateJoined : string <<get>> <<set>>
     + EmployeeType : string <<get>> <<set>>
     + EmployeeRole : string <<get>> <<set>>
-    + <<virtual>> User : User <<get>> <<set>>
 }
 User <|-- Employee
+Employee --> "User" User
 class Project {
     + ProjectId : string <<get>> <<set>>
     + ProjectName : string <<get>> <<set>>
@@ -197,19 +258,20 @@ class Project {
     + ProjectType : string <<get>> <<set>>
     + ProjectBudget : double <<get>> <<set>>
     + ServiceCenterId : string <<get>> <<set>>
-    + <<virtual>> ServiceCenter : ServiceCenter <<get>> <<set>>
 }
+Project --> "ServiceCenter" ServiceCenter
 class ServiceCenter {
     + ServiceCenterId : string <<get>> <<set>>
     + ServiceCenterName : string <<get>> <<set>>
     + ServiceCenterAddress : string <<get>> <<set>>
     + RegionalDirectorId : string <<get>> <<set>>
     + <<virtual>> RegionalDirectorName : string <<get>> <<set>>
-    + <<virtual>> RegionalDirector : Employee <<get>> <<set>>
 }
+ServiceCenter --> "RegionalDirector" Employee
 class Settings {
-    + ColumnSettings : Dictionary<string, ColumnHeader>
-    + FieldSettings : Dictionary<string, InputType>
+}
+class UserSettings {
+    + UserSettings()
 }
 class InputType {
     + type : string <<get>> <<set>>
@@ -219,10 +281,8 @@ class InputType {
     + toolTip : string <<get>> <<set>>
 }
 class "DropdownInputType`1"<T> {
-    + options : List<DropdownOption<T>> <<get>> <<set>>
 }
 class DropdownInputType {
-    + options : List<DropdownOption> <<get>> <<set>>
 }
 class "DropdownOption`1"<T> {
     + value : T <<get>> <<set>>
@@ -235,8 +295,17 @@ class DropdownOption {
 class ColumnHeader {
     + displayHeader : string <<get>> <<set>>
 }
+class "Dictionary`2"<T1,T2> {
+}
+class "List`1"<T> {
+}
+Settings --> "ColumnSettings<string,ColumnHeader>" "Dictionary`2"
+Settings --> "FieldSettings<string,InputType>" "Dictionary`2"
+Settings <|-- UserSettings
 InputType <|-- "DropdownInputType`1"
+"DropdownInputType`1" --> "options<DropdownOption<T>>" "List`1"
 InputType <|-- DropdownInputType
+DropdownInputType --> "options<DropdownOption>" "List`1"
 class User {
     + UserId : string <<get>> <<set>>
     + username : string <<get>> <<set>>
@@ -255,9 +324,9 @@ class Volunteer {
     + CriminalHistoryDesc : string <<get>> <<set>>
     + ApprovalStatus : string <<get>> <<set>>
     + ApprovedBy : string <<get>> <<set>>
-    + <<virtual>> User : User <<get>> <<set>>
 }
 User <|-- Volunteer
+Volunteer --> "User" User
 class VolunteerWork {
     + VolunteerWorkId : string <<get>> <<set>>
     + ShiftStart : string <<get>> <<set>>
@@ -265,16 +334,46 @@ class VolunteerWork {
     + SupervisingEmployee : string <<get>> <<set>>
     + VolunteerId : string <<get>> <<set>>
     + projectId : string <<get>> <<set>>
-    + <<virtual>> employee : Employee <<get>> <<set>>
-    + <<virtual>> volunteer : Volunteer <<get>> <<set>>
-    + <<virtual>> project : Project <<get>> <<set>>
 }
+VolunteerWork --> "employee" Employee
+VolunteerWork --> "volunteer" Volunteer
+VolunteerWork --> "project" Project
 class ErrorModel {
-    - <<readonly>> _logger : ILogger<ErrorModel>
     + ErrorModel(logger:ILogger<ErrorModel>)
     + RequestId : string <<get>> <<set>>
     + ShowRequestId : bool <<get>>
     + OnGet() : void
 }
+class "ILogger`1"<T> {
+}
 PageModel <|-- ErrorModel
+ErrorModel --> "_logger<ErrorModel>" "ILogger`1"
+class u <<static>> {
+    + {static} hashpassword(password:string) : string
+}
+interface "IGenericDataRepository`1"<T> {
+    GetAll() : IEnumerable<T>
+    GetByID(id:object) : T
+    Insert(obj:T) : bool
+    Update(obj:T) : bool
+    UpdateAndFetch(ojb:T) : IEnumerable<T>
+    Delete(id:object) : bool
+    GetSettings() : Settings
+    Save() : void
+}
+interface IUnitOfWork {
+    BeginTransaction() : void
+    Commit() : void
+    Rollback() : void
+    Dispose() : void
+}
+class Pages_Error {
+    + <<async>> <<override>> ExecuteAsync() : global::System.Threading.Tasks.Task
+}
+Pages_Error --> "Model" ErrorModel
+class Pages__ViewImports {
+    + <<async>> <<override>> ExecuteAsync() : global::System.Threading.Tasks.Task
+}
+class "RazorPage`1"<T> {
+}
 @enduml

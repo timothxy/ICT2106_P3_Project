@@ -5,6 +5,6 @@ class ServiceCenter {
     + ServiceCenterAddress : string <<get>> <<set>>
     + RegionalDirectorId : string <<get>> <<set>>
     + <<virtual>> RegionalDirectorName : string <<get>> <<set>>
-    + <<virtual>> RegionalDirector : Employee <<get>> <<set>>
 }
+ServiceCenter --> "RegionalDirector" Employee
 @enduml

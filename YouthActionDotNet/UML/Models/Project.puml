@@ -10,6 +10,6 @@ class Project {
     + ProjectType : string <<get>> <<set>>
     + ProjectBudget : double <<get>> <<set>>
     + ServiceCenterId : string <<get>> <<set>>
-    + <<virtual>> ServiceCenter : ServiceCenter <<get>> <<set>>
 }
+Project --> "ServiceCenter" ServiceCenter
 @enduml

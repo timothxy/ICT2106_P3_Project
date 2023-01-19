@@ -1,0 +1,28 @@
+@startuml
+class UnitOfWork {
+    + UnitOfWork(context:DBContext)
+    + BeginTransaction() : void
+    + Commit() : void
+    + Dispose() : void
+    + Rollback() : void
+}
+class "GenericRepository`1"<T> {
+}
+IUnitOfWork <|-- UnitOfWork
+IDisposable <|-- UnitOfWork
+UnitOfWork --> "context" DBContext
+UnitOfWork --> "employeeRepository<Employee>" "GenericRepository`1"
+UnitOfWork --> "donorRepository<Donor>" "GenericRepository`1"
+UnitOfWork --> "projectRepository<Project>" "GenericRepository`1"
+UnitOfWork --> "serviceCenterRepository<ServiceCenter>" "GenericRepository`1"
+UnitOfWork --> "userRepository" UserRepository
+UnitOfWork --> "volunteerRepository<Volunteer>" "GenericRepository`1"
+UnitOfWork --> "volunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
+UnitOfWork --> "EmployeeRepository<Employee>" "GenericRepository`1"
+UnitOfWork --> "DonorRepository<Donor>" "GenericRepository`1"
+UnitOfWork --> "ProjectRepository<Project>" "GenericRepository`1"
+UnitOfWork --> "ServiceCenterRepository<ServiceCenter>" "GenericRepository`1"
+UnitOfWork --> "UserRepository" UserRepository
+UnitOfWork --> "VolunteerRepository<Volunteer>" "GenericRepository`1"
+UnitOfWork --> "VolunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
+@enduml
