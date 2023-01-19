@@ -523,7 +523,7 @@ class AddEntry extends React.Component{
                     (key, index) => {
                         return (this.props.fieldSettings[key].primaryKey? "" : 
                             <StdInput 
-                            label = {key}
+                            label = {this.props.fieldSettings[key].displayLabel}
                             type={this.props.fieldSettings[key].type}
                             enabled = {true}
                             fieldLabel={key}
@@ -584,7 +584,7 @@ class DeleteEntry extends React.Component{
                     (key, index) => {
                         return (this.props.fieldSettings[key].primaryKey? 
                             <StdInput 
-                            label = {key}
+                            label = {this.props.fieldSettings[key].displayLabel}
                             type={this.props.fieldSettings[key].type}
                             enabled = {true}
                             fieldLabel={key}

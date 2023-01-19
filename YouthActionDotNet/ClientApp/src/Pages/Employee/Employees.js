@@ -1,6 +1,7 @@
 
 import React from "react"
 import DatapageLayout from "../PageLayout"
+import { Loading } from "../../Components/appCommon"
 
 export default class Employees extends React.Component {
     state={
@@ -114,7 +115,7 @@ export default class Employees extends React.Component {
 
     render(){
         if(this.state.loading){
-            return <div>Loading</div>
+            return <Loading></Loading>
         }else{
             
         return(
