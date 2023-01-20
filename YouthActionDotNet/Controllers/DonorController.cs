@@ -17,39 +17,38 @@ namespace YouthActionDotNet.Controllers
     [ApiController]
     public class DonorController : ControllerBase,IUserInterfaceCRUD<Donor>
     {
-        private UnitOfWork unitOfWork;
+        private GenericRepository<Donor> DonorRepository;
         JsonSerializerSettings settings = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
 
 
         public DonorController(DBContext context)
         {
-            unitOfWork = new UnitOfWork(context);
+            DonorRepository = new GenericRepository<Donor>(context);
         }
 
         public bool Exists(string id)
         {
-            return unitOfWork.DonorRepository.GetByID(id) != null;
+            return DonorRepository.GetByID(id) != null;
         }
         
         [HttpPost("Create")]
         public async Task<ActionResult<string>> Create(Donor donor)
         {
-            var donors = await unitOfWork.DonorRepository.GetAllAsync();
+            var donors = await DonorRepository.GetAllAsync();
             var existingDonor = donors.FirstOrDefault(d => d.UserId == donor.UserId);
             if(existingDonor != null){
                 return JsonConvert.SerializeObject(new { success = false, message = "Donor Already Exists" });
             }
             donor.Password = u.hashpassword(donor.Password);
-            await unitOfWork.DonorRepository.InsertAsync(donor);
-            unitOfWork.Commit();
-            var createdDonor = await unitOfWork.DonorRepository.GetByIDAsync(donor.UserId);
+            await DonorRepository.InsertAsync(donor);
+            var createdDonor = await DonorRepository.GetByIDAsync(donor.UserId);
             return JsonConvert.SerializeObject(new { success = true, data = donor, message = "Donor Successfully Created" });
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<string>> Get(string id)
         {   
-            var donor = await unitOfWork.DonorRepository.GetByIDAsync(id);
+            var donor = await DonorRepository.GetByIDAsync(id);
             if (donor == null)
             {
                 return JsonConvert.SerializeObject(new {success=false,message="Donor Not Found"},settings);
@@ -63,9 +62,9 @@ namespace YouthActionDotNet.Controllers
             if(id != donor.UserId){
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Donor Id Mismatch" });
             }
-            unitOfWork.DonorRepository.Update(donor);
+            DonorRepository.Update(donor);
             try{
-                await unitOfWork.DonorRepository.SaveAsync();
+                await DonorRepository.SaveAsync();
                 return await Get(id);
             }
             catch (DbUpdateConcurrencyException)
@@ -87,9 +86,9 @@ namespace YouthActionDotNet.Controllers
             if(id != template.UserId){
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Donor Id Mismatch" });
             }
-            unitOfWork.DonorRepository.Update(template);
+            DonorRepository.Update(template);
             try{
-                await unitOfWork.DonorRepository.SaveAsync();
+                await DonorRepository.SaveAsync();
                 return await All();
             }
             catch (DbUpdateConcurrencyException)
@@ -107,20 +106,19 @@ namespace YouthActionDotNet.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
-            var donor = await unitOfWork.DonorRepository.GetByIDAsync(id);
+            var donor = await DonorRepository.GetByIDAsync(id);
             if (donor == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Donor Not Found" });
             }
-            unitOfWork.DonorRepository.Delete(donor);
-            unitOfWork.Commit();
+            DonorRepository.Delete(donor);
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "Donor Successfully Deleted" });
         }
 
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
-            var donors = await unitOfWork.DonorRepository.GetAllAsync();
+            var donors = await DonorRepository.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = donors }, settings);
         }
 

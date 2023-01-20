@@ -17,34 +17,33 @@ namespace YouthActionDotNet.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase, IUserInterfaceCRUD<Employee>
     {
-        private UnitOfWork unitOfWork;
+        private GenericRepository<Employee> EmployeeRepository;
 
 
         public EmployeeController(DBContext context)
         {
-            unitOfWork = new UnitOfWork(context);
+            EmployeeRepository = new GenericRepository<Employee>(context);
         
         }
 
         [HttpPost("Create")]
         public async Task<ActionResult<string>> Create(Employee template)
         {
-            var employees = await unitOfWork.EmployeeRepository.GetAllAsync();
+            var employees = await EmployeeRepository.GetAllAsync();
             var existingEmployee = employees.FirstOrDefault(e => e.username == template.username);
             if(existingEmployee != null){
                 return JsonConvert.SerializeObject(new { success = false, message = "Employee Already Exists" });
             }
             template.Password = u.hashpassword(template.Password);
-            await unitOfWork.EmployeeRepository.InsertAsync(template);
-            unitOfWork.Commit();
-            var createdEmployee = await unitOfWork.EmployeeRepository.GetByIDAsync(template.UserId);
+            await EmployeeRepository.InsertAsync(template);
+            var createdEmployee = await EmployeeRepository.GetByIDAsync(template.UserId);
             return JsonConvert.SerializeObject(new { success = true, data = template, message = "Employee Successfully Created" });
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<string>> Get(string id)
         {
-            var employee = await unitOfWork.EmployeeRepository.GetByIDAsync(id);
+            var employee = await EmployeeRepository.GetByIDAsync(id);
             if (employee == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Employee Not Found" });
@@ -58,10 +57,10 @@ namespace YouthActionDotNet.Controllers
             if(id != template.UserId){
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Employee Id Mismatch" });
             }
-            await unitOfWork.EmployeeRepository.UpdateAsync(template);
+            await EmployeeRepository.UpdateAsync(template);
             try
             {
-                await unitOfWork.EmployeeRepository.SaveAsync();
+                await EmployeeRepository.SaveAsync();
                 return JsonConvert.SerializeObject(new { success = true, data = template, message = "Employee Successfully Updated" });
             }
             catch (DbUpdateConcurrencyException)
@@ -83,11 +82,11 @@ namespace YouthActionDotNet.Controllers
             if(id != template.UserId){
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Employee Id Mismatch" });
             }
-            await unitOfWork.EmployeeRepository.UpdateAsync(template);
+            await EmployeeRepository.UpdateAsync(template);
             try
             {
-                await unitOfWork.EmployeeRepository.SaveAsync();
-                var employees = await unitOfWork.EmployeeRepository.GetAllAsync();
+                await EmployeeRepository.SaveAsync();
+                var employees = await EmployeeRepository.GetAllAsync();
                 return JsonConvert.SerializeObject(new { success = true, data = employees, message = "Employee Successfully Updated" });
             }
             catch (DbUpdateConcurrencyException)
@@ -106,20 +105,19 @@ namespace YouthActionDotNet.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
-            var employee = await unitOfWork.EmployeeRepository.GetByIDAsync(id);
+            var employee = await EmployeeRepository.GetByIDAsync(id);
             if (employee == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Employee Not Found" });
             }
-            await unitOfWork.EmployeeRepository.DeleteAsync(employee);
-            unitOfWork.Commit();
+            await EmployeeRepository.DeleteAsync(employee);
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "Employee Successfully Deleted" });    
         }
 
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
-            var employees = await unitOfWork.EmployeeRepository.GetAllAsync();
+            var employees = await EmployeeRepository.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = employees, message = "Employees Successfully Retrieved" });
         }
 
@@ -160,7 +158,7 @@ namespace YouthActionDotNet.Controllers
 
         public bool Exists(string id)
         {
-            return unitOfWork.EmployeeRepository.GetByIDAsync(id) != null;
+            return EmployeeRepository.GetByIDAsync(id) != null;
         }
     }
 }

@@ -1,4 +1,4 @@
-public interface IUnitOfWork
+public interface IRepositoryReference
 {
     void BeginTransaction();
     void Commit();

@@ -17,38 +17,39 @@ namespace YouthActionDotNet.Controllers
     [ApiController]
     public class VolunteerController : ControllerBase, IUserInterfaceCRUD<Volunteer>
     {
-        private UnitOfWork unitOfWork;
+        private GenericRepository<Volunteer> VolunteerRepository;
+        private GenericRepository<Employee> EmployeeRepository;
         JsonSerializerSettings settings = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
 
         public VolunteerController(DBContext context)
         {
-            unitOfWork = new UnitOfWork(context);
+            VolunteerRepository = new GenericRepository<Volunteer>(context);
+            EmployeeRepository = new GenericRepository<Employee>(context);
         }
 
         public bool Exists(string id)
         {
-            return unitOfWork.VolunteerRepository.GetByID(id) != null;
+            return VolunteerRepository.GetByID(id) != null;
         }
 
         [HttpPost("Create")]
         public async Task<ActionResult<string>> Create(Volunteer template)
         {
-            var volunteers = await unitOfWork.VolunteerRepository.GetAllAsync();
+            var volunteers = await VolunteerRepository.GetAllAsync();
             var existingVolunteer = volunteers.FirstOrDefault(d => d.UserId == template.UserId);
             if(existingVolunteer != null){
                 return JsonConvert.SerializeObject(new { success = false, message = "Volunteer Already Exists" });
             }
             template.Password = u.hashpassword(template.Password);
-            await unitOfWork.VolunteerRepository.InsertAsync(template);
-            unitOfWork.Commit();
-            var createdVolunteer = await unitOfWork.VolunteerRepository.GetByIDAsync(template.UserId);
+            await VolunteerRepository.InsertAsync(template);
+            var createdVolunteer = await VolunteerRepository.GetByIDAsync(template.UserId);
             return JsonConvert.SerializeObject(new { success = true, data = template, message = "Volunteer Successfully Created" });
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<string>> Get(string id)
         {
-            var volunteer = await unitOfWork.VolunteerRepository.GetByIDAsync(id);
+            var volunteer = await VolunteerRepository.GetByIDAsync(id);
             if (volunteer == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Not Found" });
@@ -62,9 +63,8 @@ namespace YouthActionDotNet.Controllers
             if(id != template.UserId){
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Id Mismatch" });
             }
-            unitOfWork.VolunteerRepository.Update(template);
+            VolunteerRepository.Update(template);
             try{
-                unitOfWork.Commit();
                 return await Get(id);
             }
             catch (DbUpdateConcurrencyException)
@@ -85,9 +85,9 @@ namespace YouthActionDotNet.Controllers
             if(id != template.UserId){
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Id Mismatch" });
             }
-            unitOfWork.VolunteerRepository.Update(template);
+            VolunteerRepository.Update(template);
             try{
-                unitOfWork.VolunteerRepository.Save();
+                VolunteerRepository.Save();
                 return await All();
             }
             catch (DbUpdateConcurrencyException)
@@ -106,20 +106,20 @@ namespace YouthActionDotNet.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
-            var volunteer = await unitOfWork.VolunteerRepository.GetByIDAsync(id);
+            var volunteer = await VolunteerRepository.GetByIDAsync(id);
             if (volunteer == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Not Found" });
             }
-            unitOfWork.VolunteerRepository.Delete(volunteer);
-            unitOfWork.VolunteerRepository.Save();
+            VolunteerRepository.Delete(volunteer);
+            VolunteerRepository.Save();
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "Volunteer Successfully Deleted" });
         }
 
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
-            var volunteers = await unitOfWork.VolunteerRepository.GetAllAsync();
+            var volunteers = await VolunteerRepository.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = volunteers, message = "Volunteers Successfully Retrieved" }, settings);
         }
 
@@ -147,7 +147,7 @@ namespace YouthActionDotNet.Controllers
                 new DropdownOption { value = "Pending", label = "Pending" },
             } });
 
-            var allEmployees = unitOfWork.EmployeeRepository.GetAll(filter: e=>e.Role == "Employee");
+            var allEmployees = EmployeeRepository.GetAll(filter: e=>e.Role == "Employee");
             settings.FieldSettings.Add("ApprovedBy", new DropdownInputType { 
                 type = "dropdown", 
                 displayLabel = "Approved By", 

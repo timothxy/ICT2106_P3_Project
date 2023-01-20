@@ -17,32 +17,34 @@ namespace YouthActionDotNet.Controllers
     [ApiController]
     public class ProjectController : ControllerBase, IUserInterfaceCRUD<Project>
     {
-        private UnitOfWork unitOfWork;
+        private GenericRepository<Project> ProjectRepository;
+        private GenericRepository<ServiceCenter> ServiceCenterRepository;
 
         JsonSerializerSettings settings = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
 
         public ProjectController(DBContext context)
         {
-            unitOfWork = new UnitOfWork(context);
+            ProjectRepository = new GenericRepository<Project>(context);
+            ServiceCenterRepository = new GenericRepository<ServiceCenter>(context);
         }
 
         public bool Exists(string id)
         {
-            return unitOfWork.ProjectRepository.GetByID(id) != null;
+            return ProjectRepository.GetByID(id) != null;
         }
 
         [HttpPost("Create")]
         public async Task<ActionResult<string>> Create(Project template)
         {
 
-            var project = await unitOfWork.ProjectRepository.InsertAsync(template);
+            var project = await ProjectRepository.InsertAsync(template);
             return JsonConvert.SerializeObject(new { success = true, message = "Project Created", data = project }, settings);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<string>> Get(string id)
         {
-            var project = await unitOfWork.ProjectRepository.GetByIDAsync(id);
+            var project = await ProjectRepository.GetByIDAsync(id);
             if (project == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Project Not Found" });
@@ -57,10 +59,10 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Project Id Mismatch" });
             }
-            await unitOfWork.ProjectRepository.UpdateAsync(template);
+            await ProjectRepository.UpdateAsync(template);
             try
             {
-                await unitOfWork.ProjectRepository.SaveAsync();
+                await ProjectRepository.SaveAsync();
                 return JsonConvert.SerializeObject(new { success = true, data = template, message = "Project Successfully Updated" });
             }
             catch (DbUpdateConcurrencyException)
@@ -83,11 +85,11 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Project Id Mismatch" });
             }
-            await unitOfWork.ProjectRepository.UpdateAsync(template);
+            await ProjectRepository.UpdateAsync(template);
             try
             {
-                await unitOfWork.ProjectRepository.SaveAsync();
-                var projects = await unitOfWork.ProjectRepository.GetAllAsync();
+                await ProjectRepository.SaveAsync();
+                var projects = await ProjectRepository.GetAllAsync();
                 return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Project Successfully Updated" });
             }
             catch (DbUpdateConcurrencyException)
@@ -106,20 +108,19 @@ namespace YouthActionDotNet.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
-            var project = await unitOfWork.ProjectRepository.GetByIDAsync(id);
+            var project = await ProjectRepository.GetByIDAsync(id);
             if (project == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Project Not Found" });
             }
-            await unitOfWork.ProjectRepository.DeleteAsync(id);
-            unitOfWork.Commit();
+            await ProjectRepository.DeleteAsync(id);
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "Project Successfully Deleted" });
         }
 
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
-            var projects = await unitOfWork.ProjectRepository.GetAllAsync();
+            var projects = await ProjectRepository.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Projects Successfully Retrieved" });
         }
 
@@ -150,7 +151,7 @@ namespace YouthActionDotNet.Controllers
             settings.FieldSettings.Add("ProjectStatus", new InputType { type = "text", displayLabel = "Project Status", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ProjectBudget", new InputType { type = "number", displayLabel = "Project Budget", editable = true, primaryKey = false });
 
-            var serviceCenters = unitOfWork.ServiceCenterRepository.GetAll();
+            var serviceCenters = ServiceCenterRepository.GetAll();
             settings.FieldSettings.Add("ServiceCenterId", new DropdownInputType { 
                 type = "dropdown", 
                 displayLabel = "Service Center", 

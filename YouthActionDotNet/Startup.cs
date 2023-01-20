@@ -33,7 +33,7 @@ namespace YouthActionDotNet
 
             services.AddDbContext<DBContext>(options => options.UseSqlite(connectionString));
             SQLitePCL.Batteries.Init();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IRepositoryReference, RepositoryReference>();
 
             services.AddMvc();
             services.AddControllersWithViews();

@@ -3,11 +3,11 @@ using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.DAL{
-    public class UnitOfWork : IUnitOfWork, IDisposable
+    public class RepositoryReference : IRepositoryReference, IDisposable
     {
         private DBContext context;
 
-        public UnitOfWork(DBContext context)
+        public RepositoryReference(DBContext context)
         {
             this.context = context;
         }
