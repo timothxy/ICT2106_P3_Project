@@ -12,7 +12,9 @@ class EmployeeController {
 }
 class "IUserInterfaceCRUD`1"<T> {
 }
+class "GenericRepository`1"<T> {
+}
 ControllerBase <|-- EmployeeController
 "IUserInterfaceCRUD`1" "<Employee>" <|-- EmployeeController
-EmployeeController --> "unitOfWork" UnitOfWork
+EmployeeController --> "EmployeeRepository<Employee>" "GenericRepository`1"
 @enduml

@@ -15,5 +15,5 @@ class "IUserInterfaceCRUD`1"<T> {
 }
 ControllerBase <|-- UserController
 "IUserInterfaceCRUD`1" "<User>" <|-- UserController
-UserController --> "unitOfWork" UnitOfWork
+UserController --> "UserRepository" UserRepository
 @enduml

@@ -1,5 +1,5 @@
 @startuml
-interface IUnitOfWork {
+interface IRepositoryReference {
     BeginTransaction() : void
     Commit() : void
     Rollback() : void

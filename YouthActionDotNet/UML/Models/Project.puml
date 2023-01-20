@@ -1,5 +1,6 @@
 @startuml
 class Project {
+    + Project()
     + ProjectId : string <<get>> <<set>>
     + ProjectName : string <<get>> <<set>>
     + ProjectDescription : string <<get>> <<set>>

@@ -1,5 +1,6 @@
 @startuml
 class VolunteerWork {
+    VolunteerWork()
     + VolunteerWorkId : string <<get>> <<set>>
     + ShiftStart : string <<get>> <<set>>
     + ShiftEnd : string <<get>> <<set>>

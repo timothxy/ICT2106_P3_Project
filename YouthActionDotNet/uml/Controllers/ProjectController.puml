@@ -12,8 +12,11 @@ class ProjectController {
 }
 class "IUserInterfaceCRUD`1"<T> {
 }
+class "GenericRepository`1"<T> {
+}
 ControllerBase <|-- ProjectController
 "IUserInterfaceCRUD`1" "<Project>" <|-- ProjectController
-ProjectController --> "unitOfWork" UnitOfWork
+ProjectController --> "ProjectRepository<Project>" "GenericRepository`1"
+ProjectController --> "ServiceCenterRepository<ServiceCenter>" "GenericRepository`1"
 ProjectController o-> "settings" JsonSerializerSettings
 @enduml

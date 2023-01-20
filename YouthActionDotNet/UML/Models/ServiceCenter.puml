@@ -1,5 +1,6 @@
 @startuml
 class ServiceCenter {
+    + ServiceCenter()
     + ServiceCenterId : string <<get>> <<set>>
     + ServiceCenterName : string <<get>> <<set>>
     + ServiceCenterAddress : string <<get>> <<set>>

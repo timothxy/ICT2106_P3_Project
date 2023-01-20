@@ -2,12 +2,9 @@
 class UserRepository {
     + UserRepository(context:DBContext)
     + <<virtual>> <<async>> Login(username:string, password:string) : Task<User>
+    + <<virtual>> <<async>> Register(username:string, password:string) : Task<User>
 }
 class "GenericRepository`1"<T> {
 }
-class "DbSet`1"<T> {
-}
 "GenericRepository`1" "<User>" <|-- UserRepository
-UserRepository --> "context" DBContext
-UserRepository --> "dbSet<User>" "DbSet`1"
 @enduml

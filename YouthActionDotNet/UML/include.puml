@@ -25,9 +25,11 @@ class DonorController {
 }
 class "IUserInterfaceCRUD`1"<T> {
 }
+class "GenericRepository`1"<T> {
+}
 ControllerBase <|-- DonorController
 "IUserInterfaceCRUD`1" "<Donor>" <|-- DonorController
-DonorController --> "unitOfWork" UnitOfWork
+DonorController --> "DonorRepository<Donor>" "GenericRepository`1"
 DonorController o-> "settings" JsonSerializerSettings
 class EmployeeController {
     + EmployeeController(context:DBContext)
@@ -42,9 +44,11 @@ class EmployeeController {
 }
 class "IUserInterfaceCRUD`1"<T> {
 }
+class "GenericRepository`1"<T> {
+}
 ControllerBase <|-- EmployeeController
 "IUserInterfaceCRUD`1" "<Employee>" <|-- EmployeeController
-EmployeeController --> "unitOfWork" UnitOfWork
+EmployeeController --> "EmployeeRepository<Employee>" "GenericRepository`1"
 class ProjectController {
     + ProjectController(context:DBContext)
     + Exists(id:string) : bool
@@ -58,9 +62,12 @@ class ProjectController {
 }
 class "IUserInterfaceCRUD`1"<T> {
 }
+class "GenericRepository`1"<T> {
+}
 ControllerBase <|-- ProjectController
 "IUserInterfaceCRUD`1" "<Project>" <|-- ProjectController
-ProjectController --> "unitOfWork" UnitOfWork
+ProjectController --> "ProjectRepository<Project>" "GenericRepository`1"
+ProjectController --> "ServiceCenterRepository<ServiceCenter>" "GenericRepository`1"
 ProjectController o-> "settings" JsonSerializerSettings
 class ServiceCenterController {
     + ServiceCenterController(context:DBContext)
@@ -75,9 +82,12 @@ class ServiceCenterController {
 }
 class "IUserInterfaceCRUD`1"<T> {
 }
+class "GenericRepository`1"<T> {
+}
 ControllerBase <|-- ServiceCenterController
 "IUserInterfaceCRUD`1" "<ServiceCenter>" <|-- ServiceCenterController
-ServiceCenterController --> "unitOfWork" UnitOfWork
+ServiceCenterController --> "ServiceCenterRepository<ServiceCenter>" "GenericRepository`1"
+ServiceCenterController --> "UserRepository<User>" "GenericRepository`1"
 ServiceCenterController o-> "settings" JsonSerializerSettings
 class UserController {
     + UserController(context:DBContext)
@@ -95,7 +105,7 @@ class "IUserInterfaceCRUD`1"<T> {
 }
 ControllerBase <|-- UserController
 "IUserInterfaceCRUD`1" "<User>" <|-- UserController
-UserController --> "unitOfWork" UnitOfWork
+UserController --> "UserRepository" UserRepository
 class VolunteerController {
     + VolunteerController(context:DBContext)
     + Exists(id:string) : bool
@@ -109,9 +119,12 @@ class VolunteerController {
 }
 class "IUserInterfaceCRUD`1"<T> {
 }
+class "GenericRepository`1"<T> {
+}
 ControllerBase <|-- VolunteerController
 "IUserInterfaceCRUD`1" "<Volunteer>" <|-- VolunteerController
-VolunteerController --> "unitOfWork" UnitOfWork
+VolunteerController --> "VolunteerRepository<Volunteer>" "GenericRepository`1"
+VolunteerController --> "EmployeeRepository<Employee>" "GenericRepository`1"
 VolunteerController o-> "settings" JsonSerializerSettings
 class VolunteerWorkController {
     + VolunteerWorkController(context:DBContext)
@@ -126,9 +139,14 @@ class VolunteerWorkController {
 }
 class "IUserInterfaceCRUD`1"<T> {
 }
+class "GenericRepository`1"<T> {
+}
 ControllerBase <|-- VolunteerWorkController
 "IUserInterfaceCRUD`1" "<VolunteerWork>" <|-- VolunteerWorkController
-VolunteerWorkController --> "unitOfWork" UnitOfWork
+VolunteerWorkController --> "VolunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
+VolunteerWorkController --> "VolunteerRepository<Volunteer>" "GenericRepository`1"
+VolunteerWorkController --> "EmployeeRepository<Employee>" "GenericRepository`1"
+VolunteerWorkController --> "ProjectRepository<Project>" "GenericRepository`1"
 VolunteerWorkController o-> "settings" JsonSerializerSettings
 class "GenericRepository`1"<TEntity> {
     + GenericRepository(context:DBContext)
@@ -154,8 +172,8 @@ class "DbSet`1"<T> {
 "IGenericDataRepository`1" "<TEntity>" <|-- "GenericRepository`1"
 "GenericRepository`1" --> "context" DBContext
 "GenericRepository`1" --> "dbSet<TEntity>" "DbSet`1"
-class UnitOfWork {
-    + UnitOfWork(context:DBContext)
+class RepositoryReference {
+    + RepositoryReference(context:DBContext)
     + BeginTransaction() : void
     + Commit() : void
     + Dispose() : void
@@ -163,34 +181,31 @@ class UnitOfWork {
 }
 class "GenericRepository`1"<T> {
 }
-IUnitOfWork <|-- UnitOfWork
-IDisposable <|-- UnitOfWork
-UnitOfWork --> "context" DBContext
-UnitOfWork --> "employeeRepository<Employee>" "GenericRepository`1"
-UnitOfWork --> "donorRepository<Donor>" "GenericRepository`1"
-UnitOfWork --> "projectRepository<Project>" "GenericRepository`1"
-UnitOfWork --> "serviceCenterRepository<ServiceCenter>" "GenericRepository`1"
-UnitOfWork --> "userRepository" UserRepository
-UnitOfWork --> "volunteerRepository<Volunteer>" "GenericRepository`1"
-UnitOfWork --> "volunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
-UnitOfWork --> "EmployeeRepository<Employee>" "GenericRepository`1"
-UnitOfWork --> "DonorRepository<Donor>" "GenericRepository`1"
-UnitOfWork --> "ProjectRepository<Project>" "GenericRepository`1"
-UnitOfWork --> "ServiceCenterRepository<ServiceCenter>" "GenericRepository`1"
-UnitOfWork --> "UserRepository" UserRepository
-UnitOfWork --> "VolunteerRepository<Volunteer>" "GenericRepository`1"
-UnitOfWork --> "VolunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
+IRepositoryReference <|-- RepositoryReference
+IDisposable <|-- RepositoryReference
+RepositoryReference --> "context" DBContext
+RepositoryReference --> "employeeRepository<Employee>" "GenericRepository`1"
+RepositoryReference --> "donorRepository<Donor>" "GenericRepository`1"
+RepositoryReference --> "projectRepository<Project>" "GenericRepository`1"
+RepositoryReference --> "serviceCenterRepository<ServiceCenter>" "GenericRepository`1"
+RepositoryReference --> "userRepository" UserRepository
+RepositoryReference --> "volunteerRepository<Volunteer>" "GenericRepository`1"
+RepositoryReference --> "volunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
+RepositoryReference --> "EmployeeRepository<Employee>" "GenericRepository`1"
+RepositoryReference --> "DonorRepository<Donor>" "GenericRepository`1"
+RepositoryReference --> "ProjectRepository<Project>" "GenericRepository`1"
+RepositoryReference --> "ServiceCenterRepository<ServiceCenter>" "GenericRepository`1"
+RepositoryReference --> "UserRepository" UserRepository
+RepositoryReference --> "VolunteerRepository<Volunteer>" "GenericRepository`1"
+RepositoryReference --> "VolunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
 class UserRepository {
     + UserRepository(context:DBContext)
     + <<virtual>> <<async>> Login(username:string, password:string) : Task<User>
+    + <<virtual>> <<async>> Register(username:string, password:string) : Task<User>
 }
 class "GenericRepository`1"<T> {
 }
-class "DbSet`1"<T> {
-}
 "GenericRepository`1" "<User>" <|-- UserRepository
-UserRepository --> "context" DBContext
-UserRepository --> "dbSet<User>" "DbSet`1"
 class DBContext {
     + DBContext(options:DbContextOptions<DBContext>)
     + DBContext()
@@ -253,6 +268,7 @@ class Employee {
 User <|-- Employee
 Employee --> "User" User
 class Project {
+    + Project()
     + ProjectId : string <<get>> <<set>>
     + ProjectName : string <<get>> <<set>>
     + ProjectDescription : string <<get>> <<set>>
@@ -266,6 +282,7 @@ class Project {
 }
 Project --> "ServiceCenter" ServiceCenter
 class ServiceCenter {
+    + ServiceCenter()
     + ServiceCenterId : string <<get>> <<set>>
     + ServiceCenterName : string <<get>> <<set>>
     + ServiceCenterAddress : string <<get>> <<set>>
@@ -312,6 +329,7 @@ InputType <|-- "DropdownInputType`1"
 InputType <|-- DropdownInputType
 DropdownInputType --> "options<DropdownOption>" "List`1"
 class User {
+    + User()
     + UserId : string <<get>> <<set>>
     + username : string <<get>> <<set>>
     + Email : string <<get>> <<set>>
@@ -333,6 +351,7 @@ class Volunteer {
 User <|-- Volunteer
 Volunteer --> "User" User
 class VolunteerWork {
+    VolunteerWork()
     + VolunteerWorkId : string <<get>> <<set>>
     + ShiftStart : string <<get>> <<set>>
     + ShiftEnd : string <<get>> <<set>>
@@ -365,7 +384,7 @@ interface "IGenericDataRepository`1"<T> {
     Delete(obj:T) : bool
     Save() : void
 }
-interface IUnitOfWork {
+interface IRepositoryReference {
     BeginTransaction() : void
     Commit() : void
     Rollback() : void

@@ -12,8 +12,10 @@ class DonorController {
 }
 class "IUserInterfaceCRUD`1"<T> {
 }
+class "GenericRepository`1"<T> {
+}
 ControllerBase <|-- DonorController
 "IUserInterfaceCRUD`1" "<Donor>" <|-- DonorController
-DonorController --> "unitOfWork" UnitOfWork
+DonorController --> "DonorRepository<Donor>" "GenericRepository`1"
 DonorController o-> "settings" JsonSerializerSettings
 @enduml

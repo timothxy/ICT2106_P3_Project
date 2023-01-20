@@ -12,8 +12,13 @@ class VolunteerWorkController {
 }
 class "IUserInterfaceCRUD`1"<T> {
 }
+class "GenericRepository`1"<T> {
+}
 ControllerBase <|-- VolunteerWorkController
 "IUserInterfaceCRUD`1" "<VolunteerWork>" <|-- VolunteerWorkController
-VolunteerWorkController --> "unitOfWork" UnitOfWork
+VolunteerWorkController --> "VolunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
+VolunteerWorkController --> "VolunteerRepository<Volunteer>" "GenericRepository`1"
+VolunteerWorkController --> "EmployeeRepository<Employee>" "GenericRepository`1"
+VolunteerWorkController --> "ProjectRepository<Project>" "GenericRepository`1"
 VolunteerWorkController o-> "settings" JsonSerializerSettings
 @enduml

@@ -1,0 +1,28 @@
+@startuml
+class RepositoryReference {
+    + RepositoryReference(context:DBContext)
+    + BeginTransaction() : void
+    + Commit() : void
+    + Dispose() : void
+    + Rollback() : void
+}
+class "GenericRepository`1"<T> {
+}
+IRepositoryReference <|-- RepositoryReference
+IDisposable <|-- RepositoryReference
+RepositoryReference --> "context" DBContext
+RepositoryReference --> "employeeRepository<Employee>" "GenericRepository`1"
+RepositoryReference --> "donorRepository<Donor>" "GenericRepository`1"
+RepositoryReference --> "projectRepository<Project>" "GenericRepository`1"
+RepositoryReference --> "serviceCenterRepository<ServiceCenter>" "GenericRepository`1"
+RepositoryReference --> "userRepository" UserRepository
+RepositoryReference --> "volunteerRepository<Volunteer>" "GenericRepository`1"
+RepositoryReference --> "volunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
+RepositoryReference --> "EmployeeRepository<Employee>" "GenericRepository`1"
+RepositoryReference --> "DonorRepository<Donor>" "GenericRepository`1"
+RepositoryReference --> "ProjectRepository<Project>" "GenericRepository`1"
+RepositoryReference --> "ServiceCenterRepository<ServiceCenter>" "GenericRepository`1"
+RepositoryReference --> "UserRepository" UserRepository
+RepositoryReference --> "VolunteerRepository<Volunteer>" "GenericRepository`1"
+RepositoryReference --> "VolunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
+@enduml

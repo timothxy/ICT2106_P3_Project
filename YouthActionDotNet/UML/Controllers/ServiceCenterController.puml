@@ -12,8 +12,11 @@ class ServiceCenterController {
 }
 class "IUserInterfaceCRUD`1"<T> {
 }
+class "GenericRepository`1"<T> {
+}
 ControllerBase <|-- ServiceCenterController
 "IUserInterfaceCRUD`1" "<ServiceCenter>" <|-- ServiceCenterController
-ServiceCenterController --> "unitOfWork" UnitOfWork
+ServiceCenterController --> "ServiceCenterRepository<ServiceCenter>" "GenericRepository`1"
+ServiceCenterController --> "UserRepository<User>" "GenericRepository`1"
 ServiceCenterController o-> "settings" JsonSerializerSettings
 @enduml
