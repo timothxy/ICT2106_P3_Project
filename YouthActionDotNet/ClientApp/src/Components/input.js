@@ -414,6 +414,15 @@ export class StdInput extends React.Component {
             >
             </StdQRBox>
           )}
+          {this.props.type === "file" && (
+          
+            <StdFileBox
+              updateValue={this.updateValue}
+              value={this.state.newValue}
+            >
+
+            </StdFileBox>
+          )}
           {this.props.hasSaveBtn && this.state.valueChanged && (
             <div
               className="inputSave"
@@ -1238,6 +1247,84 @@ class StdQRBox extends React.Component{
         <input
           className="stdInput"
           type="text"
+          ref={this.primaryInput}
+          autoComplete={this.props.autoComplete}
+          placeholder={""}
+          onChange={(e) => this.onChange(e)}
+          value={this.state.newValue}
+        ></input>
+        {this.props.showIndicator ? (
+          this.state.editable ? (
+            <i className="bi bi-pencil "></i>
+          ) : (
+            <svg
+              className="editLock"
+              viewBox="0 0 30 30"
+              preserveAspectRatio={"xMidYMid meet"}
+            >
+              <path
+                className={"lockBody"}
+                d={
+                  "M 10 10 L 20 10 Q 25 10 25 15 V 25 Q 25 30 20 30 H 10 Q 5 30 5 25 V 15 Q 5 10 10 10 H 25 "
+                }
+              ></path>
+              <path
+                d={
+                  "M 15 20 L 15 20 L 14 19.8 L 13 23 L 17 23 L 16 19.8 L 15 20 A 1 1 0 0 0 15 15 A 1 1 0 0 0 15 20"
+                }
+                className={"keyHole"}
+              ></path>
+              <path
+                className="bolt"
+                fill={"none"}
+                d={"M 20 20 V 8 A 1 1 0 0 0 10 8 V 10"}
+              ></path>
+            </svg>
+          )
+        ) : (
+          ""
+        )}
+         
+      </div>
+    );
+  }
+}
+
+class StdFileBox extends React.Component{
+  state = {
+    valueChanged: false,
+    value: this.props.value,
+    newValue: this.props.value,
+  };
+
+  componentDidMount() {
+    this.setState({
+      newValue: this.props.value,
+    });
+  }
+
+  onChange = (e) => {
+    this.setState({
+      newValue: e.target.value,
+    });
+    this.props.updateValue({
+      FileUrl: e.target.files[0],
+      FileName: e.target.files[0].name,
+    });
+  };
+
+  render() {
+    return (
+      <div
+        className={
+          "stdInputGroup d-flex align-items-center" +
+          " " +
+          (this.state.valueChanged ? "leftBorderRadius" : "borderRadius")
+        }
+      >
+        <input
+          className="stdInput"
+          type="file"
           ref={this.primaryInput}
           autoComplete={this.props.autoComplete}
           placeholder={""}

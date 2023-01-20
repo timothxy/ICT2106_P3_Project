@@ -491,8 +491,30 @@ class AddEntry extends React.Component{
         })
     }
 
+    uploadFile = async (file) => {
+        return fetch(
+            "File/Upload",
+            {
+                method: "POST",
+                headers:{
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(file)
+            }
+        ).then((res) => {
+            return res.json();
+        }).catch(err => {
+            console.log(err);
+        })
+    }
+
     createCourse = async (courseToAdd) => {
         console.log(courseToAdd);
+        this.props.fieldSettings.map(async (field) => {
+            if(field.type === "file"){
+                courseToAdd[field] = await this.uploadFile(courseToAdd[field]);
+            }
+        })
         return fetch(this.props.settings.api + "Create", {
             method: "POST",
             headers: {
