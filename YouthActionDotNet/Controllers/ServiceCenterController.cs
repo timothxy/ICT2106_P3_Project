@@ -82,7 +82,7 @@ namespace YouthActionDotNet.Controllers
                 }
             }
         }
-        [HttpPut("UpdateAndFetchAll/{$id}")]
+        [HttpPut("UpdateAndFetch/{id}")]
         public async Task<ActionResult<string>> UpdateAndFetchAll(string id, ServiceCenter template)
         {
             if (id != template.ServiceCenterId)

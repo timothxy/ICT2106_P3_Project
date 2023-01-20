@@ -78,7 +78,7 @@ namespace YouthActionDotNet.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("UpdateAndFetch/{id}")]
         public async Task<ActionResult<string>> UpdateAndFetchAll(string id, Project template)
         {
             if (id != template.ProjectId)
