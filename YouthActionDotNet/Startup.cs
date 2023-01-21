@@ -9,6 +9,8 @@ using Microsoft.Data.Sqlite;
 using YouthActionDotNet.Data;
 using Microsoft.EntityFrameworkCore;
 using YouthActionDotNet.DAL;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace YouthActionDotNet
 {
@@ -19,7 +21,7 @@ namespace YouthActionDotNet
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; set;}
+        public IConfiguration Configuration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -34,7 +36,7 @@ namespace YouthActionDotNet
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => 
+                    builder =>
                     {
                         builder
                         .AllowAnyOrigin()
@@ -70,9 +72,15 @@ namespace YouthActionDotNet
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                       Path.Combine(env.ContentRootPath, "uploads")),
+                RequestPath = "/uploads"
+            });
+            
             app.UseRouting();
 
             app.UseCors("CorsPolicy");
@@ -100,7 +108,7 @@ namespace YouthActionDotNet
                 var dbContext = serviceScope.ServiceProvider.GetService<DBContext>();
                 dbContext.Database.EnsureCreated();
             }
-            
+
         }
     }
 }
