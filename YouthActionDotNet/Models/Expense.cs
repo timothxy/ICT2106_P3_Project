@@ -11,7 +11,7 @@ namespace YouthActionDotNet.Models
 
         public string ExpenseId { get; set; }
 
-        public double ExpenseAmount { get; set; }
+        public string ExpenseAmount { get; set; }
 
         public string ExpenseDesc { get; set; }
 
@@ -31,7 +31,9 @@ namespace YouthActionDotNet.Models
 
         [JsonIgnore]
         public virtual User user { get; set; }
+        [JsonIgnore]
         public virtual Project project { get; set; }
-
+        [JsonIgnore]
+        public virtual File ExpenseReceiptFile { get; set; }
     }
 }

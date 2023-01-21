@@ -67,9 +67,27 @@ export default class Expense extends React.Component {
         });
     }
 
+    uploadFile = async (file) => {
+        console.log(file);
+        const formData = new FormData();
+        formData.append("file", file.FileUrl);
+        
+        return await fetch("/api/File/Upload",
+            {
+                method: "POST",
+                body: formData,
+            }
+        ).then((res) => {
+            console.log(res);
+            return res.json();
+        }).catch(err => {
+            console.log(err);
+        })
+    }
+    
     update = async (data) =>{
         console.log(data);
-        return fetch(this.settings.api + "UpdateAndFetch/" + data.UserId , {
+        return fetch(this.settings.api + "UpdateAndFetch/" + data.ExpenseId , {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -81,6 +99,25 @@ export default class Expense extends React.Component {
     }
 
     handleUpdate = async (data) =>{
+        var updateData = data;
+        var fileUploadFields = [];
+        const fieldSettings = this.state.settings.data.FieldSettings;
+        for(const field of Object.keys(fieldSettings)){
+            if (fieldSettings[field].type === "file") {
+                fileUploadFields.push(field);
+            }
+        }
+
+        for(const field of fileUploadFields){
+            try {
+                const res = await this.uploadFile(updateData[field]);
+                if(res.success){
+                    updateData[field] = res.data;
+                }
+            }catch(e){
+                this.props.requestError(e);
+            }
+        }
         await this.update(data).then((content)=>{
             if(content.success){
                 this.setState({
@@ -94,6 +131,22 @@ export default class Expense extends React.Component {
                 return false;
             }
         })
+        try{
+            const res = await this.update(data);
+            if(res.success){
+                this.setState({
+                    error:"",
+                })
+                return true;
+            }else{
+                this.setState({
+                    error:res.message,
+                })
+                return false;
+            }
+        }catch(e){
+            this.requestError(e);
+        }
     }
 
     requestRefresh = async () =>{
@@ -106,6 +159,12 @@ export default class Expense extends React.Component {
                 content:content,
                 loading:false,
             });
+        })
+    }
+
+    requestError = async (error) =>{
+        this.setState({
+            error:error,
         })
     }
 
@@ -123,6 +182,7 @@ export default class Expense extends React.Component {
                 updateHandle = {this.handleUpdate}
                 requestRefresh = {this.requestRefresh}
                 error={this.state.error}
+                requestError = {this.requestError}
                 >
             </DatapageLayout>
             )

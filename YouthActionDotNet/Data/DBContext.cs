@@ -56,6 +56,12 @@ namespace YouthActionDotNet.Data{
             .HasOne(e => e.user)
             .WithMany()
             .HasForeignKey(e => e.ApprovalId);
+        modelBuilder.Entity<Expense>().ToTable("Expense")
+            .HasOne(e => e.ExpenseReceiptFile)
+            .WithMany()
+            .HasForeignKey(e => e.ExpenseReceipt);
+        modelBuilder.Entity<File>().ToTable("File");
         }
+        
     }
 }

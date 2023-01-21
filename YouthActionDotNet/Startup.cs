@@ -31,6 +31,18 @@ namespace YouthActionDotNet
             Configuration = builder.Build();
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => 
+                    {
+                        builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                    });
+            });
+
             services.AddDbContext<DBContext>(options => options.UseSqlite(connectionString));
             SQLitePCL.Batteries.Init();
 
@@ -62,6 +74,8 @@ namespace YouthActionDotNet
             app.UseSpaStaticFiles();
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {

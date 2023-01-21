@@ -492,16 +492,17 @@ class AddEntry extends React.Component{
     }
 
     uploadFile = async (file) => {
-        return fetch(
-            "File/Upload",
+        console.log(file);
+        const formData = new FormData();
+        formData.append("file", file.FileUrl);
+        
+        return await fetch("/api/File/Upload",
             {
                 method: "POST",
-                headers:{
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(file)
+                body: formData,
             }
         ).then((res) => {
+            console.log(res);
             return res.json();
         }).catch(err => {
             console.log(err);
@@ -509,12 +510,7 @@ class AddEntry extends React.Component{
     }
 
     createCourse = async (courseToAdd) => {
-        console.log(courseToAdd);
-        this.props.fieldSettings.map(async (field) => {
-            if(field.type === "file"){
-                courseToAdd[field] = await this.uploadFile(courseToAdd[field]);
-            }
-        })
+
         return fetch(this.props.settings.api + "Create", {
             method: "POST",
             headers: {
@@ -529,12 +525,35 @@ class AddEntry extends React.Component{
     }
 
     handleCourseCreation = async () => {
-        await this.createCourse(this.state.courseToAdd).then((content) => {
-            if (content.status === "success") {
-            } else {
-                console.log(content);
+        var courseToAdd = this.state.courseToAdd;
+        var fileUploadFields = [];
+        
+        for(const field of Object.keys(this.props.fieldSettings)){
+            if (this.props.fieldSettings[field].type === "file") {
+                fileUploadFields.push(field);
             }
-        })
+        }
+
+        for(const field of fileUploadFields){
+            try {
+                const res = await this.uploadFile(courseToAdd[field]);
+                if(res.success){
+                    courseToAdd[field] = res.data;
+                }
+            }catch(e){
+                this.props.requestError(e);
+            }
+        }
+        try {
+            const res = await this.createCourse(courseToAdd);
+            if(res.success){
+                this.props.requestRefresh();
+            }else{
+                this.props.requestError(res.message);
+            }
+        }catch(e){
+            this.props.requestError(e);
+        }
     }
 
     render(){

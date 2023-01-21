@@ -19,6 +19,7 @@ namespace YouthActionDotNet.Controllers
         private GenericRepository<Employee> EmployeeRepository;
         private GenericRepository<Expense> ExpenseRepository;
         private GenericRepository<Project> ProjectRepository;
+        private FileRepository FileRepository;
         JsonSerializerSettings settings = new JsonSerializerSettings
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -29,6 +30,7 @@ namespace YouthActionDotNet.Controllers
             ExpenseRepository = new GenericRepository<Expense>(context);
             EmployeeRepository = new GenericRepository<Employee>(context);
             ProjectRepository = new GenericRepository<Project>(context);
+            FileRepository = new FileRepository(context);
         }
 
         [HttpGet("All")]
@@ -52,8 +54,13 @@ namespace YouthActionDotNet.Controllers
         [HttpPost("Create")]
         public async Task<ActionResult<string>> Create(Expense template)
         {
-            var expense = await ExpenseRepository.InsertAsync(template);
-            return JsonConvert.SerializeObject(new { success = true, message = "Expense Created", data = expense }, settings);
+            try{
+                var expense = await ExpenseRepository.InsertAsync(template);
+                return JsonConvert.SerializeObject(new { success = true, message = "Expense Created", data = expense }, settings);
+        
+            }catch(Exception e){
+                return JsonConvert.SerializeObject(new { success = false, message = e.Message }, settings);
+            }
         }
 
         [HttpPut("{id}")]
@@ -147,7 +154,7 @@ namespace YouthActionDotNet.Controllers
             settings.FieldSettings.Add("ExpenseId", new InputType { type = "text", displayLabel = "Expense Id", editable = false, primaryKey = true });
             settings.FieldSettings.Add("ExpenseAmount", new InputType { type = "number", displayLabel = "Expense Amount", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ExpenseDesc", new InputType { type = "text", displayLabel = "Expense Description", editable = true, primaryKey = false });
-            settings.FieldSettings.Add("ExpenseReceipt", new InputType { type = "text", displayLabel = "Expense Receipt", editable = true, primaryKey = false });
+            settings.FieldSettings.Add("ExpenseReceipt", new InputType { type = "file", displayLabel = "Expense Receipt", editable = true, primaryKey = false });
 
             settings.FieldSettings.Add("Status", new DropdownInputType
             {
