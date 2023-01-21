@@ -23,17 +23,13 @@ namespace YouthActionDotNet.DAL{
             return template.FileId;
         }
 
-        public IActionResult getFilePath(string fileId){
-            var file = (Models.File)dbSet.Find(fileId);
+        public async Task<string> getFilePath(string fileId){
+            var file = await dbSet.FindAsync(fileId);
             var filePath = Path.Combine("uploads", file.FileName);
             if(file == null){
                 return null;
             }else{
-                var FileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                string mimeType = new
-                Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider().Mappings[Path.GetExtension(file.FileName)];
-                return new FileStreamResult(FileStream, mimeType);
-
+                return file.FileUrl;
             }
         }
     }

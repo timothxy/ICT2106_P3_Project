@@ -54,7 +54,7 @@ namespace YouthActionDotNet.Controllers{
                 else
                     return JsonConvert.SerializeObject(new { success = true, message = "File path retrieved successfully", data = filePath });
             }catch(Exception e){
-                return JsonConvert.SerializeObject(new { success = false, message = "File Does not exist" });
+                return JsonConvert.SerializeObject(new { success = false, message = e.Message });
             }
         }
     }

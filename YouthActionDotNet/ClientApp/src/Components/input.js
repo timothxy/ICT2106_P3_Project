@@ -1306,7 +1306,7 @@ class StdFileBox extends React.Component{
       await this.getContent().then((res)=>{
         console.log(res);
         this.setState({
-          filePath: res.data,
+          filePath: res.data.Result,
           loading: false,
         })
       })
