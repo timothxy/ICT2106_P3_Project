@@ -21,6 +21,9 @@ namespace YouthActionDotNet.DAL{
         private GenericRepository<Volunteer> volunteerRepository;
         private GenericRepository<VolunteerWork> volunteerWorkRepository;
 
+        private GenericRepository<Expense> expenseRepository;
+
+
         public GenericRepository<Employee> EmployeeRepository
         {
             get
@@ -105,8 +108,18 @@ namespace YouthActionDotNet.DAL{
             }
         }
         
+        public GenericRepository<Expense> ExpenseRepository
+        {
+            get
+            {
+                if (this.expenseRepository == null)
+                {
+                    this.expenseRepository = new GenericRepository<Expense>(context);
+                }
+                return expenseRepository;
+            }
+        }
         
-
 
         public void BeginTransaction()
         {
