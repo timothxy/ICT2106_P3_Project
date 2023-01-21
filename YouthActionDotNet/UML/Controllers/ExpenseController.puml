@@ -1,0 +1,20 @@
+@startuml
+class ExpenseController {
+    + ExpenseController(context:DBContext)
+    + All() : Task<ActionResult<string>>
+    + Create(template:Expense) : Task<ActionResult<string>>
+    + Delete(id:string) : Task<ActionResult<string>>
+    + Exists(id:string) : bool
+    + Get(id:string) : Task<ActionResult<string>>
+    + Settings() : string
+    + Update(id:string, template:Expense) : Task<ActionResult<string>>
+    + UpdateAndFetchAll(id:string, template:Expense) : Task<ActionResult<string>>
+}
+class "IUserInterfaceCRUD`1"<T> {
+}
+class "GenericRepository`1"<T> {
+}
+ControllerBase <|-- ExpenseController
+"IUserInterfaceCRUD`1" "<Expense>" <|-- ExpenseController
+ExpenseController --> "ExpenseRepository<Expense>" "GenericRepository`1"
+@enduml

@@ -1,0 +1,8 @@
+@startuml
+class FileController {
+    + FileController(context:DBContext)
+    + <<async>> UploadFile(file:File) : Task<string>
+}
+ControllerBase <|-- FileController
+FileController --> "FileRepository" FileRepository
+@enduml

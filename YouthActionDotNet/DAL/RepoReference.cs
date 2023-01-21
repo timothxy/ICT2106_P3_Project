@@ -12,15 +12,13 @@ namespace YouthActionDotNet.DAL{
             this.context = context;
         }
         private GenericRepository<Employee> employeeRepository;
-    
         private GenericRepository<Donor> donorRepository;
-
         private GenericRepository<Project> projectRepository;
         private GenericRepository<ServiceCenter> serviceCenterRepository;
         private UserRepository userRepository;
         private GenericRepository<Volunteer> volunteerRepository;
         private GenericRepository<VolunteerWork> volunteerWorkRepository;
-
+        private GenericRepository<File> fileRepository;
         public GenericRepository<Employee> EmployeeRepository
         {
             get
@@ -102,6 +100,18 @@ namespace YouthActionDotNet.DAL{
                     this.volunteerWorkRepository = new GenericRepository<VolunteerWork>(context);
                 }
                 return volunteerWorkRepository;
+            }
+        }
+
+        public GenericRepository<File> FileRepository
+        {
+            get
+            {
+                if (this.fileRepository == null)
+                {
+                    this.fileRepository = new GenericRepository<File>(context);
+                }
+                return fileRepository;
             }
         }
         
