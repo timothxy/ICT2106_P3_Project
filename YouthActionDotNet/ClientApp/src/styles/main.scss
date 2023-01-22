@@ -1355,6 +1355,8 @@ nav {
     &>.stdInputGroup{
         height:34px;
         width:calc(100% - 31.5px)
+
+
     }
 
     .read-only{
@@ -1442,7 +1444,6 @@ nav {
 }
 
 .stdInputGroup {
-
     width: 100%;
     flex-grow: 1;
     position: relative;
@@ -1450,6 +1451,21 @@ nav {
     background-color: transparent;
     overflow: visible;
     transition:border 0.3s linear;
+    &.file{
+        height: 100%;
+        align-items: stretch;
+        display: flex;
+
+    }
+    .file-input-thumbnail{
+        flex-grow: 1;
+
+        img{
+            height: 100%;
+            width: 100%;
+        }
+    }
+
     &:hover ,&:focus-within{
         border: 1px solid $primary;
     }
@@ -2932,6 +2948,10 @@ nav {
             grid-template-columns: repeat(1, minmax(0,1fr));
             row-gap: 15px;
         }
+
+        .file{
+            grid-row: 1 / span 3;
+        }
     }
 
 }
@@ -3191,7 +3211,6 @@ nav {
     grid-template-columns: repeat(2, 1fr);
     column-gap: 15px;
     row-gap: 15px;
-
     .button{
         grid-column: 1 / span 2;
     }

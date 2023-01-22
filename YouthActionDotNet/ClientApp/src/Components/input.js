@@ -311,7 +311,7 @@ export class StdInput extends React.Component {
   render() {
     if (this.state.enabled) {
       return (
-        <div className={"inputBox " + (this.props.sameLine ? "same-line" : "")}>
+        <div className={"inputBox " + (this.props.sameLine ? "same-line" : "") + (this.props.type === "file" ? "file" : "")}>
           {this.props.label !== "hidden" && (
             <div className="inputBox-Label">{this.props.label}:
             {(this.props.toolTip !== null && this.props.toolTip) && (
@@ -1347,13 +1347,13 @@ class StdFileBox extends React.Component{
       :
       <div
         className={
-          "stdInputGroup d-flex align-items-center" +
+          "stdInputGroup file d-flex align-items-center" +
           " " +
           (this.state.valueChanged ? "leftBorderRadius" : "borderRadius")
         }
       >
         {this.state.value &&
-        <img src={this.state.filePath}></img>
+        <div className="file-input-thumbnail"><img src={this.state.filePath}></img></div>
         }
         <input
           className="stdInput"

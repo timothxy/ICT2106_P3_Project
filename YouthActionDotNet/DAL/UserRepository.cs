@@ -25,20 +25,10 @@ namespace YouthActionDotNet.DAL
 
         public virtual async Task<User> Register(string username, string password){
             
-            System.Diagnostics.Debug.WriteLine(username);
-            System.Diagnostics.Debug.WriteLine(password);
-
-            Console.WriteLine(username);
-            Console.WriteLine(password);
-
             string hashedPassword = u.hashpassword(password);
             User template = new User();
             template.username = username;
             template.Password = hashedPassword;
-            
-            System.Diagnostics.Debug.WriteLine(template.UserId);
-            System.Diagnostics.Debug.WriteLine(template.username);
-            System.Diagnostics.Debug.WriteLine(template.Password);
 
             var user = await dbSet.FirstOrDefaultAsync(u => u.username == template.username);
             if (user == null){
