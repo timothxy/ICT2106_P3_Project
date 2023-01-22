@@ -128,6 +128,18 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, message = "Expense Successfully Deleted" }, settings);
         }
 
+        [HttpDelete("Delete")]
+        public async Task<ActionResult<String>> Delete(Expense template)
+        {
+            var expense = await ExpenseRepository.GetByIDAsync(template.ExpenseId);
+            if (expense == null)
+            {
+                return JsonConvert.SerializeObject(new { success = false, message = "Expense Not Found" }, settings);
+            }
+            await ExpenseRepository.DeleteAsync(expense);
+            return JsonConvert.SerializeObject(new { success = true, message = "Expense Successfully Deleted" }, settings);
+        }
+
         public bool Exists(string id)
         {
             return ExpenseRepository.GetByID(id) != null;

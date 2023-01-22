@@ -117,6 +117,18 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "Project Successfully Deleted" });
         }
 
+        [HttpDelete("Delete")]
+        public async Task<ActionResult<string>> Delete(Project template)
+        {
+            var project = await ProjectRepository.GetByIDAsync(template.ProjectId);
+            if (project == null)
+            {
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Project Not Found" });
+            }
+            await ProjectRepository.DeleteAsync(template);
+            return JsonConvert.SerializeObject(new { success = true, data = "", message = "Project Successfully Deleted" });
+        }
+
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {

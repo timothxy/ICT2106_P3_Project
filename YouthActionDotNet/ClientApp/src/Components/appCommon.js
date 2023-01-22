@@ -370,6 +370,16 @@ export class PageTransition extends React.Component{
   }
 }
 
+export class AccessDeniedPanel extends React.Component{
+  render(){
+    return(
+      <div className="access-denied-panel">
+        <h1 className="header">Access Denied!</h1>
+        <p className="body">You do not have permission to access this page.</p>
+      </div>
+    )
+  }
+}
 // ScopeDetails.proptypes ={
 //   scopeID: Proptypes.integer,
 //   sampleID: Proptypes.integer,

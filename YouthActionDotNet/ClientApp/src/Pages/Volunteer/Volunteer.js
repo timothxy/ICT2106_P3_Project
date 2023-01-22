@@ -13,7 +13,7 @@ export default class Volunteer extends React.Component {
     }
 
     settings ={
-        title:"Volunteer",
+        title:"Volunteers",
         primaryColor: "#a6192e",
         accentColor: "#94795d",
         textColor: "#ffffff",
@@ -123,6 +123,7 @@ export default class Volunteer extends React.Component {
                 updateHandle = {this.handleUpdate}
                 requestRefresh = {this.requestRefresh}
                 error={this.state.error}
+                permissions={this.props.permissions}
                 >
             </DatapageLayout>
             )

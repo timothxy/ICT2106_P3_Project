@@ -31,6 +31,22 @@ async function registerUser(credentials){
   })
 }
 
+async function getPermissions(token){
+  var role = token.data.Role;
+  if(role === "Employee"){
+    role = token.data.EmployeeRole;
+  }
+  return fetch( "/api/Permissions/GetPermissions/" + role , {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+  }).then(res => {
+      console.log(res);
+      return res.json();
+  });
+}
+
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -98,8 +114,14 @@ export default class Login extends React.Component {
     const token = await loginUser({
       username: this.state.username, Password: this.state.password
     });
+
+    const permissions = await getPermissions(token);
+    console.log(permissions)
+
+    
     if(token.success){
       this.props.setToken(token);
+      this.props.setPerms(permissions.data.Permission);
     }else{
       this.setState({
         message: token.message

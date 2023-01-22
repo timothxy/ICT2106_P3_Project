@@ -1,6 +1,6 @@
 import React from "react";
 import { ActionsButton, DivSpacing, IconButton, IconButtonWithText, SearchBar, SearchTags, SizedBox, StdButton, TagsBox } from "../Components/common";
-import {Loading} from "../Components/appCommon";
+import {AccessDeniedPanel, Loading} from "../Components/appCommon";
 import { StdInput } from "../Components/input";
 import SlideDrawer, { DrawerItemNonLink } from "../Components/sideNav";
 import { Cell, ListTable, HeaderRow, ExpandableRow } from "../Components/tableComponents";
@@ -41,14 +41,17 @@ export default class DatapageLayout extends React.Component {
         document.title = this.props.settings.title;
         window.addEventListener("resize", this.resize.bind(this));
         this.resize();
-
+        const perms = this.props.permissions.find(p => p.Module === this.props.settings.title);
+        
         const pageNumbers = [];
         for (let i = 1; i <= Math.ceil(this.state.data.length / this.state.itemsPerPage); i++) {
             pageNumbers.push(i);
         }
 
+        
         this.setState({
             data: this.props.data,
+            perms : perms,
             pageNumbers: pageNumbers
         })
     }
@@ -167,7 +170,17 @@ export default class DatapageLayout extends React.Component {
         const indexOfLastItem = this.state.currentPage * this.state.itemsPerPage;
         const indexOfFirstItem = indexOfLastItem - this.state.itemsPerPage;
         const currentItems = this.state.data.slice(indexOfFirstItem, indexOfLastItem);
+        const tableHeaderActions = [];
+        if (this.state.perms?.Create) {
+            tableHeaderActions.push({ label: "Add " + this.props.settings.title, onClick: () => { this.setExpansionContent("add") } })
+        }
+        if (this.state.perms?.Delete) {
+            tableHeaderActions.push({ label: "Delete " + this.props.settings.title, onClick: () => { this.setExpansionContent("delete") } })
+        }
+        tableHeaderActions.push({ label: "Generate Spreadsheet", onClick: () => { this.setExpansionContent("gs") } },)
+        
         return (
+            this.state.perms?.Read ? 
             <div className="d-flex flex-column container-fluid listPageContainer">
                 {this.props.error !== "" && 
                     <div className="listPageContainer-error">
@@ -176,12 +189,9 @@ export default class DatapageLayout extends React.Component {
                     </div>
                 }
                 <div className="col-12">
+                    
                     <TableHeader actions={
-                        [
-                            { label: "Add " + this.props.settings.title, onClick: () => { this.setExpansionContent("add") } },
-                            { label: "Delete " + this.props.settings.title, onClick: () => { this.setExpansionContent("del") } },
-                            { label: "Generate Spreadsheet", onClick: () => { this.setExpansionContent("gs") } },
-                        ]
+                        tableHeaderActions
                     } 
                     requestRefresh={this.props.requestRefresh} 
                     fieldSettings={this.props.fieldSettings} 
@@ -195,6 +205,7 @@ export default class DatapageLayout extends React.Component {
                     handleSearchCallBack = {this.handleSearchCallBack}
                     tagUpdate = {this.handleSearchCallBack}
                     data={this.state.data}
+                    perms={this.state.perms}
                     ></TableHeader>
                     <TableFooter settings={this.props.settings} toggle={this.drawerToggleClickHandler} showBottomMenu={this.state.showBottomMenu}></TableFooter>
                     <DivSpacing spacing={1}></DivSpacing>
@@ -208,7 +219,18 @@ export default class DatapageLayout extends React.Component {
                             {this.state.data && 
                             
                             currentItems.map((row, index) => {      
-                                return <ExpandableRow updateHandle={this.props.updateHandle} values={row} fieldSettings={this.props.fieldSettings} key={index} settings={settings} headers={this.props.headers} setExpansionContent={this.setExpansionContent} handleSeeMore={this.handleSeeMore} handleClose={this.handleClose} popUpContent={this.state.popUpContent}>
+                                return <ExpandableRow 
+                                updateHandle={this.props.updateHandle} 
+                                values={row} 
+                                fieldSettings={this.props.fieldSettings} 
+                                key={index} 
+                                settings={settings} 
+                                headers={this.props.headers} 
+                                setExpansionContent={this.setExpansionContent} 
+                                handleSeeMore={this.handleSeeMore} 
+                                handleClose={this.handleClose} 
+                                popUpContent={this.state.popUpContent}
+                                perms={this.state.perms}>
                                     {this.props.children? 
                                     this.props.children[index + ((this.state.currentPage - 1) * this.state.itemsPerPage)]: 
                                     ""}
@@ -291,6 +313,9 @@ export default class DatapageLayout extends React.Component {
                     ]
                 } settings={this.settings} show={this.state.drawerOpen} showBottomMenu={this.state.showBottomMenu} handles={this.setExpansionContent}></BottomMenu>
             </div>
+            :
+            <AccessDeniedPanel>
+            </AccessDeniedPanel>
         )
     }
 }
@@ -601,7 +626,7 @@ class DeleteEntry extends React.Component{
     deleteCourse = async (courseToDelete) => {
         console.log(courseToDelete);
         return fetch(this.props.settings.api + "delete", {
-            method: "POST",
+            method: "Delete",
             headers: {
                 "Content-Type": "application/json",
             },

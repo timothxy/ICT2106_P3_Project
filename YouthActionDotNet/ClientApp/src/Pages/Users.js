@@ -132,6 +132,7 @@ export default class Users extends React.Component {
                 updateHandle = {this.handleUpdate}
                 requestRefresh = {this.requestRefresh}
                 error={this.state.error}
+                permissions={this.props.permissions}
                 >
             </DatapageLayout>
             )

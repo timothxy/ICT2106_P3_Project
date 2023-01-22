@@ -471,7 +471,7 @@ export class StdInput extends React.Component {
             }
             </div>
 
-          {this.props.showIndicator && <i className="bi bi-pencil "></i>}
+          {/* {this.props.showIndicator && <i className="bi bi-pencil "></i>} */}
         </div>
       );
     }

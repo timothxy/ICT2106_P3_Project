@@ -3,6 +3,8 @@ using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.Data{
     public class DBContext : DbContext{
+        public object Permissions { get; internal set; }
+
         public DBContext(DbContextOptions<DBContext> options) : base(options) { }
 
         public DBContext(){
@@ -61,6 +63,7 @@ namespace YouthActionDotNet.Data{
             .WithMany()
             .HasForeignKey(e => e.ExpenseReceipt);
         modelBuilder.Entity<File>().ToTable("File");
+        modelBuilder.Entity<Permissions>().ToTable("Permissions");
         }
         
     }

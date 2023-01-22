@@ -183,6 +183,7 @@ export default class Expense extends React.Component {
                 requestRefresh = {this.requestRefresh}
                 error={this.state.error}
                 requestError = {this.requestError}
+                permissions={this.props.permissions}
                 >
             </DatapageLayout>
             )

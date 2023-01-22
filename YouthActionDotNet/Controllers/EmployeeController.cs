@@ -18,11 +18,13 @@ namespace YouthActionDotNet.Controllers
     public class EmployeeController : ControllerBase, IUserInterfaceCRUD<Employee>
     {
         private GenericRepository<Employee> EmployeeRepository;
+        private PermissionsRepository PermissionsRepository;
 
 
         public EmployeeController(DBContext context)
         {
             EmployeeRepository = new GenericRepository<Employee>(context);
+            PermissionsRepository = new PermissionsRepository(context);
         
         }
 
@@ -114,6 +116,18 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "Employee Successfully Deleted" });    
         }
 
+        [HttpDelete("Delete")]
+        public async Task<ActionResult<string>> Delete(Employee template)
+        {
+            var employee = await EmployeeRepository.GetByIDAsync(template.UserId);
+            if (employee == null)
+            {
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Employee Not Found" });
+            }
+            await EmployeeRepository.DeleteAsync(employee);
+            return JsonConvert.SerializeObject(new { success = true, data = "", message = "Employee Successfully Deleted" });    
+        }
+
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
@@ -143,17 +157,18 @@ namespace YouthActionDotNet.Controllers
                 new DropdownOption { value = "Intern", label = "Intern" },
                 new DropdownOption { value = "Temp", label = "Temp" },
             } });
-            settings.FieldSettings.Add("EmployeeRole", new DropdownInputType { type = "dropdown", displayLabel = "Role", editable = true, primaryKey = false, options = new List<DropdownOption> {
-                new DropdownOption { value = "Regional Director", label = "Regional Director" },
-                new DropdownOption { value = "Service Center Manager", label = "Service Center Manager" },
-                new DropdownOption { value = "Full Time Worker", label = "Full Time Worker"},
-                new DropdownOption { value = "Cheif Executive", label = "Cheif Executive"},
-                new DropdownOption { value = "Finance Director", label = "Finance Director"},
-                new DropdownOption { value = "Operating Manager", label = "Operating Manager"},
-                new DropdownOption { value = "Marketing Manager", label = "Marketing Manager"},
-                new DropdownOption { value = "Director of new Business", label = "Director of new Business"},
-            } });
-            return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
+            var employeeRoles = PermissionsRepository.GetEmployeeRoles();
+            settings.FieldSettings.Add("EmployeeRole", 
+            new DropdownInputType { 
+                type = "dropdown", 
+                displayLabel = "Role", 
+                editable = true, 
+                primaryKey = false,
+                options = employeeRoles.Select(
+                    x => new DropdownOption { value = x.Role, label = x.Role }
+                ).ToList()
+            });
+            return  JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
         }
 
         public bool Exists(string id)

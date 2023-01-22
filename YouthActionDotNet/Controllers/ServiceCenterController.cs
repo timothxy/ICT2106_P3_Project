@@ -119,6 +119,18 @@ namespace YouthActionDotNet.Controllers
             await ServiceCenterRepository.DeleteAsync(serviceCenter);
             return JsonConvert.SerializeObject(new { success = true, message = "Service Center Deleted" });
         }
+
+        [HttpDelete("Delete")]
+        public async Task<ActionResult<string>> Delete(ServiceCenter template)
+        {
+            var serviceCenter = await ServiceCenterRepository.GetByIDAsync(template.ServiceCenterId);
+            if (serviceCenter == null)
+            {
+                return JsonConvert.SerializeObject(new { success = false, message = "Service Center Not Found" });
+            }
+            await ServiceCenterRepository.DeleteAsync(serviceCenter);
+            return JsonConvert.SerializeObject(new { success = true, message = "Service Center Deleted" });
+        }
         [HttpGet("Settings")]
         public string Settings()
         {

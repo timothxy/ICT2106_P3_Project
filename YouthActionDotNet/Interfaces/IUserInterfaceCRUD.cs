@@ -16,6 +16,8 @@ namespace YouthActionDotNet.Controllers
         Task<ActionResult<string>> UpdateAndFetchAll(string id, T template);
         [HttpDelete("{$id}")]
         Task<ActionResult<string>> Delete(string id);
+        [HttpDelete("Delete")]
+        Task<ActionResult<string>> Delete(T template);
         [HttpPost("All")]
         Task<ActionResult<string>> All();
         [HttpGet("Settings")]

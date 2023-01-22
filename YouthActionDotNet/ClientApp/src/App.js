@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
 import useToken from './Components/useToken';
+import usePerms from './Components/usePerms';
 import Logout from './Pages/Logout';
 import SlideDrawer, { Backdrop, DrawerItem, DrawerSection } from './Components/sideNav';
 
@@ -20,6 +21,8 @@ import ServiceCenters from './Pages/Employee/ServiceCenters';
 import VolunteerWork from './Pages/Volunteer/VolunteerWork';
 import Project from './Pages/Project/Project';
 import Expense from './Pages/Expense/Expense';
+import Permissions from './Pages/Admin/Permissions';
+
 
 /* function getToken() {  
   const tokenString = sessionStorage.getItem('token');
@@ -29,10 +32,10 @@ import Expense from './Pages/Expense/Expense';
 
 export default function App() {
   const { token, setToken, logout } = useToken();
+  const { perms, setPerms, clearPerms} = usePerms();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [active, setActive] = React.useState("Dashboard")
   const [height, setHeight] = React.useState(window.innerHeight);
-
 
   const drawerToggleClickHandler = () => {
     setDrawerOpen(!drawerOpen)
@@ -43,7 +46,7 @@ export default function App() {
       setHeight(window.innerHeight);
     });
   })
-
+  
   let backdrop;
   if (drawerOpen) {
     backdrop = <Backdrop toggle={drawerToggleClickHandler} />;
@@ -63,13 +66,14 @@ export default function App() {
             {backdrop}
             <Routes>
               <Route path="/" element={
-                <Login setToken={setToken}></Login>}></Route>
+                <Login setToken={setToken} setPerms={setPerms}></Login>}></Route>
               <Route path="/Register" element={<Register />}></Route>
             </Routes>
           </div>
         </div>
     )
   } else {
+    
     return (
         <div className="App" style={{maxHeight: height}}>
           <LoggedInNav user={token} logout={logout} toggle={drawerToggleClickHandler} show={drawerOpen}></LoggedInNav>
@@ -86,20 +90,22 @@ export default function App() {
                 <DrawerItem label="Service Center" to={"/ServiceCenters"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Project" to={"/Project"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Expense" to={"/Expense"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="Permissions" to={"/Permissions"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Logout" to={"/Logout"} logo={logoutImg}></DrawerItem>
               </DrawerSection>
             </SlideDrawer>
             
             <Routes>
-              <Route path="/" element={<Users user={token}/>}/>
-              <Route path="/Employees" element={<Employees user={token}/>}/>
-              <Route path="/Volunteers" element={<Volunteer user={token}/>}/>
-              <Route path="/Donors" element={<Donors user={token}></Donors>}/>
-              <Route path="/VolunteerWork" element={<VolunteerWork user={token}/>}/>
-              <Route path="/ServiceCenters" element={<ServiceCenters user={token}/>}/>
-              <Route path="/Project" element={<Project user={token}/>}/>
-              <Route path="/Expense" element={<Expense user={token}/>}/>
-              <Route path="/Logout" element={<Logout logout={logout}></Logout>}/>
+              <Route path="/" element={<Users user={token} permissions = {JSON.parse(perms)}/>}/>
+              <Route path="/Employees" element={<Employees user={token} permissions = {JSON.parse(perms)}/>}/>
+              <Route path="/Volunteers" element={<Volunteer user={token} permissions = {JSON.parse(perms)}/>}/>
+              <Route path="/Donors" element={<Donors user={token} permissions = {JSON.parse(perms)}></Donors>}/>
+              <Route path="/VolunteerWork" element={<VolunteerWork user={token} permissions = {JSON.parse(perms)}/>}/>
+              <Route path="/ServiceCenters" element={<ServiceCenters user={token} permissions = {JSON.parse(perms)}/>}/>
+              <Route path="/Project" element={<Project user={token} permissions = {JSON.parse(perms)}/>}/>
+              <Route path="/Expense" element={<Expense user={token} permissions = {JSON.parse(perms)}/>}/>
+              <Route path="/Permissions" element={<Permissions user={token} permissions = {JSON.parse(perms)}/>}/>
+              <Route path="/Logout" element={<Logout logout={logout} clearPerms={clearPerms}></Logout>}/>
 
             </Routes>
           </header>

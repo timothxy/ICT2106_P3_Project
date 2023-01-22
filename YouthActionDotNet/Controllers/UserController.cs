@@ -133,6 +133,18 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "User Successfully Deleted" });
         }
 
+        [HttpDelete("Delete")]
+        public async Task<ActionResult<string>> Delete(User template)
+        {
+            var user = await UserRepository.GetByIDAsync(template.UserId);
+            if (user == null)
+            {
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "User Not Found" });
+            }
+            UserRepository.Delete(user);
+            return JsonConvert.SerializeObject(new { success = true, data = "", message = "User Successfully Deleted" });
+        }
+
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {

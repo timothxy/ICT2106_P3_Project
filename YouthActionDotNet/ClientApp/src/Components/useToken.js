@@ -16,7 +16,6 @@ export default function useToken() {
         console.log("Logging out")
         setToken(null);
         sessionStorage.removeItem('token');
-        
     }
     return {
         token,

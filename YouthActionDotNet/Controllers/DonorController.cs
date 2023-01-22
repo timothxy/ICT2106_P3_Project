@@ -115,6 +115,18 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "Donor Successfully Deleted" });
         }
 
+        [HttpDelete("Delete")]
+        public async Task<ActionResult<string>> Delete(Donor donor)
+        {
+            var existingDonor = await DonorRepository.GetByIDAsync(donor.UserId);
+            if (existingDonor == null)
+            {
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Donor Not Found" });
+            }
+            DonorRepository.Delete(existingDonor);
+            return JsonConvert.SerializeObject(new { success = true, data = "", message = "Donor Successfully Deleted" });
+        }
+
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {

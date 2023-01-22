@@ -116,6 +116,19 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "Volunteer Successfully Deleted" });
         }
 
+        [HttpDelete("Delete")]
+        public async Task<ActionResult<string>> Delete(Volunteer template)
+        {
+            var volunteer = await VolunteerRepository.GetByIDAsync(template.UserId);
+            if (volunteer == null)
+            {
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Not Found" });
+            }
+            VolunteerRepository.Delete(volunteer);
+            VolunteerRepository.Save();
+            return JsonConvert.SerializeObject(new { success = true, data = "", message = "Volunteer Successfully Deleted" });
+        }
+
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {

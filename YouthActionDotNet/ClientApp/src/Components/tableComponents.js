@@ -76,7 +76,7 @@ export class ExpandableRow extends React.Component {
                       label={this.props.fieldSettings[field].displayLabel}
                       fieldLabel={field}
                       type={this.props.fieldSettings[field].type}
-                      enabled={this.props.fieldSettings[field].editable}
+                      enabled={this.props.perms.Update ? this.props.fieldSettings[field].editable : false}
                       hasSaveBtn={true}
                       showIndicator={this.props.fieldSettings[field].editable}
                       value={this.props.values[field]}
