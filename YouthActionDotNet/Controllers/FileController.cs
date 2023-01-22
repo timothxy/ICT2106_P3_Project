@@ -46,7 +46,7 @@ namespace YouthActionDotNet.Controllers{
         }
 
         [HttpGet("{id}")]
-        public async Task<string> GetFilePath(string id){
+        public async Task<string> GetFile(string id){
             try{
                 var file = await FileRepository.getFilePath(id);
                 if(file == null){

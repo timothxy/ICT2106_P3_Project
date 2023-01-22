@@ -1,7 +1,8 @@
 @startuml
 class FileController {
     + FileController(context:DBContext)
-    + <<async>> UploadFile(file:File) : Task<string>
+    + <<async>> UploadFile() : Task<string>
+    + <<async>> GetFile(id:string) : Task<string>
 }
 ControllerBase <|-- FileController
 FileController --> "FileRepository" FileRepository

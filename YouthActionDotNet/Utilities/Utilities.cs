@@ -1,8 +1,9 @@
 using System;
+using System.IO;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.StaticFiles;
 
-
-public static class u{
+public static class Utils{
 
     public static string hashpassword(string password){
         
@@ -11,4 +12,16 @@ public static class u{
         sha256.Dispose();
         return secretPw;
     }
+
+    public static string GetFileExt(string fileName){
+        var fileExtention = Path.GetExtension(fileName);
+        return fileExtention;
+    }
+
+    public static string GetMime(string fileExt){
+        var mime = new FileExtensionContentTypeProvider();
+        mime.TryGetContentType(fileExt, out string contentType);
+        return contentType;
+    }
+
 }

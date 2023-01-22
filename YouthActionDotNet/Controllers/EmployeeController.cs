@@ -34,7 +34,7 @@ namespace YouthActionDotNet.Controllers
             if(existingEmployee != null){
                 return JsonConvert.SerializeObject(new { success = false, message = "Employee Already Exists" });
             }
-            template.Password = u.hashpassword(template.Password);
+            template.Password = Utils.hashpassword(template.Password);
             await EmployeeRepository.InsertAsync(template);
             var createdEmployee = await EmployeeRepository.GetByIDAsync(template.UserId);
             return JsonConvert.SerializeObject(new { success = true, data = template, message = "Employee Successfully Created" });

@@ -16,7 +16,7 @@ namespace YouthActionDotNet.DAL
 
         public virtual async Task<User> Login(string username, string password)
         {
-            string hashedPassword = u.hashpassword(password);
+            string hashedPassword = Utils.hashpassword(password);
             var user = await dbSet.FirstOrDefaultAsync(u => u.username == username && u.Password == hashedPassword);
             if (user == null)
                 return null;
@@ -25,7 +25,7 @@ namespace YouthActionDotNet.DAL
 
         public virtual async Task<User> Register(string username, string password){
             
-            string hashedPassword = u.hashpassword(password);
+            string hashedPassword = Utils.hashpassword(password);
             User template = new User();
             template.username = username;
             template.Password = hashedPassword;

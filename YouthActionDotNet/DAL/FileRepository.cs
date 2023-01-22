@@ -19,10 +19,8 @@ namespace YouthActionDotNet.DAL{
             Models.File template = new Models.File();
             template.FileName = fileName;
             template.FileUrl = fileUrl;
-            var fileExtention = Path.GetExtension(template.FileName);
-            var mime = new FileExtensionContentTypeProvider();
-            mime.TryGetContentType(fileExtention, out string contentType);
-            template.FileMIME = contentType;
+            var fileExtention = Utils.GetFileExt(template.FileName);
+            template.FileMIME = Utils.GetMime(fileExtention);
             template.FileExt = fileExtention;
             await dbSet.AddAsync(template);
             context.SaveChanges();

@@ -39,7 +39,7 @@ namespace YouthActionDotNet.Controllers
             if(existingDonor != null){
                 return JsonConvert.SerializeObject(new { success = false, message = "Donor Already Exists" });
             }
-            donor.Password = u.hashpassword(donor.Password);
+            donor.Password = Utils.hashpassword(donor.Password);
             await DonorRepository.InsertAsync(donor);
             var createdDonor = await DonorRepository.GetByIDAsync(donor.UserId);
             return JsonConvert.SerializeObject(new { success = true, data = donor, message = "Donor Successfully Created" });

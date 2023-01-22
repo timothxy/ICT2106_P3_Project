@@ -40,7 +40,7 @@ namespace YouthActionDotNet.Controllers
             if(existingVolunteer != null){
                 return JsonConvert.SerializeObject(new { success = false, message = "Volunteer Already Exists" });
             }
-            template.Password = u.hashpassword(template.Password);
+            template.Password = Utils.hashpassword(template.Password);
             await VolunteerRepository.InsertAsync(template);
             var createdVolunteer = await VolunteerRepository.GetByIDAsync(template.UserId);
             return JsonConvert.SerializeObject(new { success = true, data = template, message = "Volunteer Successfully Created" });

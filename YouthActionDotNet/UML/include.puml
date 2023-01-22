@@ -51,14 +51,14 @@ ControllerBase <|-- EmployeeController
 EmployeeController --> "EmployeeRepository<Employee>" "GenericRepository`1"
 class ExpenseController {
     + ExpenseController(context:DBContext)
-    + All() : Task<ActionResult<string>>
-    + Create(template:Expense) : Task<ActionResult<string>>
-    + Delete(id:string) : Task<ActionResult<string>>
+    + <<async>> All() : Task<ActionResult<string>>
+    + <<async>> Get(id:string) : Task<ActionResult<string>>
+    + <<async>> Create(template:Expense) : Task<ActionResult<string>>
+    + <<async>> Update(id:string, template:Expense) : Task<ActionResult<string>>
+    + <<async>> UpdateAndFetchAll(id:string, template:Expense) : Task<ActionResult<string>>
+    + <<async>> Delete(id:string) : Task<ActionResult<string>>
     + Exists(id:string) : bool
-    + Get(id:string) : Task<ActionResult<string>>
     + Settings() : string
-    + Update(id:string, template:Expense) : Task<ActionResult<string>>
-    + UpdateAndFetchAll(id:string, template:Expense) : Task<ActionResult<string>>
 }
 class "IUserInterfaceCRUD`1"<T> {
 }
@@ -66,10 +66,15 @@ class "GenericRepository`1"<T> {
 }
 ControllerBase <|-- ExpenseController
 "IUserInterfaceCRUD`1" "<Expense>" <|-- ExpenseController
+ExpenseController --> "EmployeeRepository<Employee>" "GenericRepository`1"
 ExpenseController --> "ExpenseRepository<Expense>" "GenericRepository`1"
+ExpenseController --> "ProjectRepository<Project>" "GenericRepository`1"
+ExpenseController --> "FileRepository" FileRepository
+ExpenseController o-> "settings" JsonSerializerSettings
 class FileController {
     + FileController(context:DBContext)
-    + <<async>> UploadFile(file:File) : Task<string>
+    + <<async>> UploadFile() : Task<string>
+    + <<async>> GetFile(id:string) : Task<string>
 }
 ControllerBase <|-- FileController
 FileController --> "FileRepository" FileRepository
@@ -175,10 +180,11 @@ VolunteerWorkController o-> "settings" JsonSerializerSettings
 class FileRepository {
     + FileRepository(context:DBContext)
     + <<async>> UploadFile(fileName:string, fileUrl:string) : Task<string>
+    + <<async>> getFilePath(fileId:string) : Task<Models.File>
 }
 class "GenericRepository`1"<T> {
 }
-"GenericRepository`1" "<File>" <|-- FileRepository
+"GenericRepository`1" "<Models.File>" <|-- FileRepository
 class "GenericRepository`1"<TEntity> {
     + GenericRepository(context:DBContext)
     + <<virtual>> GetAll(filter:Expression<Func<TEntity, bool>>, orderBy:Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>, includeProperties:string) : IEnumerable<TEntity>
@@ -222,6 +228,7 @@ RepositoryReference --> "serviceCenterRepository<ServiceCenter>" "GenericReposit
 RepositoryReference --> "userRepository" UserRepository
 RepositoryReference --> "volunteerRepository<Volunteer>" "GenericRepository`1"
 RepositoryReference --> "volunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
+RepositoryReference --> "fileRepository<File>" "GenericRepository`1"
 RepositoryReference --> "EmployeeRepository<Employee>" "GenericRepository`1"
 RepositoryReference --> "DonorRepository<Donor>" "GenericRepository`1"
 RepositoryReference --> "ProjectRepository<Project>" "GenericRepository`1"
@@ -229,6 +236,7 @@ RepositoryReference --> "ServiceCenterRepository<ServiceCenter>" "GenericReposit
 RepositoryReference --> "UserRepository" UserRepository
 RepositoryReference --> "VolunteerRepository<Volunteer>" "GenericRepository`1"
 RepositoryReference --> "VolunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
+RepositoryReference --> "FileRepository<File>" "GenericRepository`1"
 class UserRepository {
     + UserRepository(context:DBContext)
     + <<virtual>> <<async>> Login(username:string, password:string) : Task<User>
@@ -253,34 +261,6 @@ interface "IUserInterfaceCRUD`1"<T> {
     Settings() : string
     Exists(id:string) : bool
 }
-class restructurev1 <<partial>> {
-    # <<override>> Up(migrationBuilder:MigrationBuilder) : void
-    # <<override>> Down(migrationBuilder:MigrationBuilder) : void
-}
-Migration <|-- restructurev1
-class restructurev1 <<partial>> {
-    # <<override>> BuildTargetModel(modelBuilder:ModelBuilder) : void
-}
-class createdDonorType <<partial>> {
-    # <<override>> Up(migrationBuilder:MigrationBuilder) : void
-    # <<override>> Down(migrationBuilder:MigrationBuilder) : void
-}
-Migration <|-- createdDonorType
-class createdDonorType <<partial>> {
-    # <<override>> BuildTargetModel(modelBuilder:ModelBuilder) : void
-}
-class createdVolunteerWork <<partial>> {
-    # <<override>> Up(migrationBuilder:MigrationBuilder) : void
-    # <<override>> Down(migrationBuilder:MigrationBuilder) : void
-}
-Migration <|-- createdVolunteerWork
-class createdVolunteerWork <<partial>> {
-    # <<override>> BuildTargetModel(modelBuilder:ModelBuilder) : void
-}
-class DBContextModelSnapshot <<partial>> {
-    # <<override>> BuildModel(modelBuilder:ModelBuilder) : void
-}
-ModelSnapshot <|-- DBContextModelSnapshot
 class Donor {
     + donorName : string <<get>> <<set>>
     + donorType : string <<get>> <<set>>
@@ -299,12 +279,28 @@ class Employee {
 User <|-- Employee
 Employee --> "User" User
 class Expense {
+    + Expense()
+    + ExpenseId : string <<get>> <<set>>
+    + ExpenseAmount : string <<get>> <<set>>
+    + ExpenseDesc : string <<get>> <<set>>
+    + ProjectId : string <<get>> <<set>>
+    + ExpenseReceipt : string <<get>> <<set>>
+    + Status : string <<get>> <<set>>
+    + ApprovalId : string <<get>> <<set>>
 }
+Expense --> "DateOfExpense" DateTime
+Expense --> "DateOfSubmission" DateTime
+Expense --> "DateOfReimbursement" DateTime
+Expense --> "user" User
+Expense --> "project" Project
+Expense --> "ExpenseReceiptFile" File
 class File {
     + File()
     + FileId : string <<get>> <<set>>
     + FileName : string <<get>> <<set>>
     + FileUrl : string <<get>> <<set>>
+    + FileMIME : string <<get>> <<set>>
+    + FileExt : string <<get>> <<set>>
 }
 class Project {
     + Project()
@@ -401,18 +397,10 @@ class VolunteerWork {
 VolunteerWork --> "employee" Employee
 VolunteerWork --> "volunteer" Volunteer
 VolunteerWork --> "project" Project
-class ErrorModel {
-    + ErrorModel(logger:ILogger<ErrorModel>)
-    + RequestId : string <<get>> <<set>>
-    + ShowRequestId : bool <<get>>
-    + OnGet() : void
-}
-class "ILogger`1"<T> {
-}
-PageModel <|-- ErrorModel
-ErrorModel --> "_logger<ErrorModel>" "ILogger`1"
-class u <<static>> {
+class Utils <<static>> {
     + {static} hashpassword(password:string) : string
+    + {static} GetFileExt(fileName:string) : string
+    + {static} GetMime(fileExt:string) : string
 }
 interface "IGenericDataRepository`1"<T> {
     GetAll(filter:Expression<Func<T, bool>>, orderBy:Func<IQueryable<T>, IOrderedQueryable<T>>, includeProperties:string) : IEnumerable<T>
@@ -428,14 +416,5 @@ interface IRepositoryReference {
     Commit() : void
     Rollback() : void
     Dispose() : void
-}
-class Pages_Error {
-    + <<async>> <<override>> ExecuteAsync() : global::System.Threading.Tasks.Task
-}
-Pages_Error --> "Model" ErrorModel
-class Pages__ViewImports {
-    + <<async>> <<override>> ExecuteAsync() : global::System.Threading.Tasks.Task
-}
-class "RazorPage`1"<T> {
 }
 @enduml

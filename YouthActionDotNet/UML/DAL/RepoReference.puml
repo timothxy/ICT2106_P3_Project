@@ -18,6 +18,7 @@ RepositoryReference --> "serviceCenterRepository<ServiceCenter>" "GenericReposit
 RepositoryReference --> "userRepository" UserRepository
 RepositoryReference --> "volunteerRepository<Volunteer>" "GenericRepository`1"
 RepositoryReference --> "volunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
+RepositoryReference --> "fileRepository<File>" "GenericRepository`1"
 RepositoryReference --> "EmployeeRepository<Employee>" "GenericRepository`1"
 RepositoryReference --> "DonorRepository<Donor>" "GenericRepository`1"
 RepositoryReference --> "ProjectRepository<Project>" "GenericRepository`1"
@@ -25,4 +26,5 @@ RepositoryReference --> "ServiceCenterRepository<ServiceCenter>" "GenericReposit
 RepositoryReference --> "UserRepository" UserRepository
 RepositoryReference --> "VolunteerRepository<Volunteer>" "GenericRepository`1"
 RepositoryReference --> "VolunteerWorkRepository<VolunteerWork>" "GenericRepository`1"
+RepositoryReference --> "FileRepository<File>" "GenericRepository`1"
 @enduml
