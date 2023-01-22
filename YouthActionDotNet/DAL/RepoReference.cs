@@ -115,8 +115,18 @@ namespace YouthActionDotNet.DAL{
             }
         }
         
+        public GenericRepository<Expense> ExpenseRepository
+        {
+            get
+            {
+                if (this.expenseRepository == null)
+                {
+                    this.expenseRepository = new GenericRepository<Expense>(context);
+                }
+                return expenseRepository;
+            }
+        }
         
-
 
         public void BeginTransaction()
         {

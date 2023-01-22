@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YouthActionDotNet.Data;
 
@@ -10,9 +11,11 @@ using YouthActionDotNet.Data;
 namespace YouthActionDotNet.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20230121053329_Expense")]
+    partial class Expense
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
@@ -34,8 +37,8 @@ namespace YouthActionDotNet.Migrations
                     b.Property<DateTime>("DateOfSubmission")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ExpenseAmount")
-                        .HasColumnType("TEXT");
+                    b.Property<double>("ExpenseAmount")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("ExpenseDesc")
                         .HasColumnType("TEXT");
@@ -53,27 +56,9 @@ namespace YouthActionDotNet.Migrations
 
                     b.HasIndex("ApprovalId");
 
-                    b.HasIndex("ExpenseReceipt");
-
                     b.HasIndex("ProjectId");
 
                     b.ToTable("Expense", (string)null);
-                });
-
-            modelBuilder.Entity("YouthActionDotNet.Models.File", b =>
-                {
-                    b.Property<string>("FileId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FileName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FileUrl")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("FileId");
-
-                    b.ToTable("File", (string)null);
                 });
 
             modelBuilder.Entity("YouthActionDotNet.Models.Project", b =>
@@ -280,15 +265,9 @@ namespace YouthActionDotNet.Migrations
                         .WithMany()
                         .HasForeignKey("ApprovalId");
 
-                    b.HasOne("YouthActionDotNet.Models.File", "ExpenseReceiptFile")
-                        .WithMany()
-                        .HasForeignKey("ExpenseReceipt");
-
                     b.HasOne("YouthActionDotNet.Models.Project", "project")
                         .WithMany()
                         .HasForeignKey("ProjectId");
-
-                    b.Navigation("ExpenseReceiptFile");
 
                     b.Navigation("project");
 

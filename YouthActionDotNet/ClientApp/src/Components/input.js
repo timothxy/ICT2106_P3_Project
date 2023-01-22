@@ -1,5 +1,5 @@
 import React from "react";
-
+import { Loading } from "./appCommon";
 // List of all potential country phone number code and their flag unicodes
 // const telCodes = [
 //   { value: "+1", label: "(+1) USA", countryCode: "🇺🇸" },
@@ -1295,11 +1295,38 @@ class StdFileBox extends React.Component{
     valueChanged: false,
     value: this.props.value,
     newValue: this.props.value,
+    loading: true,
   };
-
-  componentDidMount() {
+  
+  componentDidMount = async() =>{
     this.setState({
-      newValue: this.props.value,
+      loading: true,
+    })
+    this.props.value ? 
+      await this.getContent().then((res)=>{
+        console.log(res);
+        this.setState({
+          filePath: res.data.Result,
+          loading: false,
+        })
+      })
+    :
+      this.setState({
+        loading: false,
+        newValue: this.props.value
+      })
+  }
+
+  getContent = async () =>{
+    return fetch("/api/File/" + this.props.value,{
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      return res.json();
+    }).catch((err) => {
+      console.log(err);
     });
   }
 
@@ -1312,9 +1339,12 @@ class StdFileBox extends React.Component{
       FileName: e.target.files[0].name,
     });
   };
-
+  
   render() {
     return (
+      this.state.loading ? 
+      <Loading></Loading>
+      :
       <div
         className={
           "stdInputGroup d-flex align-items-center" +
@@ -1322,6 +1352,9 @@ class StdFileBox extends React.Component{
           (this.state.valueChanged ? "leftBorderRadius" : "borderRadius")
         }
       >
+        {this.state.value &&
+        <img src={this.state.filePath}></img>
+        }
         <input
           className="stdInput"
           type="file"
@@ -1329,7 +1362,6 @@ class StdFileBox extends React.Component{
           autoComplete={this.props.autoComplete}
           placeholder={""}
           onChange={(e) => this.onChange(e)}
-          value={this.state.newValue}
         ></input>
         {this.props.showIndicator ? (
           this.state.editable ? (

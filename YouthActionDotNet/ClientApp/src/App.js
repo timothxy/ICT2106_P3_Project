@@ -19,6 +19,7 @@ import Donors from './Pages/Donor/Donor';
 import ServiceCenters from './Pages/Employee/ServiceCenters';
 import VolunteerWork from './Pages/Volunteer/VolunteerWork';
 import Project from './Pages/Project/Project';
+import Expense from './Pages/Expense/Expense';
 
 /* function getToken() {  
   const tokenString = sessionStorage.getItem('token');
@@ -84,6 +85,7 @@ export default function App() {
                 <DrawerItem label="Donors" to={"/Donors"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Service Center" to={"/ServiceCenters"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Project" to={"/Project"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="Expense" to={"/Expense"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Logout" to={"/Logout"} logo={logoutImg}></DrawerItem>
               </DrawerSection>
             </SlideDrawer>
@@ -96,6 +98,7 @@ export default function App() {
               <Route path="/VolunteerWork" element={<VolunteerWork user={token}/>}/>
               <Route path="/ServiceCenters" element={<ServiceCenters user={token}/>}/>
               <Route path="/Project" element={<Project user={token}/>}/>
+              <Route path="/Expense" element={<Expense user={token}/>}/>
               <Route path="/Logout" element={<Logout logout={logout}></Logout>}/>
 
             </Routes>
