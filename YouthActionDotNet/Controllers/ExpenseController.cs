@@ -142,12 +142,7 @@ namespace YouthActionDotNet.Controllers
 
             settings.ColumnSettings.Add("ExpenseId", new ColumnHeader { displayHeader = "Expense Id" });
             settings.ColumnSettings.Add("ExpenseAmount", new ColumnHeader { displayHeader = "Expense Amount" });
-            settings.ColumnSettings.Add("ExpenseDesc", new ColumnHeader { displayHeader = "Expense Description" });
-            settings.ColumnSettings.Add("ExpenseReceipt", new ColumnHeader { displayHeader = "Expense Receipt" });
             settings.ColumnSettings.Add("Status", new ColumnHeader { displayHeader = "Status" });
-            settings.ColumnSettings.Add("DateOfExpense", new ColumnHeader { displayHeader = "Date of Expense" });
-            settings.ColumnSettings.Add("DateOfSubmission", new ColumnHeader { displayHeader = "Date of Submission" });
-            settings.ColumnSettings.Add("DateOfReimbursement", new ColumnHeader { displayHeader = "Date of Reimbursement" });
             settings.ColumnSettings.Add("ApprovalId", new ColumnHeader { displayHeader = "Approval Id" });
             settings.ColumnSettings.Add("ProjectId", new ColumnHeader { displayHeader = "Project Id" });
 

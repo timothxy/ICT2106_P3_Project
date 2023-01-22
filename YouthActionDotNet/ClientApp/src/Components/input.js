@@ -326,6 +326,7 @@ export class StdInput extends React.Component {
           )}
           {this.props.type === "text" && (
             <StdTextBox
+              valueChanged={this.state.valueChanged}
               updateValue={this.updateValue}
               value={this.state.newValue}
             ></StdTextBox>
@@ -338,24 +339,28 @@ export class StdInput extends React.Component {
           )}
           {this.props.type === "email" && (
             <StdEmailBox
+              valueChanged={this.state.valueChanged}
               updateValue={this.updateValue}
               value={this.state.newValue}
             ></StdEmailBox>
           )}
           {this.props.type === "number" && (
             <StdNumberBox
+              valueChanged={this.state.valueChanged}
               updateValue={this.updateValue}
               value={this.state.newValue}
             ></StdNumberBox>
           )}
           {this.props.type === "time" && (
             <StdTimeBox
+              valueChanged={this.state.valueChanged}
               updateValue={this.updateValue}
               value={this.state.newValue}
             ></StdTimeBox>
           )}
           {this.props.type === "date" && this.props.dateFormat === "YYYY" &&(
             <StdNumberBox
+              valueChanged={this.state.valueChanged}
               updateValue={this.updateValue}
               value={this.state.newValue}
               max={this.props.max ? this.props.max : new Date().getFullYear()}
@@ -364,6 +369,7 @@ export class StdInput extends React.Component {
           )}
           {this.props.type === "date" && this.props.dateFormat === "MM" &&(
             <StdNumberBox
+              valueChanged={this.state.valueChanged}
               updateValue={this.updateValue}
               value={this.state.newValue}
               max={this.props.max ? this.props.max : 12}
@@ -372,6 +378,7 @@ export class StdInput extends React.Component {
           )}
           {this.props.type === "date" && this.props.dateFormat === "DD" &&(
             <StdNumberBox
+              valueChanged={this.state.valueChanged}
               updateValue={this.updateValue}
               value={this.state.newValue}
               max={this.props.max ? this.props.max : 31}
@@ -380,12 +387,14 @@ export class StdInput extends React.Component {
           )}
           {this.props.type === "date" && !["YYYY","MM","DD"].includes(this.props.dateFormat) &&(
             <StdDateBox
+              valueChanged={this.state.valueChanged}
               updateValue={this.updateValue}
               value={this.state.newValue}
             ></StdDateBox>
           )}
           {this.props.type === "datetime" && (
             <StdDateTimeBox
+              valueChanged={this.state.valueChanged}
               updateValue={this.updateValue}
               value={this.state.newValue}
             ></StdDateTimeBox>
@@ -394,6 +403,7 @@ export class StdInput extends React.Component {
           {this.props.type === "dropdown" && (
             <StdDropDownBox
               updateValue={this.updateValue}
+              valueChanged={this.state.valueChanged}
               value={this.state.newValue}
               options={this.props.options}
               maxItems = {this.props.maxItems}
@@ -403,6 +413,7 @@ export class StdInput extends React.Component {
 
           {this.props.type === "multiselect" && (
             <StdMultiSelect
+              valueChanged={this.state.valueChanged}
               updateValue={this.updateValue}
               value={this.state.newValue}
               options={this.props.options}
@@ -411,6 +422,7 @@ export class StdInput extends React.Component {
 
           {this.props.type === "QR" && (
             <StdQRBox
+              valueChanged={this.state.valueChanged}
               updateValue={this.updateValue}
               value={this.state.newValue}
             >
@@ -419,6 +431,7 @@ export class StdInput extends React.Component {
           {this.props.type === "file" && (
           
             <StdFileBox
+              valueChanged={this.state.valueChanged}
               updateValue={this.updateValue}
               value={this.state.newValue}
               field = {this.props.fieldLabel}
@@ -472,7 +485,6 @@ StdInput.defaultProps = {
 
 class StdTextBox extends React.Component {
   state = {
-    valueChanged: false,
     value: this.props.value,
     newValue: this.props.value,
   };
@@ -496,7 +508,7 @@ class StdTextBox extends React.Component {
         className={
           "stdInputGroup d-flex align-items-center" +
           " " +
-          (this.state.valueChanged ? "leftBorderRadius" : "borderRadius")
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
         }
       >
         <input
@@ -546,7 +558,6 @@ class StdTextBox extends React.Component {
 
 class StdPwdBox extends React.Component {
   state = {
-    valueChanged: false,
     value: this.props.value,
     newValue: this.props.value,
   };
@@ -570,7 +581,7 @@ class StdPwdBox extends React.Component {
         className={
           "stdInputGroup d-flex align-items-center" +
           " " +
-          (this.state.valueChanged ? "leftBorderRadius" : "borderRadius")
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
         }
       >
         <input
@@ -620,7 +631,6 @@ class StdPwdBox extends React.Component {
 
 class StdDateBox extends React.Component {
   state = {
-    valueChanged: false,
     value: this.props.value,
     newValue: this.props.value,
   };
@@ -652,7 +662,7 @@ class StdDateBox extends React.Component {
         className={
           "stdInputGroup d-flex align-items-center" +
           " " +
-          (this.state.valueChanged ? "leftBorderRadius" : "borderRadius")
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
         }
       >
         <input
@@ -702,7 +712,6 @@ class StdDateBox extends React.Component {
 
 class StdTimeBox extends React.Component {
   state = {
-    valueChanged: false,
     value: this.props.value,
     newValue: this.props.value,
   };
@@ -726,7 +735,7 @@ class StdTimeBox extends React.Component {
         className={
           "stdInputGroup d-flex align-items-center" +
           " " +
-          (this.state.valueChanged ? "leftBorderRadius" : "borderRadius")
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
         }
       >
         <input
@@ -776,7 +785,6 @@ class StdTimeBox extends React.Component {
 
 class StdDateTimeBox extends React.Component {
   state = {
-    valueChanged: false,
     value: this.props.value,
     newValue: this.props.value,
   };
@@ -800,7 +808,7 @@ class StdDateTimeBox extends React.Component {
         className={
           "stdInputGroup d-flex align-items-center" +
           " " +
-          (this.state.valueChanged ? "leftBorderRadius" : "borderRadius")
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
         }
       >
         <input
@@ -850,7 +858,6 @@ class StdDateTimeBox extends React.Component {
 
 class StdEmailBox extends React.Component {
   state = {
-    valueChanged: false,
     value: this.props.value,
     newValue: this.props.value,
   };
@@ -874,7 +881,7 @@ class StdEmailBox extends React.Component {
         className={
           "stdInputGroup d-flex align-items-center" +
           " " +
-          (this.state.valueChanged ? "leftBorderRadius" : "borderRadius")
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
         }
       >
         <input
@@ -924,7 +931,6 @@ class StdEmailBox extends React.Component {
 
 class StdNumberBox extends React.Component {
   state = {
-    valueChanged: false,
     value: this.props.value,
     newValue: this.props.value,
   };
@@ -957,7 +963,7 @@ class StdNumberBox extends React.Component {
         className={
           "stdInputGroup d-flex align-items-center" +
           " " +
-          (this.state.valueChanged ? "leftBorderRadius" : "borderRadius")
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
         }
       >
         <input
@@ -1009,7 +1015,6 @@ class StdNumberBox extends React.Component {
 
 class StdDropDownBox extends React.Component {
   state = {
-    valueChanged: false,
     value: this.props.value,
     newValue: "",
     options: this.props.options? this.props.options : [],
@@ -1051,7 +1056,7 @@ class StdDropDownBox extends React.Component {
         className={
           "stdInputGroup d-flex align-items-center" +
           " " +
-          (this.state.valueChanged ? "leftBorderRadius" : "borderRadius")
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
         }
       >
         <select
@@ -1114,7 +1119,6 @@ StdDropDownBox.defaultProps = {
 
 class StdMultiSelect extends React.Component {
   state = {
-    valueChanged: false,
     value: this.props.value,
     newValue: this.props.value.length > 0 ? this.props.options.find((option) => option.value === this.props.value).label : [],
     options: this.props.options? this.props.options : [],
@@ -1160,7 +1164,7 @@ class StdMultiSelect extends React.Component {
         className={
           "stdInputGroup d-flex align-items-center" +
           " " +
-          (this.state.valueChanged ? "leftBorderRadius" : "borderRadius")
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
         }
       >
         <input
@@ -1220,7 +1224,6 @@ class StdMultiSelect extends React.Component {
 
 class StdQRBox extends React.Component{
   state = {
-    valueChanged: false,
     value: this.props.value,
     newValue: this.props.value,
   };
@@ -1244,7 +1247,7 @@ class StdQRBox extends React.Component{
         className={
           "stdInputGroup d-flex align-items-center" +
           " " +
-          (this.state.valueChanged ? "leftBorderRadius" : "borderRadius")
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
         }
       >
         <input
@@ -1295,7 +1298,6 @@ class StdQRBox extends React.Component{
 
 class StdFileBox extends React.Component{
   state = {
-    valueChanged: false,
     value: this.props.value,
     newValue: this.props.value,
     loading: true,
@@ -1320,6 +1322,7 @@ class StdFileBox extends React.Component{
       })
   }
 
+
   getContent = async () =>{
     return fetch("/api/File/" + this.props.value,{
       method: "GET",
@@ -1336,6 +1339,11 @@ class StdFileBox extends React.Component{
   onChange = (e) => {
     this.setState({
       newValue: e.target.value,
+      file: {
+        FileExt: e.target.files[0].name.split(".").pop(),
+        FileUrl: URL.createObjectURL(e.target.files[0]),
+        FileName: e.target.files[0].name,
+      }
     });
     this.props.updateValue({
       FileUrl: e.target.files[0],
@@ -1352,7 +1360,7 @@ class StdFileBox extends React.Component{
         className={
           "stdInputGroup file d-flex align-items-center" +
           " " +
-          (this.state.valueChanged ? "leftBorderRadius" : "borderRadius")
+          (this.props.valueChanged ? "leftBorderRadius" : "borderRadius")
         }
       >
         {this.state.value &&
@@ -1411,8 +1419,8 @@ class StdFileBox extends React.Component{
 export class FileThumbnail extends React.Component{
   state ={
     showModal : false,
-
   }
+
 
   toggleModal = () =>{
     this.setState({
@@ -1428,11 +1436,11 @@ export class FileThumbnail extends React.Component{
         }>
           <i className="bi bi-x"></i>
           <img src={this.props.file.FileUrl} alt="file preview" className="file-image-preview"></img>
-        
         </div>
         <div className="file-input-thumbnail" onClick={this.toggleModal}>
-          <FileIcon extension = {this.props.file.FileExt} {...defaultStyles[this.props.file.FileExt]}/>
+          <FileIcon extension = {this.props.file.FileExt} {...defaultStyles[this.props.file.FileExt.substring(1)]}/>
         </div>
+        <span className="file-input-file-name">{this.props.file.FileName}</span>
       </div>
     )
   }
