@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YouthActionDotNet.Data;
 
@@ -10,9 +11,11 @@ using YouthActionDotNet.Data;
 namespace YouthActionDotNet.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20230122124204_updateFileModel")]
+    partial class updateFileModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
@@ -63,9 +66,6 @@ namespace YouthActionDotNet.Migrations
             modelBuilder.Entity("YouthActionDotNet.Models.File", b =>
                 {
                     b.Property<string>("FileId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FileExt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FileMIME")

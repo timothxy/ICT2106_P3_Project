@@ -48,12 +48,16 @@ namespace YouthActionDotNet.Controllers{
         [HttpGet("{id}")]
         public async Task<string> GetFilePath(string id){
             try{
-                var filePath = FileRepository.getFilePath(id);
-                if(filePath == null)
+                var file = await FileRepository.getFilePath(id);
+                if(file == null){
                     return JsonConvert.SerializeObject(new { success = false, message = "File Does not exist" });
-                else
-                    return JsonConvert.SerializeObject(new { success = true, message = "File path retrieved successfully", data = filePath });
-            }catch(Exception e){
+                
+                }else{
+                    return JsonConvert.SerializeObject(new { success = true, message = "File path retrieved successfully", data = file });
+            
+                }
+
+                    }catch(Exception e){
                 return JsonConvert.SerializeObject(new { success = false, message = e.Message });
             }
         }

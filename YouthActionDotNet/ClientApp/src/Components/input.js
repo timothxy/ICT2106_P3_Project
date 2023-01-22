@@ -1,5 +1,7 @@
 import React from "react";
 import { Loading } from "./appCommon";
+import {FileIcon, defaultStyles} from 'react-file-icon';
+import { IconButton } from "./common";
 // List of all potential country phone number code and their flag unicodes
 // const telCodes = [
 //   { value: "+1", label: "(+1) USA", countryCode: "🇺🇸" },
@@ -419,6 +421,7 @@ export class StdInput extends React.Component {
             <StdFileBox
               updateValue={this.updateValue}
               value={this.state.newValue}
+              field = {this.props.fieldLabel}
             >
 
             </StdFileBox>
@@ -1306,7 +1309,7 @@ class StdFileBox extends React.Component{
       await this.getContent().then((res)=>{
         console.log(res);
         this.setState({
-          filePath: res.data.Result,
+          file: res.data,
           loading: false,
         })
       })
@@ -1353,16 +1356,21 @@ class StdFileBox extends React.Component{
         }
       >
         {this.state.value &&
-        <div className="file-input-thumbnail"><img src={this.state.filePath}></img></div>
+        <FileThumbnail file={this.state.file}></FileThumbnail>
         }
-        <input
-          className="stdInput"
-          type="file"
-          ref={this.primaryInput}
-          autoComplete={this.props.autoComplete}
-          placeholder={""}
-          onChange={(e) => this.onChange(e)}
-        ></input>
+        <label htmlFor={this.props.fieldLabel} className="stdInput">
+          Click here to select a file
+          <input
+            id={this.props.fieldLabel}
+            className="stdInput-file"
+            type="file"
+            ref={this.primaryInput}
+            autoComplete={this.props.autoComplete}
+            placeholder={""}
+            onChange={(e) => this.onChange(e)}
+          ></input>
+          
+        </label>
         {this.props.showIndicator ? (
           this.state.editable ? (
             <i className="bi bi-pencil "></i>
@@ -1397,5 +1405,35 @@ class StdFileBox extends React.Component{
          
       </div>
     );
+  }
+}
+
+export class FileThumbnail extends React.Component{
+  state ={
+    showModal : false,
+
+  }
+
+  toggleModal = () =>{
+    this.setState({
+      showModal: !this.state.showModal
+    })
+  }
+
+  render(){
+    return(
+      <div className="file-input-preview">
+        <div className={"file-image-modal " + (this.state.showModal ? "show" : "")} onClick={
+          this.toggleModal
+        }>
+          <i className="bi bi-x"></i>
+          <img src={this.props.file.FileUrl} alt="file preview" className="file-image-preview"></img>
+        
+        </div>
+        <div className="file-input-thumbnail" onClick={this.toggleModal}>
+          <FileIcon extension = {this.props.file.FileExt} {...defaultStyles[this.props.file.FileExt]}/>
+        </div>
+      </div>
+    )
   }
 }
