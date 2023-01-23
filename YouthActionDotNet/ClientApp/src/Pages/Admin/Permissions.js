@@ -161,7 +161,8 @@ export default class Permissions extends React.Component {
 export class PermissionsMap extends React.Component {
     state= {
         item: this.props.item,
-        loading:true
+        loading:true,
+        message:"",
     }
     componentDidMount(){
         this.setState({
@@ -187,12 +188,14 @@ export class PermissionsMap extends React.Component {
             if(res){
                 this.setState({
                     loading:false,
-                    message : "Updated"
+                    success:true,
+                    message : "Changes saved!"
                 })
             }else{
                 this.setState({
                     loading:false,
-                    message : "Error"
+                    success:false,
+                    message : "Error saving permissions!"
                 })
             }
         })
@@ -203,23 +206,30 @@ export class PermissionsMap extends React.Component {
             <Loading></Loading>
             :
             
-            <div className="container-fluid">
-                <span>{this.state.message}</span>
+            <div className="container-fluid g-0">
+                {this.state.message != "" ?
+                <div 
+                    className={"alert " + (this.state.success ? "alert-success" : "alert-danger")} 
+                    onClick={()=>{this.setState({message:""})}}
+                >{this.state.message}</div>
+                :
+                <span></span>
+                }
                 <div className="row">
                     {this.state.permission.map((item, moduleIndex) => {
-                            return <div className="col-md-6 col-12">
-                                <div>
+                            return <div className="py-4 col-md-6 col-12 permission-module-container d-flex flex-column">
+                                <div className="permission-module">
                                     {item.Module}
                                 </div>
                                 <div className="row">
                                 {Object.keys(item).slice(1).map((key, index) => {
                                     return(
-                                        <div className="d-flex col-3 flex-column">
-                                            <div>
+                                        <div className="d-flex col-3 flex-column permission-toggle-group">
+                                            <div className="permission-toggle-label">
                                                 {key}
                                             </div>
                                             <div>
-                                                <input type="checkbox" checked={item[key]} onChange={()=>this.onChange(moduleIndex,key)}></input>
+                                                <input className="form-check-input permission-toggle" type="checkbox" checked={item[key]} onChange={()=>this.onChange(moduleIndex,key)}></input>
                                             </div>
                                         </div>
                                     )
