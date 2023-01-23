@@ -4,6 +4,10 @@ using Newtonsoft.Json;
 namespace YouthActionDotNet.Models{
 
     public class Donations {
+        public Donations(){
+            this.DonationsId = Guid.NewGuid().ToString();
+        }
+
         public string DonationsId { get; set; }
 
         public string DonationType  { get; set; }
