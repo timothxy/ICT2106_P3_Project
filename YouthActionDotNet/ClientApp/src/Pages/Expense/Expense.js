@@ -13,7 +13,7 @@ export default class Expense extends React.Component {
     }
 
     settings ={
-        title:"Expense",
+        title:"Expenses",
         primaryColor: "#a6192e",
         accentColor: "#94795d",
         textColor: "#ffffff",
