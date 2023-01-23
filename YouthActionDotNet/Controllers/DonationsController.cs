@@ -34,7 +34,7 @@ namespace YouthActionDotNet.Controllers{
         public async Task<ActionResult<string>> Create(Donations template)
         {
             await DonationsRepository.InsertAsync(template);
-            var createdDonations = await DonationsRepository.GetByIDAsync(template.DonationId);
+            var createdDonations = await DonationsRepository.GetByIDAsync(template.DonationsId);
             return JsonConvert.SerializeObject(new {success = true, data = createdDonations}, settings);
         }
 
@@ -54,7 +54,7 @@ namespace YouthActionDotNet.Controllers{
         [HttpDelete("Delete")]
         public async Task<ActionResult<string>> Delete(Donations template)
         {
-            var donations = await DonationsRepository.GetByIDAsync(template.DonationId);
+            var donations = await DonationsRepository.GetByIDAsync(template.DonationsId);
             if (donations == null)
             {
                 return JsonConvert.SerializeObject(new {success = false, message = "Donations Not Found"}, settings);
@@ -91,7 +91,7 @@ namespace YouthActionDotNet.Controllers{
         [HttpPut("{id}")]
         public async Task<ActionResult<string>> Update(string id, Donations template)
         {
-            if(id != template.DonationId)
+            if(id != template.DonationsId)
             {
                 return JsonConvert.SerializeObject(new {success = false, message = "Donations ID Mismatch"}, settings);
             }
@@ -114,7 +114,7 @@ namespace YouthActionDotNet.Controllers{
         [HttpPut("UpdateAndFetch/{id}")]
         public async Task<ActionResult<string>> UpdateAndFetchAll(string id, Donations template)
         {
-            if(id != template.DonationId)
+            if(id != template.DonationsId)
             {
                 return JsonConvert.SerializeObject(new {success = false, message = "Donations ID Mismatch"}, settings);
             }

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace YouthActionDotNet.Models{
 
     public class Donations {
-        public string DonationId { get; set; }
+        public string DonationsId { get; set; }
 
         public string DonationType  { get; set; }
 
