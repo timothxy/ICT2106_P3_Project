@@ -1438,7 +1438,7 @@ export class FileThumbnail extends React.Component{
           <img src={this.props.file.FileUrl} alt="file preview" className="file-image-preview"></img>
         </div>
         <div className="file-input-thumbnail" onClick={this.toggleModal}>
-          <FileIcon extension = {this.props.file.FileExt} {...defaultStyles[this.props.file.FileExt.substring(1)]}/>
+          <FileIcon extension = {this.props.file.FileExt} {...defaultStyles[this.props.file.FileExt?.substring(1)]}/>
         </div>
         <span className="file-input-file-name">{this.props.file.FileName}</span>
       </div>
