@@ -31,15 +31,11 @@ namespace YouthActionDotNet.Control
             EmployeeRepository = new GenericRepositoryOut<Employee>(context);
             ProjectRepository = new GenericRepositoryOut<Project>(context);
         }
-
-        [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
             var expense = await ExpenseRepositoryOut.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = expense, message = "Expense Successfully Retrieved" }, settings);
         }
-
-        [HttpGet("{id}")]
         public async Task<ActionResult<string>> Get(string id)
         {
             var expense = await ExpenseRepositoryOut.GetByIDAsync(id);
@@ -49,8 +45,6 @@ namespace YouthActionDotNet.Control
             }
             return JsonConvert.SerializeObject(new { success = true, message = "Expense Successfully Retrieved", data = expense }, settings);
         }
-
-        [HttpPost("Create")]
         public async Task<ActionResult<string>> Create(Expense template)
         {
             try{
@@ -61,8 +55,6 @@ namespace YouthActionDotNet.Control
                 return JsonConvert.SerializeObject(new { success = false, message = e.Message }, settings);
             }
         }
-
-        [HttpPut("{id}")]
         public async Task<ActionResult<string>> Update(string id, Expense template)
         {
             if (id != template.ExpenseId)
@@ -86,8 +78,6 @@ namespace YouthActionDotNet.Control
                 }
             }
         }
-
-        [HttpPut("UpdateAndFetch/{id}")]
         public async Task<ActionResult<string>> UpdateAndFetchAll(string id, Expense template)
         {
             if (id != template.ExpenseId)
@@ -112,8 +102,6 @@ namespace YouthActionDotNet.Control
                 }
             }
         }
-
-        [HttpDelete("{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
             var expense = await ExpenseRepositoryOut.GetByIDAsync(id);
@@ -124,8 +112,6 @@ namespace YouthActionDotNet.Control
             await ExpenseRepositoryIn.DeleteAsync(expense);
             return JsonConvert.SerializeObject(new { success = true, message = "Expense Successfully Deleted" }, settings);
         }
-
-        [HttpDelete("Delete")]
         public async Task<ActionResult<String>> Delete(Expense template)
         {
             var expense = await ExpenseRepositoryOut.GetByIDAsync(template.ExpenseId);
@@ -141,8 +127,6 @@ namespace YouthActionDotNet.Control
         {
             return ExpenseRepositoryOut.GetByID(id) != null;
         }
-
-        [HttpGet("Settings")]
         public string Settings()
         {
             Settings settings = new Settings();
