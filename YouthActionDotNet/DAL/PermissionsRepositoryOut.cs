@@ -8,7 +8,8 @@ using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.DAL{
-    public class PermissionsRepository : GenericRepository<Permissions> {
+
+    public class PermissionsRepository : GenericRepositoryIn<Permissions> {
         public PermissionsRepository(DBContext context) : base(context){
             this.context = context;
             this.dbSet = context.Set<Permissions>();

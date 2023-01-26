@@ -8,9 +8,9 @@ using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.DAL{
-    public class FileRepository: GenericRepository<Models.File>{
+    public class FileRepositoryIn: GenericRepositoryIn<Models.File>{
 
-        public FileRepository(DBContext context): base(context){
+        public FileRepositoryIn(DBContext context): base(context){
             this.context = context;
             this.dbSet = context.Set<Models.File>();            
         }
@@ -25,16 +25,6 @@ namespace YouthActionDotNet.DAL{
             await dbSet.AddAsync(template);
             context.SaveChanges();
             return template.FileId;
-        }
-
-        public async Task<Models.File> getFilePath(string fileId){
-            var file = await dbSet.FindAsync(fileId);
-            if(file == null){
-                return null;
-            }else{
-                file.FileUrl = Path.Combine("uploads", file.FileName);
-                return file;
-            }
         }
     }
 }

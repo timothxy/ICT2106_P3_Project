@@ -9,46 +9,15 @@ using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.DAL
 {
-    public class GenericRepository<TEntity> : IGenericDataRepository<TEntity> where TEntity: class {
-        internal DBContext context;
+    public class GenericRepositoryIn<TEntity> where TEntity: class{
         internal DbSet<TEntity> dbSet;
-        
-        public GenericRepository(DBContext context){
+        internal DbContext context;
+
+        public GenericRepositoryIn(DbContext context){
             this.context = context;
             this.dbSet = context.Set<TEntity>();
         }
-        
-        public virtual IEnumerable<TEntity> GetAll(Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = "")
-        {
-            IQueryable<TEntity> query = dbSet;
 
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-
-            foreach (var includeProperty in includeProperties.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
-
-            if (orderBy != null)
-            {
-                return orderBy(query).ToList();
-            }
-            else
-            {
-                return query.ToList();
-            }
-        }
-
-        public virtual TEntity GetByID(object id)
-        {
-            return dbSet.Find(id);
-        }
 
         public virtual bool Insert(TEntity entity)
         {
@@ -95,41 +64,6 @@ namespace YouthActionDotNet.DAL
                 return false;
             }
         }
-
-
-
-        public virtual async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = "")
-        {
-            IQueryable<TEntity> query = dbSet;
-
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-
-            foreach (var includeProperty in includeProperties.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
-
-            if (orderBy != null)
-            {
-                return await orderBy(query).ToListAsync();
-            }
-            else
-            {
-                return await query.ToListAsync();
-            }
-        }
-
-        public virtual async Task<TEntity> GetByIDAsync(object id)
-        {
-            return await dbSet.FindAsync(id);
-        }
-        
 
         public virtual async Task<bool> InsertAsync(TEntity entity)
         {
@@ -179,14 +113,5 @@ namespace YouthActionDotNet.DAL
             }
         }
 
-        public void Save()
-        {
-            context.SaveChanges();
-        }
-
-        public async Task SaveAsync()
-        {
-            await context.SaveChangesAsync();
-        }
     }
 }
