@@ -111,7 +111,7 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Not Found" });
             }
-            VolunteerRepositoryIn.Delete(volunteer);
+            await VolunteerRepositoryIn.DeleteAsync(volunteer);
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "Volunteer Successfully Deleted" });
         }
 
@@ -122,7 +122,7 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Not Found" });
             }
-            VolunteerRepositoryIn.Delete(volunteer);
+            await VolunteerRepositoryIn.DeleteAsync(volunteer);
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "Volunteer Successfully Deleted" });
         }
 

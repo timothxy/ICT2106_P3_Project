@@ -175,7 +175,7 @@ export default class DatapageLayout extends React.Component {
             tableHeaderActions.push({ label: "Add " + this.props.settings.title, onClick: () => { this.setExpansionContent("add") } })
         }
         if (this.state.perms?.Delete) {
-            tableHeaderActions.push({ label: "Delete " + this.props.settings.title, onClick: () => { this.setExpansionContent("delete") } })
+            tableHeaderActions.push({ label: "Delete " + this.props.settings.title, onClick: () => { this.setExpansionContent("del") } })
         }
         tableHeaderActions.push({ label: "Generate Spreadsheet", onClick: () => { this.setExpansionContent("gs") } },)
         
@@ -625,7 +625,7 @@ class DeleteEntry extends React.Component{
 
     deleteCourse = async (courseToDelete) => {
         console.log(courseToDelete);
-        return fetch(this.props.settings.api + "delete", {
+        return fetch(this.props.settings.api + "Delete", {
             method: "Delete",
             headers: {
                 "Content-Type": "application/json",
@@ -638,7 +638,7 @@ class DeleteEntry extends React.Component{
 
     handleCourseDeletion = async () => {
         await this.deleteCourse(this.state.courseToDelete).then((content) => {
-            this.props.requestRefresh();
+            console.log(content);
         })
     }
 
@@ -651,7 +651,7 @@ class DeleteEntry extends React.Component{
                         return (this.props.fieldSettings[key].primaryKey? 
                             <StdInput 
                             label = {this.props.fieldSettings[key].displayLabel}
-                            type={this.props.fieldSettings[key].type}
+                            type={"text"}
                             enabled = {true}
                             fieldLabel={key}
                             onChange = {this.onChange}

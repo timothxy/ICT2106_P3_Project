@@ -120,7 +120,7 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "User Not Found" });
             }
-            UserRepositoryIn.Delete(user);
+            await UserRepositoryIn.DeleteAsync(user);
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "User Successfully Deleted" });
         }
 
@@ -131,7 +131,7 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "User Not Found" });
             }
-            UserRepositoryIn.Delete(user);
+            await UserRepositoryIn.DeleteAsync(user);
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "User Successfully Deleted" });
         }
 

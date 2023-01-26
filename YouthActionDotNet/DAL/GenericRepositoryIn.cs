@@ -59,6 +59,7 @@ namespace YouthActionDotNet.DAL
                     dbSet.Attach(entityToDelete);
                 }
                 dbSet.Remove(entityToDelete);
+                context.SaveChanges();
                 return true;
             }catch{
                 return false;
