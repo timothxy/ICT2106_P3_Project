@@ -129,6 +129,13 @@ export default class Permissions extends React.Component {
         })
     }
 
+    requestError = async (error) =>{
+        this.setState({
+            error:error,
+        })
+    }
+
+
     render(){
         if(this.state.loading){
             return <Loading></Loading>
@@ -144,6 +151,7 @@ export default class Permissions extends React.Component {
                 requestRefresh = {this.requestRefresh}
                 error={this.state.error}
                 permissions={this.props.permissions}
+                requestError = {this.requestError}
                 >
                 {this.state.content.data.map((item, index) => {
                     return (

@@ -109,6 +109,13 @@ export default class Donors extends React.Component {
         })
     }
 
+    
+    requestError = async (error) =>{
+        this.setState({
+            error:error,
+        })
+    }
+
     render(){
         if(this.state.loading){
             return <Loading></Loading>
@@ -124,6 +131,7 @@ export default class Donors extends React.Component {
                 requestRefresh = {this.requestRefresh}
                 error={this.state.error}
                 permissions={this.props.permissions}
+                requestError={this.requestError}
                 >
             </DatapageLayout>
             )

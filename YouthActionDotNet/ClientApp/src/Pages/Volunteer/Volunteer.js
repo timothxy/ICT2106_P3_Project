@@ -108,6 +108,13 @@ export default class Volunteer extends React.Component {
             });
         })
     }
+    
+    requestError = async (error) =>{
+        this.setState({
+            error:error,
+        })
+    }
+
 
     render(){
         if(this.state.loading){
@@ -124,6 +131,7 @@ export default class Volunteer extends React.Component {
                 requestRefresh = {this.requestRefresh}
                 error={this.state.error}
                 permissions={this.props.permissions}
+                requestError={this.requestError}
                 >
             </DatapageLayout>
             )

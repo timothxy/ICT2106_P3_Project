@@ -185,7 +185,10 @@ export default class DatapageLayout extends React.Component {
                 {this.props.error !== "" && 
                     <div className="listPageContainer-error">
                         {this.props.error}
-                        <IconButton icon = {<i className="bi bi-x-circle-fill"></i>}></IconButton>
+                        <IconButton 
+                            icon = {<i className="bi bi-x-circle-fill"></i>} 
+                            onClick = {()=>this.props.requestError("")}
+                        ></IconButton>
                     </div>
                 }
                 <div className="col-12">
@@ -206,6 +209,7 @@ export default class DatapageLayout extends React.Component {
                     tagUpdate = {this.handleSearchCallBack}
                     data={this.state.data}
                     perms={this.state.perms}
+                    requestError={this.props.requestError}
                     ></TableHeader>
                     <TableFooter settings={this.props.settings} toggle={this.drawerToggleClickHandler} showBottomMenu={this.state.showBottomMenu}></TableFooter>
                     <DivSpacing spacing={1}></DivSpacing>
@@ -412,7 +416,16 @@ export class TableHeader extends React.Component {
                                     actions={this.props.actions}></TableQuickAction></div>}
                     </div>
                 </div>
-                <HeaderExpansion settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings={this.props.fieldSettings} expanded={this.props.expanded} component={this.props.component} handleClose={this.props.handleClose} data = {this.props.data}>
+                <HeaderExpansion 
+                settings={this.props.settings} 
+                requestRefresh={this.props.requestRefresh} 
+                fieldSettings={this.props.fieldSettings} 
+                expanded={this.props.expanded} 
+                component={this.props.component}
+                handleClose={this.props.handleClose} 
+                data = {this.props.data}
+                requestError = {this.props.requestError}
+                >
                 </HeaderExpansion>
                 <DivSpacing spacing={1}></DivSpacing>
                 <TagsBox showlabel={true} enableDeleteAll={true} className=" p-2" deleteAllTags={this.deleteAllTags}>
@@ -436,14 +449,14 @@ export class HeaderExpansion extends React.Component {
                 return(
 
                     <HeaderExpansionPane handleClose={this.props.handleClose} title={"Add Entry"}>
-                        <AddEntry settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings = {this.props.fieldSettings}></AddEntry>
+                        <AddEntry settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings = {this.props.fieldSettings} requestError={this.props.requestError}></AddEntry>
                     </HeaderExpansionPane>
                 )
             }
             if (this.props.component === "del"){
                 return(
                     <HeaderExpansionPane handleClose={this.props.handleClose} title={"Delete Entry"}>
-                        <DeleteEntry settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings = {this.props.fieldSettings}></DeleteEntry>
+                        <DeleteEntry settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings = {this.props.fieldSettings} requestError={this.props.requestError}></DeleteEntry>
                     </HeaderExpansionPane>
                 )
             }
@@ -451,7 +464,7 @@ export class HeaderExpansion extends React.Component {
             if (this.props.component === "gs") {
                 return (
                     <HeaderExpansionPane handleClose={this.props.handleClose} title={"Generate Spreadsheet"}>
-                        <GenerateSpreadsheet settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings = {this.props.fieldSettings} data={this.props.data}></GenerateSpreadsheet>
+                        <GenerateSpreadsheet settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings = {this.props.fieldSettings} data={this.props.data} requestError={this.props.requestError}></GenerateSpreadsheet>
                     </HeaderExpansionPane>
                 )
             }
@@ -459,7 +472,7 @@ export class HeaderExpansion extends React.Component {
             if (this.props.component === "cs") {
                 return (
                     <HeaderExpansionPane handleClose={this.props.handleClose} title={"Column Settings"}>
-                        <ColumnSettings settings={this.props.settings} requestRefresh={this.props.requestRefresh}></ColumnSettings>
+                        <ColumnSettings settings={this.props.settings} requestRefresh={this.props.requestRefresh} requestError={this.props.requestError}></ColumnSettings>
                     </HeaderExpansionPane>
                 )
             }
@@ -549,7 +562,8 @@ class AddEntry extends React.Component{
         })
     }
 
-    handleCourseCreation = async () => {
+    handleCourseCreation = async (e) => {
+        e.preventDefault();
         var courseToAdd = this.state.courseToAdd;
         var fileUploadFields = [];
         
@@ -636,9 +650,14 @@ class DeleteEntry extends React.Component{
         }));
     }
 
-    handleCourseDeletion = async () => {
+    handleCourseDeletion = async (e) => {
+        e.preventDefault();
         await this.deleteCourse(this.state.courseToDelete).then((content) => {
-            console.log(content);
+            if(content.success){
+                this.props.requestRefresh();
+            }else{
+                this.props.requestError(content.message);
+            }
         })
     }
 
