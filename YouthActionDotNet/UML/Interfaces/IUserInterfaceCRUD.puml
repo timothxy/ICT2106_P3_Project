@@ -5,6 +5,7 @@ interface "IUserInterfaceCRUD`1"<T> {
     Update(id:string, template:T) : Task<ActionResult<string>>
     UpdateAndFetchAll(id:string, template:T) : Task<ActionResult<string>>
     Delete(id:string) : Task<ActionResult<string>>
+    Delete(template:T) : Task<ActionResult<string>>
     All() : Task<ActionResult<string>>
     Settings() : string
     Exists(id:string) : bool

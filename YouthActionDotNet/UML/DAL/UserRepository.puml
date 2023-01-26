@@ -1,10 +1,9 @@
 @startuml
-class UserRepository {
-    + UserRepository(context:DBContext)
+class UserRepositoryOut {
+    + UserRepositoryOut(context:DBContext)
     + <<virtual>> <<async>> Login(username:string, password:string) : Task<User>
-    + <<virtual>> <<async>> Register(username:string, password:string) : Task<User>
 }
-class "GenericRepository`1"<T> {
+class "GenericRepositoryOut`1"<T> {
 }
-"GenericRepository`1" "<User>" <|-- UserRepository
+"GenericRepositoryOut`1" "<User>" <|-- UserRepositoryOut
 @enduml

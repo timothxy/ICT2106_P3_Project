@@ -1,6 +1,6 @@
 @startuml
-class UserController {
-    + UserController(context:DBContext)
+class UserControl {
+    + UserControl(context:DBContext)
     + Exists(id:string) : bool
     + <<async>> LoginUser(user:User) : Task<ActionResult<String>>
     + <<async>> Create(template:User) : Task<ActionResult<string>>
@@ -14,7 +14,7 @@ class UserController {
 }
 class "IUserInterfaceCRUD`1"<T> {
 }
-ControllerBase <|-- UserController
-"IUserInterfaceCRUD`1" "<User>" <|-- UserController
-UserController --> "userControl" UserControl
+"IUserInterfaceCRUD`1" "<User>" <|-- UserControl
+UserControl --> "UserRepositoryIn" UserRepositoryIn
+UserControl --> "UserRepositoryOut" UserRepositoryOut
 @enduml

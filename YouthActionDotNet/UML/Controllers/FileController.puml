@@ -5,5 +5,5 @@ class FileController {
     + <<async>> GetFile(id:string) : Task<string>
 }
 ControllerBase <|-- FileController
-FileController --> "FileRepository" FileRepository
+FileController --> "fileControl" FileControl
 @enduml

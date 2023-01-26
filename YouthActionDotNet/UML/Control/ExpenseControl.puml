@@ -1,6 +1,6 @@
 @startuml
-class ExpenseController {
-    + ExpenseController(context:DBContext)
+class ExpenseControl {
+    + ExpenseControl(context:DBContext)
     + <<async>> All() : Task<ActionResult<string>>
     + <<async>> Get(id:string) : Task<ActionResult<string>>
     + <<async>> Create(template:Expense) : Task<ActionResult<string>>
@@ -13,8 +13,14 @@ class ExpenseController {
 }
 class "IUserInterfaceCRUD`1"<T> {
 }
-ControllerBase <|-- ExpenseController
-"IUserInterfaceCRUD`1" "<Expense>" <|-- ExpenseController
-ExpenseController --> "expenseControl" ExpenseControl
-ExpenseController o-> "settings" JsonSerializerSettings
+class "GenericRepositoryOut`1"<T> {
+}
+class "GenericRepositoryIn`1"<T> {
+}
+"IUserInterfaceCRUD`1" "<Expense>" <|-- ExpenseControl
+ExpenseControl --> "EmployeeRepository<Employee>" "GenericRepositoryOut`1"
+ExpenseControl --> "ExpenseRepositoryOut<Expense>" "GenericRepositoryOut`1"
+ExpenseControl --> "ExpenseRepositoryIn<Expense>" "GenericRepositoryIn`1"
+ExpenseControl --> "ProjectRepository<Project>" "GenericRepositoryOut`1"
+ExpenseControl o-> "settings" JsonSerializerSettings
 @enduml

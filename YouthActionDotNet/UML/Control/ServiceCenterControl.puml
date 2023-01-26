@@ -1,6 +1,6 @@
 @startuml
-class ServiceCenterController {
-    + ServiceCenterController(context:DBContext)
+class ServiceCenterControl {
+    + ServiceCenterControl(context:DBContext)
     + Exists(id:string) : bool
     + <<async>> Create(template:ServiceCenter) : Task<ActionResult<string>>
     + <<async>> Get(id:string) : Task<ActionResult<string>>
@@ -13,8 +13,14 @@ class ServiceCenterController {
 }
 class "IUserInterfaceCRUD`1"<T> {
 }
-ControllerBase <|-- ServiceCenterController
-"IUserInterfaceCRUD`1" "<ServiceCenter>" <|-- ServiceCenterController
-ServiceCenterController --> "serviceCenterControl" ServiceCenterControl
-ServiceCenterController o-> "settings" JsonSerializerSettings
+class "GenericRepositoryIn`1"<T> {
+}
+class "GenericRepositoryOut`1"<T> {
+}
+"IUserInterfaceCRUD`1" "<ServiceCenter>" <|-- ServiceCenterControl
+ServiceCenterControl --> "ServiceCenterRepositoryIn<ServiceCenter>" "GenericRepositoryIn`1"
+ServiceCenterControl --> "ServiceCenterRepositoryOut<ServiceCenter>" "GenericRepositoryOut`1"
+ServiceCenterControl --> "UserRepositoryIn<User>" "GenericRepositoryIn`1"
+ServiceCenterControl --> "UserRepositoryOut<User>" "GenericRepositoryOut`1"
+ServiceCenterControl o-> "settings" JsonSerializerSettings
 @enduml

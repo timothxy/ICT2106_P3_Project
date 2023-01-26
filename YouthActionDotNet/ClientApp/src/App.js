@@ -16,6 +16,7 @@ import logoutImg from "./Assets/nav/logout.png";
 import Users from './Pages/Users';
 import Employees from './Pages/Employee/Employees';
 import Volunteer from './Pages/Volunteer/Volunteer';
+import VolunteerRegistration from './Pages/Volunteer/VolunteerRegistration';
 import Donors from './Pages/Donor/Donor';
 import ServiceCenters from './Pages/Employee/ServiceCenters';
 import VolunteerWork from './Pages/Volunteer/VolunteerWork';
@@ -61,6 +62,7 @@ export default function App() {
             <SlideDrawer show={drawerOpen} toggle={drawerToggleClickHandler} direction="top">
               <DrawerSection label={"Modules"}>
                 <DrawerItem label="Dashboard" to={"/"} logo={homeImg}></DrawerItem>
+                <DrawerItem label="Volunteer Registration" to={"volunteer-registration"} logo={homeImg}></DrawerItem>
               </DrawerSection>
             </SlideDrawer>
             {backdrop}
@@ -68,6 +70,7 @@ export default function App() {
               <Route path="/" element={
                 <Login setToken={setToken} setPerms={setPerms}></Login>}></Route>
               <Route path="/Register" element={<Register />}></Route>
+              <Route path="/volunteer-registration" element={<VolunteerRegistration />}></Route>
             </Routes>
           </div>
         </div>

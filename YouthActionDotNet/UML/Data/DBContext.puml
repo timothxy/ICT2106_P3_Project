@@ -1,5 +1,6 @@
 @startuml
 class DBContext {
+    + Permissions : object <<get>> <<internal set>>
     + DBContext(options:DbContextOptions<DBContext>)
     + DBContext()
     # <<override>> OnModelCreating(modelBuilder:ModelBuilder) : void
