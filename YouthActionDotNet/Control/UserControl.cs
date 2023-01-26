@@ -12,28 +12,27 @@ using YouthActionDotNet.DAL;
 
 namespace YouthActionDotNet.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UserController : ControllerBase, IUserInterfaceCRUD<User>
-    {
-        private UserRepository UserRepository;
 
-        public UserController(DBContext context)
+    public class UserControl : ControllerBase, IUserInterfaceCRUD<User>
+    {
+        private UserRepositoryIn UserRepositoryIn;
+
+        private UserRepositoryOut UserRepositoryOut;
+
+        public UserControl(DBContext context)
         {
-            UserRepository = new UserRepository(context);
+            UserRepositoryIn = new UserRepositoryIn(context);
+            UserRepositoryOut = new UserRepositoryOut(context);
         }
         
         public bool Exists(string id)
         {
-            return UserRepository.GetByID(id) != null;
+            return UserRepositoryOut.GetByID(id) != null;
         }
 
-        // To login the user
-        // POST: api/User/Login
-        [HttpPost("Login")]
         public async Task<ActionResult<String>> LoginUser(User user)
         {
-            var validLoginUser = await UserRepository.Login(user.username, user.Password);
+            var validLoginUser = await UserRepositoryOut.Login(user.username, user.Password);
             if (validLoginUser == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Invalid Username or Password" });
@@ -41,27 +40,24 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, message = "Login Successful", data=validLoginUser });
         }
         
-
-        [HttpPost("Create")]
         public async Task<ActionResult<string>> Create(User template)
         {
-            var users = await UserRepository.GetAllAsync();
+            var users = await UserRepositoryOut.GetAllAsync();
             var existingUser = users.FirstOrDefault(u => u.username == template.username);
             if(existingUser != null){
                 return JsonConvert.SerializeObject(new { success = false, message = "User Already Exists" });
             }
             
-            var createdUser = await UserRepository.Register(template.username, template.Password);
+            var createdUser = await UserRepositoryIn.Register(template.username, template.Password);
             if(createdUser == null){
                 return JsonConvert.SerializeObject(new { success = false, message = "Unexpected Error" });
             }
             return JsonConvert.SerializeObject(new { success = true, data = template, message = "User Successfully Created" });
         }
 
-        [HttpGet("{id}")]
         public async Task<ActionResult<string>> Get(string id)
         {
-            var user = await UserRepository.GetByIDAsync(id);
+            var user = await UserRepositoryOut.GetByIDAsync(id);
             if (user == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "User Not Found" });
@@ -69,17 +65,15 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, data = user, message = "User Successfully Retrieved" });
         }
 
-        [HttpPut("{id}")]
         public async Task<ActionResult<string>> Update(string id, User template)
         {
             if (id != template.UserId)
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Id Mismatch" });
             }
-            UserRepository.Update(template);
+            UserRepositoryIn.Update(template);
             try
             {
-                await UserRepository.SaveAsync();
                 return await Get(id);
             }
             catch (DbUpdateConcurrencyException)
@@ -95,17 +89,15 @@ namespace YouthActionDotNet.Controllers
             }
         }
     
-        [HttpPut("UpdateAndFetch/{id}")]
         public async Task<ActionResult<string>> UpdateAndFetchAll(string id, User template)
         {
             if (id != template.UserId)
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Id Mismatch" });
             }
-            UserRepository.Update(template);
+            UserRepositoryIn.Update(template);
             try
             {
-                await UserRepository.SaveAsync();
                 return await All();
             }
             catch (DbUpdateConcurrencyException)
@@ -121,34 +113,33 @@ namespace YouthActionDotNet.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
-            var user = await UserRepository.GetByIDAsync(id);
+            var user = await UserRepositoryOut.GetByIDAsync(id);
             if (user == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "User Not Found" });
             }
-            UserRepository.Delete(user);
+            UserRepositoryIn.Delete(user);
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "User Successfully Deleted" });
         }
 
         [HttpDelete("Delete")]
         public async Task<ActionResult<string>> Delete(User template)
         {
-            var user = await UserRepository.GetByIDAsync(template.UserId);
+            var user = await UserRepositoryOut.GetByIDAsync(template.UserId);
             if (user == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "User Not Found" });
             }
-            UserRepository.Delete(user);
+            UserRepositoryIn.Delete(user);
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "User Successfully Deleted" });
         }
 
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
-            var users = await UserRepository.GetAllAsync();
+            var users = await UserRepositoryOut.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = users, message = "Users Successfully Retrieved" });
         }
         [HttpGet("Settings")]

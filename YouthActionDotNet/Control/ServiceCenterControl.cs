@@ -12,37 +12,39 @@ using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ServiceCenterController : ControllerBase, IUserInterfaceCRUD<ServiceCenter>
+    public class ServiceCenterControl : ControllerBase, IUserInterfaceCRUD<ServiceCenter>
     {
-        private GenericRepository<ServiceCenter> ServiceCenterRepository;
-        private GenericRepository<User> UserRepository;
+        private GenericRepositoryIn<ServiceCenter> ServiceCenterRepositoryIn;
+
+        private GenericRepositoryOut<ServiceCenter> ServiceCenterRepositoryOut;
+        private GenericRepositoryIn<User> UserRepositoryIn;
+        private GenericRepositoryOut<User> UserRepositoryOut;
         JsonSerializerSettings settings = new JsonSerializerSettings
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         };
-        public ServiceCenterController(DBContext context)
+        public ServiceCenterControl(DBContext context)
         {
-            ServiceCenterRepository = new GenericRepository<ServiceCenter>(context);
-            UserRepository = new GenericRepository<User>(context);
+            ServiceCenterRepositoryIn = new GenericRepositoryIn<ServiceCenter>(context);
+            ServiceCenterRepositoryOut = new GenericRepositoryOut<ServiceCenter>(context);
+            UserRepositoryIn = new GenericRepositoryIn<User>(context);
+            UserRepositoryOut = new GenericRepositoryOut<User>(context);
         }
-        
+
         public bool Exists(string id)
         {
-            return ServiceCenterRepository.GetByID(id) != null;
+            return ServiceCenterRepositoryOut.GetByID(id) != null;
         }
-        // GET: api/ServiceCenter
-        [HttpPost("Create")]
+
         public async Task<ActionResult<string>> Create(ServiceCenter template)
         {
-            var serviceCenter = await ServiceCenterRepository.InsertAsync(template);
+            var serviceCenter = await ServiceCenterRepositoryIn.InsertAsync(template);
             return JsonConvert.SerializeObject(new { success = true, message = "Service Center Created", data = serviceCenter }, settings);
         }
-        [HttpGet("{$id}")]
+
         public async Task<ActionResult<string>> Get(string id)
         {
-            var serviceCenter = await ServiceCenterRepository.GetByIDAsync(id);
+            var serviceCenter = await ServiceCenterRepositoryOut.GetByIDAsync(id);
             if (serviceCenter == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Service Center Not Found" });
@@ -50,23 +52,21 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, data = serviceCenter, message = "Service Center Successfully Retrieved" });
         }
 
-        [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
-            var serviceCenter = await ServiceCenterRepository.GetAllAsync();
+            var serviceCenter = await ServiceCenterRepositoryOut.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = serviceCenter, message = "Service Center Successfully Retrieved" });
         }
-        [HttpPut("{$id}")]
+
         public async Task<ActionResult<string>> Update(string id, ServiceCenter template)
         {
             if (id != template.ServiceCenterId)
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Service Center Not Found" });
             }
-            await ServiceCenterRepository.UpdateAsync(template);
+            await ServiceCenterRepositoryIn.UpdateAsync(template);
             try
             {
-                await ServiceCenterRepository.SaveAsync();
                 return JsonConvert.SerializeObject(new { success = true, message = "Service Center Updated", data = template }, settings);
 
             }
@@ -82,18 +82,17 @@ namespace YouthActionDotNet.Controllers
                 }
             }
         }
-        [HttpPut("UpdateAndFetch/{id}")]
+
         public async Task<ActionResult<string>> UpdateAndFetchAll(string id, ServiceCenter template)
         {
             if (id != template.ServiceCenterId)
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Service Center Not Found" });
             }
-            await ServiceCenterRepository.UpdateAsync(template);
+            await ServiceCenterRepositoryIn.UpdateAsync(template);
             try
             {
-                await ServiceCenterRepository.SaveAsync();
-                var serviceCenter = await ServiceCenterRepository.GetAllAsync();
+                var serviceCenter = await ServiceCenterRepositoryOut.GetAllAsync();
                 return JsonConvert.SerializeObject(new { success = true, data = serviceCenter, message = "Service Center Updated" });
             }
             catch (DbUpdateConcurrencyException)
@@ -108,30 +107,29 @@ namespace YouthActionDotNet.Controllers
                 }
             }
         }
-        [HttpDelete("{$id}")]
+
         public async Task<ActionResult<string>> Delete(string id)
         {
-            var serviceCenter = await ServiceCenterRepository.GetByIDAsync(id);
+            var serviceCenter = await ServiceCenterRepositoryOut.GetByIDAsync(id);
             if (serviceCenter == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Service Center Not Found" });
             }
-            await ServiceCenterRepository.DeleteAsync(serviceCenter);
+            await ServiceCenterRepositoryIn.DeleteAsync(serviceCenter);
             return JsonConvert.SerializeObject(new { success = true, message = "Service Center Deleted" });
         }
 
-        [HttpDelete("Delete")]
         public async Task<ActionResult<string>> Delete(ServiceCenter template)
         {
-            var serviceCenter = await ServiceCenterRepository.GetByIDAsync(template.ServiceCenterId);
+            var serviceCenter = await ServiceCenterRepositoryOut.GetByIDAsync(template.ServiceCenterId);
             if (serviceCenter == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Service Center Not Found" });
             }
-            await ServiceCenterRepository.DeleteAsync(serviceCenter);
+            await ServiceCenterRepositoryIn.DeleteAsync(serviceCenter);
             return JsonConvert.SerializeObject(new { success = true, message = "Service Center Deleted" });
         }
-        [HttpGet("Settings")]
+
         public string Settings()
         {
             Settings settings = new Settings();
@@ -147,17 +145,20 @@ namespace YouthActionDotNet.Controllers
             settings.FieldSettings.Add("ServiceCenterName", new InputType { type = "text", displayLabel = "Service Center Name", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ServiceCenterAddress", new InputType { type = "text", displayLabel = "Service Center Address", editable = true, primaryKey = false });
 
-            var allEmployees = UserRepository.GetAll(filter: e => e.Role == "Employee");
-            settings.FieldSettings.Add("RegionalDirectorId", new DropdownInputType { 
-                type = "dropdown", 
-                displayLabel = "Regional Director", 
-                editable = true, 
-                primaryKey = false, 
+            var allEmployees = UserRepositoryOut.GetAll(filter: e => e.Role == "Employee");
+            settings.FieldSettings.Add("RegionalDirectorId", new DropdownInputType
+            {
+                type = "dropdown",
+                displayLabel = "Regional Director",
+                editable = true,
+                primaryKey = false,
                 options = allEmployees.Select(
-                    e => new DropdownOption { 
-                        value = e.UserId, 
-                        label = e.username }).ToList() 
-                     });
+                    e => new DropdownOption
+                    {
+                        value = e.UserId,
+                        label = e.username
+                    }).ToList()
+            });
 
             return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
         }
