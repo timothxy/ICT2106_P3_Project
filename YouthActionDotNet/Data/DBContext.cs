@@ -3,8 +3,6 @@ using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.Data{
     public class DBContext : DbContext{
-        public object Permissions { get; internal set; }
-
         public DBContext(DbContextOptions<DBContext> options) : base(options) { }
 
         public DBContext(){

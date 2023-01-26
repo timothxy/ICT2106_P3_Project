@@ -14,7 +14,7 @@ namespace YouthActionDotNet.Models{
 
         public string DonationAmount { get; set; }
 
-        public string DonationContstraint { get; set; } 
+        public string DonationConstraint { get; set; } 
 
         public DateTime DonationDate { get; set; }
 

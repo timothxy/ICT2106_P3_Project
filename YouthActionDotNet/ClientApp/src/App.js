@@ -18,6 +18,7 @@ import Employees from './Pages/Employee/Employees';
 import Volunteer from './Pages/Volunteer/Volunteer';
 import VolunteerRegistration from './Pages/Volunteer/VolunteerRegistration';
 import Donors from './Pages/Donor/Donor';
+import Donations from './Pages/Donor/Donations';
 import ServiceCenters from './Pages/Employee/ServiceCenters';
 import VolunteerWork from './Pages/Volunteer/VolunteerWork';
 import Project from './Pages/Project/Project';
@@ -90,6 +91,7 @@ export default function App() {
                 <DrawerItem label="Volunteers" to={"/Volunteers"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Volunteer Work" to={"/VolunteerWork"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Donors" to={"/Donors"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                <DrawerItem label="Donations" to={"/Donations"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Service Center" to={"/ServiceCenters"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Project" to={"/Project"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
                 <DrawerItem label="Expense" to={"/Expense"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
@@ -103,6 +105,7 @@ export default function App() {
               <Route path="/Employees" element={<Employees user={token} permissions = {JSON.parse(perms)}/>}/>
               <Route path="/Volunteers" element={<Volunteer user={token} permissions = {JSON.parse(perms)}/>}/>
               <Route path="/Donors" element={<Donors user={token} permissions = {JSON.parse(perms)}></Donors>}/>
+              <Route path="/Donations" element={<Donations user={token} permissions = {JSON.parse(perms)}></Donations>}/>
               <Route path="/VolunteerWork" element={<VolunteerWork user={token} permissions = {JSON.parse(perms)}/>}/>
               <Route path="/ServiceCenters" element={<ServiceCenters user={token} permissions = {JSON.parse(perms)}/>}/>
               <Route path="/Project" element={<Project user={token} permissions = {JSON.parse(perms)}/>}/>
