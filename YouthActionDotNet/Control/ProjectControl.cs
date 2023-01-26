@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -13,7 +11,7 @@ using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.Controllers
 {
-    public class ProjectControl : ControllerBase, IUserInterfaceCRUD<Project>
+    public class ProjectControl : IUserInterfaceCRUD<Project>
     {
         private GenericRepositoryIn<Project> ProjectRepositoryIn;
         private GenericRepositoryOut<Project> ProjectRepositoryOut;
@@ -129,8 +127,6 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, data = projects, message = "Projects Successfully Retrieved" });
         }
 
-
-        [HttpGet("Settings")]
         public string Settings()
         {
             Settings settings = new Settings();
@@ -157,12 +153,14 @@ namespace YouthActionDotNet.Controllers
             settings.FieldSettings.Add("ProjectBudget", new InputType { type = "number", displayLabel = "Project Budget", editable = true, primaryKey = false });
 
             var serviceCenters = ServiceCenterRepositoryOut.GetAll();
-            settings.FieldSettings.Add("ServiceCenterId", new DropdownInputType { 
-                type = "dropdown", 
-                displayLabel = "Service Center", 
-                editable = true, 
-                primaryKey = false, 
-                options = serviceCenters.Select(x => new DropdownOption { value = x.ServiceCenterId, label = x.ServiceCenterName }).ToList()});
+            settings.FieldSettings.Add("ServiceCenterId", new DropdownInputType
+            {
+                type = "dropdown",
+                displayLabel = "Service Center",
+                editable = true,
+                primaryKey = false,
+                options = serviceCenters.Select(x => new DropdownOption { value = x.ServiceCenterId, label = x.ServiceCenterName }).ToList()
+            });
 
             return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
         }

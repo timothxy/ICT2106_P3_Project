@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -13,7 +11,7 @@ using YouthActionDotNet.DAL;
 namespace YouthActionDotNet.Controllers
 {
 
-    public class UserControl : ControllerBase, IUserInterfaceCRUD<User>
+    public class UserControl : IUserInterfaceCRUD<User>
     {
         private UserRepositoryIn UserRepositoryIn;
 
@@ -24,7 +22,7 @@ namespace YouthActionDotNet.Controllers
             UserRepositoryIn = new UserRepositoryIn(context);
             UserRepositoryOut = new UserRepositoryOut(context);
         }
-        
+
         public bool Exists(string id)
         {
             return UserRepositoryOut.GetByID(id) != null;
@@ -37,19 +35,21 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Invalid Username or Password" });
             }
-            return JsonConvert.SerializeObject(new { success = true, message = "Login Successful", data=validLoginUser });
+            return JsonConvert.SerializeObject(new { success = true, message = "Login Successful", data = validLoginUser });
         }
-        
+
         public async Task<ActionResult<string>> Create(User template)
         {
             var users = await UserRepositoryOut.GetAllAsync();
             var existingUser = users.FirstOrDefault(u => u.username == template.username);
-            if(existingUser != null){
+            if (existingUser != null)
+            {
                 return JsonConvert.SerializeObject(new { success = false, message = "User Already Exists" });
             }
-            
+
             var createdUser = await UserRepositoryIn.Register(template.username, template.Password);
-            if(createdUser == null){
+            if (createdUser == null)
+            {
                 return JsonConvert.SerializeObject(new { success = false, message = "Unexpected Error" });
             }
             return JsonConvert.SerializeObject(new { success = true, data = template, message = "User Successfully Created" });
@@ -88,7 +88,7 @@ namespace YouthActionDotNet.Controllers
                 }
             }
         }
-    
+
         public async Task<ActionResult<string>> UpdateAndFetchAll(string id, User template)
         {
             if (id != template.UserId)
@@ -124,7 +124,6 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "User Successfully Deleted" });
         }
 
-        [HttpDelete("Delete")]
         public async Task<ActionResult<string>> Delete(User template)
         {
             var user = await UserRepositoryOut.GetByIDAsync(template.UserId);
@@ -136,16 +135,14 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "User Successfully Deleted" });
         }
 
-        [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
             var users = await UserRepositoryOut.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = users, message = "Users Successfully Retrieved" });
         }
-        [HttpGet("Settings")]
         public string Settings()
-        {   
-            
+        {
+
             Settings settings = new UserSettings();
             settings.ColumnSettings.Add("UserId", new ColumnHeader { displayHeader = "User Id" });
             settings.ColumnSettings.Add("username", new ColumnHeader { displayHeader = "Username" });

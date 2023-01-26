@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -12,7 +11,7 @@ using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.Controllers
 {
-    public class ServiceCenterControl : ControllerBase, IUserInterfaceCRUD<ServiceCenter>
+    public class ServiceCenterControl : IUserInterfaceCRUD<ServiceCenter>
     {
         private GenericRepositoryIn<ServiceCenter> ServiceCenterRepositoryIn;
 

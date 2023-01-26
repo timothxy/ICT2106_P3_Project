@@ -2,18 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
 using Newtonsoft.Json;
-using System.Security.Cryptography;
 using YouthActionDotNet.DAL;
 
 namespace YouthActionDotNet.Controllers
 {
-    public class VolunteerControl : ControllerBase, IUserInterfaceCRUD<Volunteer>
+    public class VolunteerControl : IUserInterfaceCRUD<Volunteer>
     {
         private GenericRepositoryIn<Volunteer> VolunteerRepositoryIn;
         private GenericRepositoryOut<Volunteer> VolunteerRepositoryOut;
@@ -38,7 +36,8 @@ namespace YouthActionDotNet.Controllers
         {
             var volunteers = await VolunteerRepositoryOut.GetAllAsync();
             var existingVolunteer = volunteers.FirstOrDefault(d => d.UserId == template.UserId);
-            if(existingVolunteer != null){
+            if (existingVolunteer != null)
+            {
                 return JsonConvert.SerializeObject(new { success = false, message = "Volunteer Already Exists" });
             }
             template.Password = Utils.hashpassword(template.Password);
@@ -59,11 +58,13 @@ namespace YouthActionDotNet.Controllers
 
         public async Task<ActionResult<string>> Update(string id, Volunteer template)
         {
-            if(id != template.UserId){
+            if (id != template.UserId)
+            {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Id Mismatch" });
             }
             VolunteerRepositoryIn.Update(template);
-            try{
+            try
+            {
                 return await Get(id);
             }
             catch (DbUpdateConcurrencyException)
@@ -81,11 +82,13 @@ namespace YouthActionDotNet.Controllers
 
         public async Task<ActionResult<string>> UpdateAndFetchAll(string id, Volunteer template)
         {
-            if(id != template.UserId){
+            if (id != template.UserId)
+            {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Id Mismatch" });
             }
             VolunteerRepositoryIn.Update(template);
-            try{
+            try
+            {
                 return await All();
             }
             catch (DbUpdateConcurrencyException)
@@ -101,7 +104,6 @@ namespace YouthActionDotNet.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
             var volunteer = await VolunteerRepositoryOut.GetByIDAsync(id);
@@ -113,7 +115,6 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "Volunteer Successfully Deleted" });
         }
 
-        [HttpDelete("Delete")]
         public async Task<ActionResult<string>> Delete(Volunteer template)
         {
             var volunteer = await VolunteerRepositoryOut.GetByIDAsync(template.UserId);
@@ -125,14 +126,12 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "Volunteer Successfully Deleted" });
         }
 
-        [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
             var volunteers = await VolunteerRepositoryOut.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = volunteers, message = "Volunteers Successfully Retrieved" }, settings);
         }
 
-        [HttpGet("Settings")]
         public string Settings()
         {
             Settings settings = new UserSettings();
@@ -146,30 +145,47 @@ namespace YouthActionDotNet.Controllers
             settings.FieldSettings.Add("VolunteerDateJoined", new InputType { type = "datetime", displayLabel = "Volunteer Date Joined", editable = true, primaryKey = false });
             settings.FieldSettings.Add("VolunteerDateBirth", new InputType { type = "datetime", displayLabel = "Volunteer Date Birth", editable = true, primaryKey = false });
             settings.FieldSettings.Add("Qualifications", new InputType { type = "text", displayLabel = "Qualifications", editable = true, primaryKey = false });
-            settings.FieldSettings.Add("CriminalHistory", new DropdownInputType { type = "dropdown", displayLabel = "Criminal History", editable = true, primaryKey = false, options = new List<DropdownOption> {
+            settings.FieldSettings.Add("CriminalHistory", new DropdownInputType
+            {
+                type = "dropdown",
+                displayLabel = "Criminal History",
+                editable = true,
+                primaryKey = false,
+                options = new List<DropdownOption> {
                 new DropdownOption { value = "Yes", label = "Yes" },
                 new DropdownOption { value = "No", label = "No" },
-            } });
+            }
+            });
             settings.FieldSettings.Add("CriminalHistoryDesc", new InputType { type = "text", displayLabel = "Criminal History Description", editable = true, primaryKey = false });
-            settings.FieldSettings.Add("ApprovalStatus", new DropdownInputType { type = "dropdown", displayLabel = "Volunteer Status", editable = true, primaryKey = false, options = new List<DropdownOption> {
+            settings.FieldSettings.Add("ApprovalStatus", new DropdownInputType
+            {
+                type = "dropdown",
+                displayLabel = "Volunteer Status",
+                editable = true,
+                primaryKey = false,
+                options = new List<DropdownOption> {
                 new DropdownOption { value = "Approved", label = "Approved" },
                 new DropdownOption { value = "Pending", label = "Pending" },
-            } });
+            }
+            });
 
-            var allEmployees = EmployeeRepositoryOut.GetAll(filter: e=>e.Role == "Employee");
-            settings.FieldSettings.Add("ApprovedBy", new DropdownInputType { 
-                type = "dropdown", 
-                displayLabel = "Approved By", 
-                editable = true, 
-                primaryKey = false, 
+            var allEmployees = EmployeeRepositoryOut.GetAll(filter: e => e.Role == "Employee");
+            settings.FieldSettings.Add("ApprovedBy", new DropdownInputType
+            {
+                type = "dropdown",
+                displayLabel = "Approved By",
+                editable = true,
+                primaryKey = false,
                 options = allEmployees.Select(
-                    e => new DropdownOption { 
-                        value = e.UserId, 
-                        label = e.username }).ToList() 
-                     });
+                    e => new DropdownOption
+                    {
+                        value = e.UserId,
+                        label = e.username
+                    }).ToList()
+            });
 
-            
-            
+
+
             return JsonConvert.SerializeObject(new { success = true, data = settings, message = "Settings Successfully Retrieved" });
         }
 

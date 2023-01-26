@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YouthActionDotNet.Data;
@@ -12,7 +11,7 @@ using YouthActionDotNet.DAL;
 
 namespace YouthActionDotNet.Controllers
 {
-    public class VolunteerWorkControl : ControllerBase, IUserInterfaceCRUD<VolunteerWork>
+    public class VolunteerWorkControl : IUserInterfaceCRUD<VolunteerWork>
     {
         private GenericRepositoryIn<VolunteerWork> VolunteerWorkRepositoryIn;
         private GenericRepositoryOut<VolunteerWork> VolunteerWorkRepositoryOut;
@@ -45,7 +44,6 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, message = "Volunteer Work Created", data = volunteerWork }, settings);
         }
 
-        [HttpGet("{$id}")]
         public async Task<ActionResult<string>> Get(string id)
         {
             var volunteerWork = await VolunteerWorkRepositoryOut.GetByIDAsync(id);
@@ -56,14 +54,12 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, data = volunteerWork, message = "Volunteer Work Successfully Retrieved" }, settings);
         }
         
-        [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
             var volunteerWork = await VolunteerWorkRepositoryOut.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = volunteerWork, message = "Volunteer Work Successfully Retrieved" }, settings);
         }
 
-        [HttpPut("{$id}")]
         public async Task<ActionResult<string>> Update(string id, VolunteerWork template)
         {
             if (id != template.VolunteerWorkId)
@@ -88,7 +84,6 @@ namespace YouthActionDotNet.Controllers
             }
         }
 
-        [HttpPut("UpdateAndFetch/{$id}")]
         public async Task<ActionResult<string>> UpdateAndFetchAll(string id, VolunteerWork template)
         {
             if (id != template.VolunteerWorkId)
@@ -114,7 +109,6 @@ namespace YouthActionDotNet.Controllers
             }
         }
 
-        [HttpDelete("{$id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
             var volunteerWork = await VolunteerWorkRepositoryOut.GetByIDAsync(id);
@@ -126,7 +120,6 @@ namespace YouthActionDotNet.Controllers
             return JsonConvert.SerializeObject(new { success = true, message = "Volunteer Work Successfully Deleted" }, settings);
         }
 
-        [HttpDelete("Delete")]
         public async Task<ActionResult<string>> Delete(VolunteerWork template)
         {
             var volunteerWork = await VolunteerWorkRepositoryOut.GetByIDAsync(template.VolunteerWorkId);
@@ -143,7 +136,6 @@ namespace YouthActionDotNet.Controllers
             return VolunteerWorkRepositoryOut.GetByID(id) != null;
         }
 
-        [HttpGet("Settings")]
         public string Settings()
         {
             Settings settings = new Settings();
