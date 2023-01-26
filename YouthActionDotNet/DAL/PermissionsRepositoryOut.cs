@@ -9,8 +9,8 @@ using YouthActionDotNet.Models;
 
 namespace YouthActionDotNet.DAL{
 
-    public class PermissionsRepository : GenericRepositoryIn<Permissions> {
-        public PermissionsRepository(DBContext context) : base(context){
+    public class PermissionsRepositoryOut : GenericRepositoryOut<Permissions> {
+        public PermissionsRepositoryOut(DBContext context) : base(context){
             this.context = context;
             this.dbSet = context.Set<Permissions>();
         }

@@ -13,7 +13,7 @@ using YouthActionDotNet.DAL;
 using YouthActionDotNet.Controllers;
 
 namespace YouthActionDotNet.Control
-{    public class DonorControl : ControllerBase,IUserInterfaceCRUD<Donor>
+{    public class DonorControl : IUserInterfaceCRUD<Donor>
     {
         private GenericRepositoryIn<Donor> DonorRepositoryIn;
         private GenericRepositoryOut<Donor> DonorRepositoryOut;

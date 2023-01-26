@@ -9,41 +9,40 @@ using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
 using Newtonsoft.Json;
 using YouthActionDotNet.DAL;
+using YouthActionDotNet.Controllers;
 
-namespace YouthActionDotNet.Controllers
+namespace YouthActionDotNet.Control
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ExpenseController : ControllerBase, IUserInterfaceCRUD<Expense>
+    public class ExpenseControl: IUserInterfaceCRUD<Expense>
     {
-        private GenericRepository<Employee> EmployeeRepository;
-        private GenericRepository<Expense> ExpenseRepository;
-        private GenericRepository<Project> ProjectRepository;
-        private FileRepository FileRepository;
+        private GenericRepositoryOut<Employee> EmployeeRepository;
+        private GenericRepositoryOut<Expense> ExpenseRepositoryOut;
+        private GenericRepositoryIn<Expense> ExpenseRepositoryIn;
+        private GenericRepositoryOut<Project> ProjectRepository;
         JsonSerializerSettings settings = new JsonSerializerSettings
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         };
 
-        public ExpenseController(DBContext context)
+        public ExpenseControl(DBContext context)
         {
-            ExpenseRepository = new GenericRepository<Expense>(context);
-            EmployeeRepository = new GenericRepository<Employee>(context);
-            ProjectRepository = new GenericRepository<Project>(context);
-            FileRepository = new FileRepository(context);
+            ExpenseRepositoryOut = new GenericRepositoryOut<Expense>(context);
+            ExpenseRepositoryIn = new GenericRepositoryIn<Expense>(context);
+            EmployeeRepository = new GenericRepositoryOut<Employee>(context);
+            ProjectRepository = new GenericRepositoryOut<Project>(context);
         }
 
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
-            var expense = await ExpenseRepository.GetAllAsync();
+            var expense = await ExpenseRepositoryOut.GetAllAsync();
             return JsonConvert.SerializeObject(new { success = true, data = expense, message = "Expense Successfully Retrieved" }, settings);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<string>> Get(string id)
         {
-            var expense = await ExpenseRepository.GetByIDAsync(id);
+            var expense = await ExpenseRepositoryOut.GetByIDAsync(id);
             if (expense == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Expense Not Found" }, settings);
@@ -55,7 +54,7 @@ namespace YouthActionDotNet.Controllers
         public async Task<ActionResult<string>> Create(Expense template)
         {
             try{
-                var expense = await ExpenseRepository.InsertAsync(template);
+                var expense = await ExpenseRepositoryIn.InsertAsync(template);
                 return JsonConvert.SerializeObject(new { success = true, message = "Expense Created", data = expense }, settings);
         
             }catch(Exception e){
@@ -70,10 +69,9 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Expense ID Mismatch" }, settings);
             }
-            await ExpenseRepository.UpdateAsync(template);
+            await ExpenseRepositoryIn.UpdateAsync(template);
             try
             {
-                await ExpenseRepository.SaveAsync();
                 return JsonConvert.SerializeObject(new { success = true, message = "Expense Successfully Updated", data = template }, settings);
             }
             catch (DbUpdateConcurrencyException)
@@ -96,11 +94,10 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Expense ID Mismatch" }, settings);
             }
-            await ExpenseRepository.UpdateAsync(template);
+            await ExpenseRepositoryIn.UpdateAsync(template);
             try
             {
-                await ExpenseRepository.SaveAsync();
-                var expense = await ExpenseRepository.GetAllAsync();
+                var expense = await ExpenseRepositoryOut.GetAllAsync();
                 return JsonConvert.SerializeObject(new { success = true, message = "Expense Successfully Updated", data = expense }, settings);
             }
             catch (DbUpdateConcurrencyException)
@@ -119,30 +116,30 @@ namespace YouthActionDotNet.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
-            var expense = await ExpenseRepository.GetByIDAsync(id);
+            var expense = await ExpenseRepositoryOut.GetByIDAsync(id);
             if (expense == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Expense Not Found" }, settings);
             }
-            await ExpenseRepository.DeleteAsync(expense);
+            await ExpenseRepositoryIn.DeleteAsync(expense);
             return JsonConvert.SerializeObject(new { success = true, message = "Expense Successfully Deleted" }, settings);
         }
 
         [HttpDelete("Delete")]
         public async Task<ActionResult<String>> Delete(Expense template)
         {
-            var expense = await ExpenseRepository.GetByIDAsync(template.ExpenseId);
+            var expense = await ExpenseRepositoryOut.GetByIDAsync(template.ExpenseId);
             if (expense == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Expense Not Found" }, settings);
             }
-            await ExpenseRepository.DeleteAsync(expense);
+            await ExpenseRepositoryIn.DeleteAsync(expense);
             return JsonConvert.SerializeObject(new { success = true, message = "Expense Successfully Deleted" }, settings);
         }
 
         public bool Exists(string id)
         {
-            return ExpenseRepository.GetByID(id) != null;
+            return ExpenseRepositoryOut.GetByID(id) != null;
         }
 
         [HttpGet("Settings")]

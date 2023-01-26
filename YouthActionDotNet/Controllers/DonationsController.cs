@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using YouthActionDotNet.Control;
 using YouthActionDotNet.DAL;
 using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
@@ -13,126 +14,63 @@ namespace YouthActionDotNet.Controllers{
     [ApiController]
     public class DonationsController : ControllerBase, IUserInterfaceCRUD<Donations>
     {
-        private GenericRepository<Donations> DonationsRepository;
-        JsonSerializerSettings settings = new JsonSerializerSettings
-        {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-        };
+        private DonationsControl donationsControl;
 
         public DonationsController(DBContext context)
         {
-            DonationsRepository = new GenericRepository<Donations>(context);
+            donationsControl = new DonationsControl(context);
         }
         [HttpGet("All")]
         public async Task<ActionResult<string>> All()
         {
-            var donations = await DonationsRepository.GetAllAsync();
-            return JsonConvert.SerializeObject(new {success = true, data = donations}, settings);
+            return await donationsControl.All();
         }
 
         [HttpPost("Create")]
         public async Task<ActionResult<string>> Create(Donations template)
         {
-            await DonationsRepository.InsertAsync(template);
-            var createdDonations = await DonationsRepository.GetByIDAsync(template.DonationsId);
-            return JsonConvert.SerializeObject(new {success = true, data = createdDonations}, settings);
+            return await donationsControl.Create(template);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
-            var donations = await DonationsRepository.GetByIDAsync(id);
-            if (donations == null)
-            {
-                return JsonConvert.SerializeObject(new {success = false, message = "Donations Not Found"}, settings);
-            }
-
-            await DonationsRepository.DeleteAsync(donations);
-            return JsonConvert.SerializeObject(new {success = true, message = "Donations Successfully Deleted"}, settings);
+            return await donationsControl.Delete(id);
         }
 
         [HttpDelete("Delete")]
         public async Task<ActionResult<string>> Delete(Donations template)
         {
-            var donations = await DonationsRepository.GetByIDAsync(template.DonationsId);
-            if (donations == null)
-            {
-                return JsonConvert.SerializeObject(new {success = false, message = "Donations Not Found"}, settings);
-            }
-
-            await DonationsRepository.DeleteAsync(donations);
-            return JsonConvert.SerializeObject(new {success = true, message = "Donations Successfully Deleted"}, settings);
+            return await donationsControl.Delete(template);
         }
 
         public bool Exists(string id)
         {
-            if (DonationsRepository.GetByIDAsync(id) != null)
-            {
-                return true;
-            }
-            return false;
+            return donationsControl.Exists(id);
         }
         
         [HttpGet("{id}")]
         public async Task<ActionResult<string>> Get(string id)
         {
-            var donations = await DonationsRepository.GetByIDAsync(id);
-            if (donations == null)
-            {
-                return JsonConvert.SerializeObject(new {success = false, message = "Donations Not Found"}, settings);
-            }
-            return JsonConvert.SerializeObject(new {success = true, data = donations}, settings);
+            return await donationsControl.Get(id);
         }
 
+        [HttpGet("Settings")]
         public string Settings()
         {
-            return JsonConvert.SerializeObject(new {success = true, data = settings}, settings);
+            return donationsControl.Settings();
         }
+
         [HttpPut("{id}")]
         public async Task<ActionResult<string>> Update(string id, Donations template)
         {
-            if(id != template.DonationsId)
-            {
-                return JsonConvert.SerializeObject(new {success = false, message = "Donations ID Mismatch"}, settings);
-            }
-            DonationsRepository.Update(template);
-            try{
-                await DonationsRepository.SaveAsync();
-                return await Get(id);
-            }catch (DbUpdateConcurrencyException)
-            {
-                if (!Exists(id))
-                {
-                    return JsonConvert.SerializeObject(new {success = false, message = "Donations Not Found"}, settings);
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            return await donationsControl.Update(id,template);
         }
+        
         [HttpPut("UpdateAndFetch/{id}")]
         public async Task<ActionResult<string>> UpdateAndFetchAll(string id, Donations template)
         {
-            if(id != template.DonationsId)
-            {
-                return JsonConvert.SerializeObject(new {success = false, message = "Donations ID Mismatch"}, settings);
-            }
-            DonationsRepository.Update(template);
-            try{
-                await DonationsRepository.SaveAsync();
-                return await All();
-            }catch (DbUpdateConcurrencyException)
-            {
-                if (!Exists(id))
-                {
-                    return JsonConvert.SerializeObject(new {success = false, message = "Donations Not Found"}, settings);
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            return await donationsControl.UpdateAndFetchAll(id,template);
         }
     }
 }

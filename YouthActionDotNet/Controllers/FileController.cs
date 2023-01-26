@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using YouthActionDotNet.Control;
 using YouthActionDotNet.DAL;
 using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
@@ -13,9 +14,9 @@ namespace YouthActionDotNet.Controllers{
     [ApiController]
     public class FileController: ControllerBase{
         
-        private FileRepository FileRepository;
+        private FileControl fileControl;
         public FileController(DBContext context){
-            FileRepository = new FileRepository(context);
+            fileControl = new FileControl(context);
         }
 
         [HttpPost("Upload")]
@@ -23,9 +24,6 @@ namespace YouthActionDotNet.Controllers{
             try{
                 var form = await Request.ReadFormAsync();
                 var file = form.Files.FirstOrDefault();
-                System.Diagnostics.Debug.WriteLine(file.FileName);
-
-                Console.WriteLine(file.FileName);
 
                 if(file != null)
                 {
@@ -34,8 +32,7 @@ namespace YouthActionDotNet.Controllers{
                         await file.OpenReadStream().CopyToAsync(stream);
                     }
                     
-                    var fileId = await FileRepository.UploadFile(file.FileName,filePath);
-                    return JsonConvert.SerializeObject(new { success = true, message = "File uploaded successfully", data = fileId });
+                    return await fileControl.UploadFile(file.FileName, filePath);
                 }
                 return JsonConvert.SerializeObject(new { success = false, message = "No file found" });
             }catch(Exception e){
@@ -48,16 +45,10 @@ namespace YouthActionDotNet.Controllers{
         [HttpGet("{id}")]
         public async Task<string> GetFile(string id){
             try{
-                var file = await FileRepository.getFilePath(id);
-                if(file == null){
-                    return JsonConvert.SerializeObject(new { success = false, message = "File Does not exist" });
-                
-                }else{
-                    return JsonConvert.SerializeObject(new { success = true, message = "File path retrieved successfully", data = file });
-            
-                }
+                var file = await fileControl.GetFile(id);
+                return file;
 
-                    }catch(Exception e){
+            }catch(Exception e){
                 return JsonConvert.SerializeObject(new { success = false, message = e.Message });
             }
         }
