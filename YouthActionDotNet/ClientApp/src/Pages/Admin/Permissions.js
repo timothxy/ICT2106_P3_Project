@@ -151,6 +151,7 @@ export default class Permissions extends React.Component {
                     <ModuleUpdate
                         requestError = {this.requestError}
                         requestRefresh = {this.requestRefresh}
+                        api = {this.settings.api}
                     >
 
                     </ModuleUpdate>
@@ -274,6 +275,7 @@ class ModuleUpdate extends React.Component{
 
     state = {
         currentStep: 0,
+        newModule:"",
     }
 
     moduleOnChange = (field,value) => {
@@ -283,7 +285,7 @@ class ModuleUpdate extends React.Component{
     }
 
     addModule = async (name) =>{
-        return fetch(this.settings.api + "CreateModule/" + name , {
+        return fetch(this.props.api + "CreateModule/" + name , {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -305,7 +307,7 @@ class ModuleUpdate extends React.Component{
     }
 
     deleteModule = async (name) =>{
-        return fetch(this.settings.api + "RemoveModule/" + name , {
+        return fetch(this.props.api + "RemoveModule/" + name , {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
