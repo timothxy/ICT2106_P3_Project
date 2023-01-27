@@ -62,7 +62,7 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Id Mismatch" });
             }
-            VolunteerRepositoryIn.Update(template);
+            await VolunteerRepositoryIn.UpdateAsync(template);
             try
             {
                 return await Get(id);
@@ -86,7 +86,7 @@ namespace YouthActionDotNet.Controllers
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Id Mismatch" });
             }
-            VolunteerRepositoryIn.Update(template);
+            await VolunteerRepositoryIn.UpdateAsync(template);
             try
             {
                 return await All();

@@ -2,8 +2,11 @@
 import React from "react"
 import { json } from "react-router-dom"
 import { Loading } from "../../Components/appCommon"
-import { StdButton } from "../../Components/common"
+import { MultiStepBox, StdButton } from "../../Components/common"
+import { StdInput } from "../../Components/input"
 import DatapageLayout from "../PageLayout"
+
+import "../../styles/permissions.scss"
 
 export default class Permissions extends React.Component {
     state={
@@ -12,6 +15,7 @@ export default class Permissions extends React.Component {
         loading:true,
         settings: {},
         error: "",
+        currentStep:0,
     }
 
     settings ={
@@ -142,25 +146,35 @@ export default class Permissions extends React.Component {
         }else{
             
         return(
-            <DatapageLayout 
-                settings={this.settings}
-                fieldSettings={this.state.settings.data.FieldSettings} 
-                headers={this.state.settings.data.ColumnSettings} 
-                data={this.state.content.data}
-                updateHandle = {this.handleUpdate}
-                requestRefresh = {this.requestRefresh}
-                error={this.state.error}
-                permissions={this.props.permissions}
-                requestError = {this.requestError}
-                >
-                {this.state.content.data.map((item, index) => {
-                    return (
-                        <div className="staff-extended">
-                            <PermissionsMap handleUpdate={this.handleUpdate} item={item}></PermissionsMap>
-                        </div>
-                    )
-                })}
-            </DatapageLayout>
+            <div className="d-flex flex-column w-100">
+                <div className="container-fluid module-update-container">
+                    <ModuleUpdate
+                        requestError = {this.requestError}
+                        requestRefresh = {this.requestRefresh}
+                    >
+
+                    </ModuleUpdate>
+                </div>
+                <DatapageLayout 
+                    settings={this.settings}
+                    fieldSettings={this.state.settings.data.FieldSettings} 
+                    headers={this.state.settings.data.ColumnSettings} 
+                    data={this.state.content.data}
+                    updateHandle = {this.handleUpdate}
+                    requestRefresh = {this.requestRefresh}
+                    error={this.state.error}
+                    permissions={this.props.permissions}
+                    requestError = {this.requestError}
+                    >
+                    {this.state.content.data.map((item, index) => {
+                        return (
+                            <div className="staff-extended">
+                                <PermissionsMap handleUpdate={this.handleUpdate} item={item}></PermissionsMap>
+                            </div>
+                        )
+                    })}
+                </DatapageLayout>
+            </div>
             )
         }
     }
@@ -250,6 +264,120 @@ export class PermissionsMap extends React.Component {
                 <StdButton onClick={this.handleUpdate}>
                     Save Changes
                 </StdButton>
+            </div>
+        )
+    }
+}
+
+
+class ModuleUpdate extends React.Component{
+
+    state = {
+        currentStep: 0,
+    }
+
+    moduleOnChange = (field,value) => {
+        this.setState({
+            newModule:value,
+        })
+    }
+
+    addModule = async (name) =>{
+        return fetch(this.settings.api + "CreateModule/" + name , {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: name
+        }).then(async res => {
+            return res.json();
+        });
+    }
+
+    handleAddModule = async (e) =>{
+        await this.addModule(this.state.newModule).then((content)=>{
+            if(content.success){
+                this.props.requestRefresh();
+            }else{
+                this.props.requestError(content.message);
+            }
+        })
+    }
+
+    deleteModule = async (name) =>{
+        return fetch(this.settings.api + "RemoveModule/" + name , {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: name
+        }).then(async res => {
+            return res.json();
+        });
+    }
+
+    handleDeleteModule = async (e) =>{
+        await this.deleteModule(this.state.newModule).then((content)=>{
+            if(content.success){
+                this.props.requestRefresh();
+            }else{
+                this.props.requestError(content.message);
+            }
+        })
+    }
+
+
+    render(){
+        return(
+            <div className="d-flex container-fluid flex-column">
+                <div className="row">
+                    <div 
+                        className={"col-6 module-update-tab " + (this.state.currentStep === 0 ? "active" : "")}
+                        onClick={()=>{this.setState({currentStep:0})}}
+                    >
+                        Add Module
+                    </div>
+                    <div 
+                        className={"col-6 module-update-tab " + (this.state.currentStep === 1 ? "active" : "")}
+                        onClick={()=>{this.setState({currentStep:1})}}
+                    >
+                        Delete Module
+                    </div>
+                </div>
+                <MultiStepBox currentStep={this.state.currentStep} steps={
+                [{0: "Add Module"},
+                {1: "Delete Module"}]
+                }>
+                    <div className="row module">
+                        <div className="col-12 d-flex flex-column">
+                            <form onSubmit={this.handleAddModule} className="module-form">
+                                <span className="module-update-header">Add Module</span>
+                                <StdInput
+                                    type="text"
+                                    label="Module Name"
+                                    onChange={this.moduleOnChange}
+                                    enabled = {true}
+                                ></StdInput>
+                                <StdButton type={"submit"}>Submit</StdButton>
+                            </form>
+                        </div>
+                    </div>
+                    <div className="row module">
+                        <div className="col-12 d-flex flex-column">
+                            <form onSubmit={this.handleDeleteModule} className="module-form">
+                                <span className="module-update-header">Delete Module</span>
+                                <StdInput
+                                    type="text"
+                                    label="Module Name"
+                                    onChange={this.moduleOnChange}
+                                    enabled = {true}
+                                ></StdInput>
+                                <StdButton type={"submit"}>Submit</StdButton>
+                            </form>
+                        </div>
+                    </div>
+                </MultiStepBox>
+                    
             </div>
         )
     }

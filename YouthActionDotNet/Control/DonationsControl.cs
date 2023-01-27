@@ -126,7 +126,7 @@ namespace YouthActionDotNet.Control{
             {
                 return JsonConvert.SerializeObject(new {success = false, message = "Donations ID Mismatch"}, settings);
             }
-            DonationsRepositoryIn.Update(template);
+            await DonationsRepositoryIn.UpdateAsync(template);
             try{
                 return await Get(id);
             }catch (DbUpdateConcurrencyException)
@@ -147,7 +147,7 @@ namespace YouthActionDotNet.Control{
             {
                 return JsonConvert.SerializeObject(new {success = false, message = "Donations ID Mismatch"}, settings);
             }
-            DonationsRepositoryIn.Update(template);
+            await DonationsRepositoryIn.UpdateAsync(template);
             try{
                 return await All();
             }catch (DbUpdateConcurrencyException)

@@ -7,12 +7,14 @@ namespace YouthActionDotNet.Models{
 
     public class Permissions{
         public Permissions(){
+            string json = "";
             this.Id = Guid.NewGuid().ToString();
             using (StreamReader r = new StreamReader("./PermissionTemplate/permission.json")){
-                string json = r.ReadToEnd();
-                List<Permission> items = JsonConvert.DeserializeObject<List<Permission>>(json);
-                this.Permission = JsonConvert.SerializeObject(items);
+                json = r.ReadToEnd();
+                r.Close();
             }
+            List<Permission> items = JsonConvert.DeserializeObject<List<Permission>>(json);
+            this.Permission = JsonConvert.SerializeObject(items);
             
         }
 
@@ -22,9 +24,62 @@ namespace YouthActionDotNet.Models{
 
         public string Permission { get; set; }
 
+        public static void UpdateDefaultPermissions(string name){
+            string json = "";
+            using (StreamReader r = new StreamReader("./PermissionTemplate/permission.json")){
+                json = r.ReadToEnd();
+                r.Close();
+            }
+
+
+            using (StreamWriter w = new StreamWriter("./PermissionTemplate/permission.json")){
+                
+                List<Permission> items = JsonConvert.DeserializeObject<List<Permission>>(json);
+                for (int i = 0; i < items.Count; i++){
+                    if (items[i].Module == name){
+                        return;
+                    }
+                }
+                
+                items.Add(new Permission(name));
+                string output = JsonConvert.SerializeObject(items, Formatting.Indented);
+                w.Write(output);
+                w.Close();
+            }
+        }
+
+        public static void RemoveDefaultPermissions(string name){
+            string json = "";
+            using (StreamReader r = new StreamReader("./PermissionTemplate/permission.json")){
+                json = r.ReadToEnd();
+                r.Close();
+            }
+
+            using (StreamWriter w = new StreamWriter("./PermissionTemplate/permission.json")){
+                List<Permission> items = JsonConvert.DeserializeObject<List<Permission>>(json);
+                for (int i = 0; i < items.Count; i++){
+                    if (items[i].Module == name){
+                        items.RemoveAt(i);
+                        break;
+                    }
+                }
+                string output = JsonConvert.SerializeObject(items, Formatting.Indented);
+                w.Write(output);
+                w.Close();
+            }
+        }
+
     }
 
     public class Permission{
+
+        public Permission(string module){
+            this.Module = module;
+            this.Create = true;
+            this.Read = true;
+            this.Update = true;
+            this.Delete = true;
+        }
         public string Module { get; set; }
         public bool Create { get; set; }
         public bool Read { get; set; }

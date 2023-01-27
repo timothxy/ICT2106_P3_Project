@@ -1,0 +1,32 @@
+@import "main.scss";
+
+.module-update-container{
+    display:grid;
+
+    .module-update-header{
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .module-update-tab{
+        background-color: $primary;
+        padding:15px;
+        color:white;
+        transition: 0.3s ease-in-out;
+        cursor: pointer;
+        &.active{
+            background-color: $nav-active;
+            font-weight: bold;
+        }
+    }
+
+    .module{
+        padding:15px;
+
+        .module-form{
+            display:flex;
+            flex-direction: column;
+            gap:15px;
+        }
+    }
+}

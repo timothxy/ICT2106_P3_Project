@@ -71,5 +71,20 @@ namespace YouthActionDotNet.Controllers{
         {
             return await permissionsControl.UpdateAndFetchAll(id, template);
         }
+
+        [HttpPost("CreateModule/{name}")]
+        public async Task<ActionResult<string>> CreateModule(string name)
+        {
+            Console.WriteLine(name);
+            Permissions.UpdateDefaultPermissions(name);
+            return await permissionsControl.CreateModule(name);
+        }
+
+        [HttpPost("RemoveModule/{name}")]
+        public async Task<ActionResult<string>> RemoveModule(string name)
+        {
+            Permissions.RemoveDefaultPermissions(name);
+            return await permissionsControl.DeleteModule(name);
+        }
     }
 }

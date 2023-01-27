@@ -72,7 +72,6 @@ namespace YouthActionDotNet.Controllers
             return await projectControl.All();
         }
 
-
         [HttpGet("Settings")]
         public string Settings()
         {

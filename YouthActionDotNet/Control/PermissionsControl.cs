@@ -84,6 +84,41 @@ namespace YouthActionDotNet.Control{
             }
             return JsonConvert.SerializeObject(new { success = true, message = "Permission Successfully Retrieved", data = permission });
         }
+
+        public async Task<ActionResult<string>> CreateModule(string name){
+            var permissions = await PermissionRepositoryOut.GetAllAsync();
+
+            try{
+                foreach(var permission in permissions){
+                    List<Permission> permissionList = JsonConvert.DeserializeObject<List<Permission>>(permission.Permission);
+                    permissionList.Add(new Permission(name));
+                    permission.Permission = JsonConvert.SerializeObject(permissionList);
+                    await PermissionRepositoryIn.UpdateAsync(permission);
+                }
+                return JsonConvert.SerializeObject(new { success = true, message = "Module Created" });
+            }catch(Exception e){
+                return JsonConvert.SerializeObject(new { success = false, message = e.Message});
+            
+            }
+        }
+
+        public async Task<ActionResult<string>> DeleteModule(string name){
+            var permissions = await PermissionRepositoryOut.GetAllAsync();
+
+            try{
+                foreach(var permission in permissions){
+                    List<Permission> permissionList = JsonConvert.DeserializeObject<List<Permission>>(permission.Permission);
+                    permissionList.RemoveAll(x => x.Module == name);
+                    permission.Permission = JsonConvert.SerializeObject(permissionList);
+                    await PermissionRepositoryIn.UpdateAsync(permission);
+                }
+                return JsonConvert.SerializeObject(new { success = true, message = "Module Deleted" });
+            }catch(Exception e){
+                return JsonConvert.SerializeObject(new { success = false, message = e.Message});
+            
+            }
+        }
+
         public string Settings()
         {
             Settings settings = new Settings();
