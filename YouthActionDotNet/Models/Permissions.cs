@@ -69,6 +69,20 @@ namespace YouthActionDotNet.Models{
             }
         }
 
+        public static List<string> GetAllModules(){
+            string json = "";
+            using (StreamReader r = new StreamReader("./PermissionTemplate/permission.json")){
+                json = r.ReadToEnd();
+                r.Close();
+            }
+            List<string> modules = new List<string>();
+            List<Permission> items = JsonConvert.DeserializeObject<List<Permission>>(json);
+            foreach (var item in items){
+                modules.Add(item.Module);
+            }
+            return modules;
+        }
+
     }
 
     public class Permission{

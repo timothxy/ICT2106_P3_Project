@@ -1,10 +1,11 @@
 import React from "react";
-import { ActionsButton, DivSpacing, IconButton, IconButtonWithText, SearchBar, SearchTags, SizedBox, StdButton, TagsBox } from "../Components/common";
+import { ActionsButton, DivSpacing, IconButton, IconButtonWithText, MultiStepBox, SearchBar, SearchTags, SizedBox, StdButton, TagsBox } from "../Components/common";
 import {AccessDeniedPanel, Loading} from "../Components/appCommon";
 import { StdInput } from "../Components/input";
 import SlideDrawer, { DrawerItemNonLink } from "../Components/sideNav";
 import { Cell, ListTable, HeaderRow, ExpandableRow } from "../Components/tableComponents";
 import {CSVLink} from "react-csv";
+import U from "../Utilities/utilities";
 
 export const searchSuggestions = [
 ]
@@ -37,23 +38,52 @@ export default class DatapageLayout extends React.Component {
         this.handleClose = this.handleClose.bind(this);
         this.expand = this.expand.bind(this);
     }
-    componentDidMount() {
+    componentDidMount = async () =>{
         document.title = this.props.settings.title;
         window.addEventListener("resize", this.resize.bind(this));
         this.resize();
-        const perms = this.props.permissions.find(p => p.Module === this.props.settings.title);
-        
+        const perms = await this.props.permissions.find(p => p.Module === this.props.settings.title);
+        const reformattedPerms = [];
+        Object.keys(perms).forEach((perm)=>{
+            return perm === "Module" ? null : 
+                perms[perm] === true ? reformattedPerms.push(perm) : null
+        });
         const pageNumbers = [];
         for (let i = 1; i <= Math.ceil(this.state.data.length / this.state.itemsPerPage); i++) {
             pageNumbers.push(i);
         }
+        let extraComponents = [];
+        this.props.extraComponents?.length > 0 && 
 
-        
+            this.props.extraComponents.forEach((component)=>{
+                
+                U.checkSubset(component.requiredPerms,reformattedPerms) && 
+                    extraComponents.push(component)
+            })
+        let tableHeaderActions = await this.populateActions(perms,extraComponents);
         this.setState({
+            extraComponents: extraComponents,
+            tableHeaderActions: tableHeaderActions,
             data: this.props.data,
             perms : perms,
-            pageNumbers: pageNumbers
+            pageNumbers: pageNumbers,
         })
+    }
+
+    populateActions = async (perms,components)=>{
+        let tableHeaderActions = [];
+        if (perms?.Create) {
+            tableHeaderActions.push({ label: "Add " + this.props.settings.title, onClick: () => { this.setExpansionContent("add") } })
+        }
+        if (perms?.Delete) {
+            tableHeaderActions.push({ label: "Delete " + this.props.settings.title, onClick: () => { this.setExpansionContent("del") } })
+        }
+        tableHeaderActions.push({ label: "Generate Spreadsheet", onClick: () => { this.setExpansionContent("gs") } },)
+        
+        components.forEach((component)=>{
+            tableHeaderActions.push({label: component.label, onClick: ()=>{this.setExpansionContent(component.key)}})
+        })
+        return tableHeaderActions;
     }
 
     rerenderPageNums = (e) => {
@@ -170,18 +200,10 @@ export default class DatapageLayout extends React.Component {
         const indexOfLastItem = this.state.currentPage * this.state.itemsPerPage;
         const indexOfFirstItem = indexOfLastItem - this.state.itemsPerPage;
         const currentItems = this.state.data.slice(indexOfFirstItem, indexOfLastItem);
-        const tableHeaderActions = [];
-        if (this.state.perms?.Create) {
-            tableHeaderActions.push({ label: "Add " + this.props.settings.title, onClick: () => { this.setExpansionContent("add") } })
-        }
-        if (this.state.perms?.Delete) {
-            tableHeaderActions.push({ label: "Delete " + this.props.settings.title, onClick: () => { this.setExpansionContent("del") } })
-        }
-        tableHeaderActions.push({ label: "Generate Spreadsheet", onClick: () => { this.setExpansionContent("gs") } },)
-        
+
         return (
             this.state.perms?.Read ? 
-            <div className="d-flex flex-column container-fluid listPageContainer">
+            <div className="d-flex flex-column container-fluid listPageContainer h-100">
                 {this.props.error !== "" && 
                     <div className="listPageContainer-error">
                         {this.props.error}
@@ -191,10 +213,10 @@ export default class DatapageLayout extends React.Component {
                         ></IconButton>
                     </div>
                 }
-                <div className="col-12">
+                <div className="col-12 d-flex flex-column h-100">
                     
                     <TableHeader actions={
-                        tableHeaderActions
+                        this.state.tableHeaderActions
                     } 
                     requestRefresh={this.props.requestRefresh} 
                     fieldSettings={this.props.fieldSettings} 
@@ -210,10 +232,11 @@ export default class DatapageLayout extends React.Component {
                     data={this.state.data}
                     perms={this.state.perms}
                     requestError={this.props.requestError}
+                    extraComponents={this.state.extraComponents}
                     ></TableHeader>
                     <TableFooter settings={this.props.settings} toggle={this.drawerToggleClickHandler} showBottomMenu={this.state.showBottomMenu}></TableFooter>
                     <DivSpacing spacing={1}></DivSpacing>
-                    <div className="d-flex justify-content-center align-items-center">
+                    <div className="d-flex justify-content-center align-items-start flex-fill">
                         <ListTable settings={this.settings}>
                             <HeaderRow>
                                 {Object.keys(this.props.headers).map((key, index) => {
@@ -243,7 +266,7 @@ export default class DatapageLayout extends React.Component {
                         </ListTable>
                         
                     </div>
-                    <div className="d-flex justify-content-end page-nums-container">
+                    <div className="d-flex justify-content-end page-nums-container align-self-end">
                         <div className="items-per-page">
                             <StdInput
                                 type="dropdown"
@@ -307,7 +330,6 @@ export default class DatapageLayout extends React.Component {
                             </li>
                         </ul>
                     </div>
-                    <SizedBox height={"56px"}></SizedBox>
                 </div>
                 <BottomMenu actions={
                     [
@@ -417,6 +439,7 @@ export class TableHeader extends React.Component {
                     </div>
                 </div>
                 <HeaderExpansion 
+                perms = {this.props.perms}
                 settings={this.props.settings} 
                 requestRefresh={this.props.requestRefresh} 
                 fieldSettings={this.props.fieldSettings} 
@@ -425,6 +448,8 @@ export class TableHeader extends React.Component {
                 handleClose={this.props.handleClose} 
                 data = {this.props.data}
                 requestError = {this.props.requestError}
+                extraComponents = {this.props.extraComponents}
+                actions={this.props.actions}
                 >
                 </HeaderExpansion>
                 <DivSpacing spacing={1}></DivSpacing>
@@ -443,60 +468,70 @@ TableHeader.defaultProps = {
 }
 
 export class HeaderExpansion extends React.Component {
-    render() {
-        if (this.props.expanded) {
-            if (this.props.component === "add") {
-                return(
-
-                    <HeaderExpansionPane handleClose={this.props.handleClose} title={"Add Entry"}>
-                        <AddEntry settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings = {this.props.fieldSettings} requestError={this.props.requestError}></AddEntry>
-                    </HeaderExpansionPane>
-                )
-            }
-            if (this.props.component === "del"){
-                return(
-                    <HeaderExpansionPane handleClose={this.props.handleClose} title={"Delete Entry"}>
-                        <DeleteEntry settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings = {this.props.fieldSettings} requestError={this.props.requestError}></DeleteEntry>
-                    </HeaderExpansionPane>
-                )
-            }
-
-            if (this.props.component === "gs") {
-                return (
-                    <HeaderExpansionPane handleClose={this.props.handleClose} title={"Generate Spreadsheet"}>
-                        <GenerateSpreadsheet settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings = {this.props.fieldSettings} data={this.props.data} requestError={this.props.requestError}></GenerateSpreadsheet>
-                    </HeaderExpansionPane>
-                )
-            }
-
-            if (this.props.component === "cs") {
-                return (
-                    <HeaderExpansionPane handleClose={this.props.handleClose} title={"Column Settings"}>
-                        <ColumnSettings settings={this.props.settings} requestRefresh={this.props.requestRefresh} requestError={this.props.requestError}></ColumnSettings>
-                    </HeaderExpansionPane>
-                )
-            }
-
-            if (this.props.component === "tm") {
-                return (
-                    <HeaderExpansionPane handleClose={this.props.handleClose} title={"Tag Macros"}>
-                        <TagMacros settings={this.props.settings} requestRefresh={this.props.requestRefresh}>
-                        </TagMacros>
-                    </HeaderExpansionPane>
-                )
-            }
-
-            return (
-                <div>
-                </div>
-            )
-        } else {
-            return (
-                <div>
-
-                </div>
-            )
+    state={
+        currentStep: 0,
+        steps: [],
+        expanded:false,
+    }
+    componentDidMount(){
+        let steps = {}
+        let componentsToRender = [];
+        if(this.props.perms.Create){
+            steps[Object.keys(steps).length] = "add"
+            componentsToRender.push(<AddEntry settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings = {this.props.fieldSettings} requestError={this.props.requestError}></AddEntry>)
         }
+        if(this.props.perms.Delete){
+            steps[Object.keys(steps).length] = "del"
+            componentsToRender.push(<DeleteEntry settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings = {this.props.fieldSettings} requestError={this.props.requestError}></DeleteEntry>)
+        }
+        steps[Object.keys(steps).length] = "gs"
+        componentsToRender.push(<GenerateSpreadsheet settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings = {this.props.fieldSettings} data={this.props.data} requestError={this.props.requestError}></GenerateSpreadsheet>)
+        this.props.extraComponents.forEach((component)=>{
+            steps[Object.keys(steps).length] = component.key
+        })
+        this.props.extraComponents.forEach((component)=>{
+            componentsToRender.push(component.component)
+        })
+
+        this.setState({
+            steps: steps,
+            componentsToRender: componentsToRender,
+            currentStep: this.getKeyByValue(steps, this.props.component),
+        })
+    }
+
+    getKeyByValue(obj, value){
+        let key = Object.keys(obj).find(key => obj[key] === value);
+        console.log(key);
+        return parseInt(key);
+    }
+
+    componentDidUpdate(prevProps) {
+        if(prevProps.component != this.props.component){
+            this.setState({
+                currentStep: this.getKeyByValue(this.state.steps, this.props.component),
+            })
+        }
+        if(prevProps.expanded != this.props.expanded){
+            this.setState({
+                expanded: this.props.expanded,
+            })
+        }
+    }
+
+    render() {
+            return (
+                this.state.expanded?
+                <HeaderExpansionPane handleClose={this.props.handleClose} title={this.props.actions[this.state.currentStep].label}>
+                    <MultiStepBox currentStep = {this.state.currentStep} steps={this.state.steps}>
+                        {this.state.componentsToRender.map((component, index) => {
+                            return (React.cloneElement(component, {key: index}))
+                        })}
+                    </MultiStepBox>
+                </HeaderExpansionPane>
+                :
+                <div></div>
+            )
 
     }
 }

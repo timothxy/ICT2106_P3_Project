@@ -102,6 +102,11 @@ namespace YouthActionDotNet.Control{
             }
         }
 
+        public string GetAllModules()
+        {
+            return JsonConvert.SerializeObject(new { success = true, message = "Modules Retrieved", data = Permissions.GetAllModules() });
+        }
+
         public async Task<ActionResult<string>> DeleteModule(string name){
             var permissions = await PermissionRepositoryOut.GetAllAsync();
 

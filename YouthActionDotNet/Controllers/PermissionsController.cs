@@ -86,5 +86,11 @@ namespace YouthActionDotNet.Controllers{
             Permissions.RemoveDefaultPermissions(name);
             return await permissionsControl.DeleteModule(name);
         }
+
+        [HttpGet("GetAllModules")]
+        public string GetAllModules()
+        {
+            return  permissionsControl.GetAllModules();
+        }
     }
 }
