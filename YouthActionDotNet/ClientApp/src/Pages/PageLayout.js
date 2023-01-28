@@ -125,6 +125,7 @@ export default class DatapageLayout extends React.Component {
     setExpansionContent = content => {
         if (this.state.expanded && this.state.expansionContent === content) {
             this.setState({
+                expansionContent: "",
                 expanded: false,
             })
         } else {
@@ -332,11 +333,7 @@ export default class DatapageLayout extends React.Component {
                     </div>
                 </div>
                 <BottomMenu actions={
-                    [
-                        { label: "Add " + this.props.settings.title, onClick: () => { this.setExpansionContent("add") } },
-                        { label: "Delete " + this.props.settings.title, onClick: () => { this.setExpansionContent("del") } },
-                        { label: "Generate Spreadsheet", onClick: () => { this.setExpansionContent("gs") } },
-                    ]
+                        this.state.tableHeaderActions
                 } settings={this.settings} show={this.state.drawerOpen} showBottomMenu={this.state.showBottomMenu} handles={this.setExpansionContent}></BottomMenu>
             </div>
             :
