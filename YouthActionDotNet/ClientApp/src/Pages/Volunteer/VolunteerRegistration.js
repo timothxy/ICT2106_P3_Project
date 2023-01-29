@@ -43,28 +43,27 @@ export default class VolunteerRegistration extends React.Component{
             <div className='container'>
                 {Object.keys(this.state.settings.FieldSettings).map((key,index)=>{
                 const field = this.state.settings.FieldSettings[key];
-                console.log(field);
                 
-                return (
-                    this.state.excludes.includes(key) ? null :
-                    <div className='row'>
-                        <div className='col-12'>
-                            <StdInput 
-                                label = {field.displayLabel}
-                                type={field.type}
-                                enabled = {true}
-                                fieldLabel={field.fieldLabel}
-                                onChange = {this.onChange}
-                                options={field.options}
-                                dateFormat = {field.dateFormat}
-                                allowEmpty = {true}
-                                toolTip = {field.toolTip}
-                                >
-                            </StdInput>
+                    return (
+                        this.state.excludes.includes(key) ? null :
+                        <div className='row'>
+                            <div className='col-12'>
+                                <StdInput 
+                                    label = {field.displayLabel}
+                                    type={field.type}
+                                    enabled = {true}
+                                    fieldLabel={field.fieldLabel}
+                                    onChange = {this.onChange}
+                                    options={field.options}
+                                    dateFormat = {field.dateFormat}
+                                    allowEmpty = {true}
+                                    toolTip = {field.toolTip}
+                                    >
+                                </StdInput>
+                            </div>
                         </div>
-                    </div>
-                )
-                })}
+                    )
+                    })}
                 <StdButton>Submit</StdButton>
             </div>
         )

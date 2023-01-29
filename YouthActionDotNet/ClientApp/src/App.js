@@ -104,6 +104,7 @@ export default function App() {
               <Route path="/" element={<Users user={token} permissions = {JSON.parse(perms)}/>}/>
               <Route path="/Employees" element={<Employees user={token} permissions = {JSON.parse(perms)}/>}/>
               <Route path="/Volunteers" element={<Volunteer user={token} permissions = {JSON.parse(perms)}/>}/>
+              <Route path="/volunteer-registration" element={<VolunteerRegistration user={token} permissions = {JSON.parse(perms)}/>}/>
               <Route path="/Donors" element={<Donors user={token} permissions = {JSON.parse(perms)}></Donors>}/>
               <Route path="/Donations" element={<Donations user={token} permissions = {JSON.parse(perms)}></Donations>}/>
               <Route path="/VolunteerWork" element={<VolunteerWork user={token} permissions = {JSON.parse(perms)}/>}/>
