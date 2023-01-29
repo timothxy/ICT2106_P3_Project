@@ -485,11 +485,8 @@ export class HeaderExpansion extends React.Component {
         componentsToRender.push(<GenerateSpreadsheet settings={this.props.settings} requestRefresh={this.props.requestRefresh} fieldSettings = {this.props.fieldSettings} data={this.props.data} requestError={this.props.requestError}></GenerateSpreadsheet>)
         this.props.extraComponents.forEach((component)=>{
             steps[Object.keys(steps).length] = component.key
-        })
-        this.props.extraComponents.forEach((component)=>{
             componentsToRender.push(component.component)
         })
-
         this.setState({
             steps: steps,
             componentsToRender: componentsToRender,

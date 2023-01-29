@@ -2,7 +2,7 @@
 import React from "react"
 import { json } from "react-router-dom"
 import { Loading } from "../../Components/appCommon"
-import { MultiStepBox, StdButton } from "../../Components/common"
+import { IconButtonWithText, MultiStepBox, StdButton } from "../../Components/common"
 import { StdInput } from "../../Components/input"
 import DatapageLayout from "../PageLayout"
 
@@ -205,6 +205,17 @@ export class PermissionsMap extends React.Component {
         })
     }
 
+    clear = (index) => {
+        let permission = this.state.permission;
+        permission[index].Create = false;
+        permission[index].Read = false;
+        permission[index].Update = false;
+        permission[index].Delete = false;
+        this.setState({
+            permission:permission
+        })
+    }
+
     handleUpdate = async () =>{
         var data = this.state.item;
         data.Permission = JSON.stringify(this.state.permission);
@@ -247,6 +258,7 @@ export class PermissionsMap extends React.Component {
                             return <div className="py-4 col-md-6 col-12 permission-module-container d-flex flex-column">
                                 <div className="permission-module">
                                     {item.Module}
+                                    <IconButtonWithText className={"invert"} onClick={()=>this.clear(moduleIndex)} label={"Clear All"} icon={<i className="bi bi-x-circle"></i>}></IconButtonWithText>
                                 </div>
                                 <div className="row">
                                 {Object.keys(item).slice(1).map((key, index) => {

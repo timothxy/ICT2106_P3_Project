@@ -80,7 +80,7 @@ export default function App() {
     
     return (
         <div className="App" style={{maxHeight: height}}>
-          <LoggedInNav user={token} logout={logout} toggle={drawerToggleClickHandler} show={drawerOpen}></LoggedInNav>
+          <LoggedInNav user={token.data} logout={logout} toggle={drawerToggleClickHandler} show={drawerOpen}></LoggedInNav>
           <header className="App-header" style={{maxHeight: height - 56}}>
             {backdrop}
             <SlideDrawer show={drawerOpen} toggle={drawerToggleClickHandler} direction={"top"}>
@@ -146,7 +146,7 @@ class LoggedInNav extends React.Component {
   render() {
 
     return (
-      <Nav user={this.props.data} title={this.state.title
+      <Nav user={this.props.user} title={this.state.title
       } toggle={this.props.toggle} show={this.props.show}>
       </Nav>
     )

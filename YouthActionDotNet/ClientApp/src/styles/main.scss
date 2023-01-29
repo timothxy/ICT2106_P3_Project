@@ -4014,22 +4014,3 @@ nav {
         }
     }
 }
-
-.permission-module-container{
-    gap:15px;
-    
-    .permission-module{
-        font-size: $large-font;
-        font-weight: bold;
-    }
-
-    
-    .permission-toggle-group{
-        gap:7.5px;
-    }
-}
-
-
-.permission-toggle-label{
-    font-size: $medium-font;
-}

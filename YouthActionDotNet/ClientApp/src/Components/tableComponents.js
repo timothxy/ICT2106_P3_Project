@@ -59,7 +59,13 @@ export class ExpandableRow extends React.Component {
           })}
            */}
           {Object.keys(this.props.headers).map((key, index) => {
-            return <Cell width={"100%"} key={index}>{this.props.values[key]}</Cell>
+            return <Cell width={"100%"} key={index}>{
+              this.props.fieldSettings[key].type === "dropdown"?
+                this.props.fieldSettings[key].options.find((option) => option.value === this.props.values[key]).label
+              :
+              this.props.values[key]
+              
+            }</Cell>
           })}
         </div>
         {this.state.expanded ? (
