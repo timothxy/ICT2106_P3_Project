@@ -10,6 +10,7 @@ using YouthActionDotNet.Models;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
 using YouthActionDotNet.DAL;
+using YouthActionDotNet.Control;
 
 namespace YouthActionDotNet.Controllers
 {
