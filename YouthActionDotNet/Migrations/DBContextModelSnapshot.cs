@@ -25,7 +25,7 @@ namespace YouthActionDotNet.Migrations
                     b.Property<string>("DonationAmount")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("DonationContstraint")
+                    b.Property<string>("DonationConstraint")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("DonationDate")
