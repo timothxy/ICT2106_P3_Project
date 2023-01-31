@@ -7,8 +7,9 @@ using Newtonsoft.Json;
 using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
 using YouthActionDotNet.DAL;
+using YouthActionDotNet.Controllers;
 
-namespace YouthActionDotNet.Controllers
+namespace YouthActionDotNet.Control
 {
 
     public class UserControl : IUserInterfaceCRUD<User>

@@ -8,8 +8,9 @@ using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
 using Newtonsoft.Json;
 using YouthActionDotNet.DAL;
+using YouthActionDotNet.Controllers;
 
-namespace YouthActionDotNet.Controllers
+namespace YouthActionDotNet.Control
 {
     public class VolunteerControl : IUserInterfaceCRUD<Volunteer>
     {

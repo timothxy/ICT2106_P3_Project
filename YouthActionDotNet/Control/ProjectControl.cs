@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using YouthActionDotNet.Controllers;
 using YouthActionDotNet.DAL;
 using YouthActionDotNet.Data;
 using YouthActionDotNet.Models;
 
-namespace YouthActionDotNet.Controllers
+namespace YouthActionDotNet.Control
 {
     public class ProjectControl : IUserInterfaceCRUD<Project>
     {
