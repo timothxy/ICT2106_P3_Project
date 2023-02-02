@@ -136,12 +136,12 @@ namespace YouthActionDotNet.Control
             settings.ColumnSettings = new Dictionary<string, ColumnHeader>();
             settings.FieldSettings = new Dictionary<string, InputType>();
 
-            settings.ColumnSettings.Add("id", new ColumnHeader { displayHeader = "ID" });
+            settings.ColumnSettings.Add("ServiceCenterId", new ColumnHeader { displayHeader = "ID" });
             settings.ColumnSettings.Add("ServiceCenterName", new ColumnHeader { displayHeader = "Service Center Name" });
             settings.ColumnSettings.Add("ServiceCenterAddress", new ColumnHeader { displayHeader = "Service Center Address" });
-            settings.ColumnSettings.Add("RegionalDirectorName", new ColumnHeader { displayHeader = "Regional Director Name" });
+            settings.ColumnSettings.Add("RegionalDirectorId", new ColumnHeader { displayHeader = "Regional Director Name" });
 
-            settings.FieldSettings.Add("id", new InputType { type = "number", displayLabel = "ID", editable = false, primaryKey = true });
+            settings.FieldSettings.Add("ServiceCenterId", new InputType { type = "number", displayLabel = "ID", editable = false, primaryKey = true });
             settings.FieldSettings.Add("ServiceCenterName", new InputType { type = "text", displayLabel = "Service Center Name", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ServiceCenterAddress", new InputType { type = "text", displayLabel = "Service Center Address", editable = true, primaryKey = false });
 

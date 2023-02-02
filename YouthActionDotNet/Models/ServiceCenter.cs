@@ -1,4 +1,5 @@
 using System;
+using Newtonsoft.Json;
 
 namespace YouthActionDotNet.Models
 {
@@ -13,7 +14,7 @@ namespace YouthActionDotNet.Models
         public string ServiceCenterAddress { get; set; }
         public string RegionalDirectorId { get; set; }
 
-        public virtual string RegionalDirectorName { get; set; }
+        [JsonIgnore]
         public virtual Employee RegionalDirector { get; set; }
     }
 }
