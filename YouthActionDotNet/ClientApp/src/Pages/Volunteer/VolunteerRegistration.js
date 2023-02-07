@@ -2,20 +2,39 @@ import React from 'react';
 import { Loading } from '../../Components/appCommon';
 import { StdButton } from '../../Components/common';
 import { StdInput } from '../../Components/input';
+import "../../styles/volunteer-registration.scss";
 
+async function getPermissions(token){
+    var role = token.data.Role;
+    if(role === "Employee"){
+      role = token.data.EmployeeRole;
+    }
+    return fetch( "/api/Permissions/GetPermissions/" + role , {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }).then(res => {
+        console.log(res);
+        return res.json();
+    });
+  }
+  
 export default class VolunteerRegistration extends React.Component{
     state ={
         loading:true,
         settings: {},        
-        excludes:["UserId","ApprovedBy","ApprovalStatus","Role"]
+        excludes:["UserId","ApprovedBy","ApprovalStatus","Role"],
+        dataToPush:{},
     }
     
     async componentDidMount(){
         await this.getSettings().then((settings)=>{
             this.setState({
-                settings:settings.data,
+                settings: settings.data,
             })
         })
+        
         this.setState({
             loading:false,
         })
@@ -33,6 +52,39 @@ export default class VolunteerRegistration extends React.Component{
         });
     }
 
+    register = async () =>{
+        return await fetch("/api/Volunteer/Register",{
+            method: "POST",
+            headers:{
+                "Content-Type": "application/json",
+            },
+            body:JSON.stringify(this.state.dataToPush),
+        }).then(response => {
+            return response.json();
+        });
+    }
+
+    handleRegister = async () =>{
+        const token = await this.register();
+        const perms = await getPermissions(token)
+        if(token.success){
+            console.log(token);
+            this.props.setToken(token);
+            this.props.setPerms(perms.data.Permission);
+        }else{
+            console.log(token.message);
+        }
+    }
+
+    
+
+    onChange = (field, value) =>{
+        var dataToPush = this.state.dataToPush;
+        dataToPush[field] = value;
+        this.setState({
+            dataToPush : dataToPush,
+        })        
+    }
 
 
     render(){
@@ -40,7 +92,7 @@ export default class VolunteerRegistration extends React.Component{
             this.state.loading ? 
             <Loading></Loading>
             :
-            <div className='container'>
+            <form className='container volunteer-form-container' onSubmit={this.handleRegister}>
                 {Object.keys(this.state.settings.FieldSettings).map((key,index)=>{
                 const field = this.state.settings.FieldSettings[key];
                 
@@ -52,7 +104,8 @@ export default class VolunteerRegistration extends React.Component{
                                     label = {field.displayLabel}
                                     type={field.type}
                                     enabled = {true}
-                                    fieldLabel={field.fieldLabel}
+                                    
+                                    fieldLabel={key}
                                     onChange = {this.onChange}
                                     options={field.options}
                                     dateFormat = {field.dateFormat}
@@ -64,8 +117,8 @@ export default class VolunteerRegistration extends React.Component{
                         </div>
                     )
                     })}
-                <StdButton>Submit</StdButton>
-            </div>
+                <StdButton type={"submit"}>Submit</StdButton>
+            </form>
         )
     }
 }

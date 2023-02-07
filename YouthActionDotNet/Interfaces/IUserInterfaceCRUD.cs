@@ -8,13 +8,13 @@ namespace YouthActionDotNet.Controllers
     {
         [HttpPost("Create")]
         Task<ActionResult<string>> Create(T template);
-        [HttpGet("{$id}")]
+        [HttpGet("{id}")]
         Task<ActionResult<string>> Get(string id);
-        [HttpPut("{$id}")]
+        [HttpPut("{id}")]
         Task<ActionResult<string>> Update(string id, T template);
-        [HttpPut("UpdateAndFetch/{$id}")]
+        [HttpPut("UpdateAndFetch/{id}")]
         Task<ActionResult<string>> UpdateAndFetchAll(string id, T template);
-        [HttpDelete("{$id}")]
+        [HttpDelete("{id}")]
         Task<ActionResult<string>> Delete(string id);
         [HttpDelete("Delete")]
         Task<ActionResult<string>> Delete(T template);

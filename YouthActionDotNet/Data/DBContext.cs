@@ -18,7 +18,7 @@ namespace YouthActionDotNet.Data{
             .HasForeignKey(e => e.UserId);
         modelBuilder.Entity<Volunteer>().ToTable("Volunteer")
             .HasOne(e => e.User)
-            .WithMany()
+            .WithMany().IsRequired(false)
             .HasForeignKey(e => e.UserId);
         modelBuilder.Entity<Volunteer>()
             .HasOne(e=> e.User)

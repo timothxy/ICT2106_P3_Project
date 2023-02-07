@@ -133,6 +133,7 @@ export default class Project extends React.Component {
                 permissions={this.props.permissions}
                 requestError={this.requestError}
                 >
+                    
             </DatapageLayout>
             )
         }

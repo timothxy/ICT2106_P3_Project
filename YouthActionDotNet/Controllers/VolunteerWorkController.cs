@@ -10,6 +10,7 @@ using YouthActionDotNet.Models;
 using Newtonsoft.Json;
 using YouthActionDotNet.DAL;
 using YouthActionDotNet.Control;
+using System.Diagnostics;
 
 namespace YouthActionDotNet.Controllers
 {
@@ -35,10 +36,18 @@ namespace YouthActionDotNet.Controllers
             return await volunteerWorkControl.Create(template);
         }
 
-        [HttpGet("{$id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<string>> Get(string id)
         {
             return await volunteerWorkControl.Get(id);
+        }
+
+        [HttpGet("GetByVolunteerId/{id}")]
+        public async Task<ActionResult<string>> GetByVolunteerId(string id)
+        {
+            Console.WriteLine("GetByVolunteerId");
+            Console.WriteLine(id);
+            return await volunteerWorkControl.GetByVolunteerId(id);
         }
 
         [HttpGet("All")]
@@ -47,19 +56,19 @@ namespace YouthActionDotNet.Controllers
             return await volunteerWorkControl.All();
         }
 
-        [HttpPut("{$id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<string>> Update(string id, VolunteerWork template)
         {
             return await volunteerWorkControl.Update(id, template);
         }
 
-        [HttpPut("UpdateAndFetch/{$id}")]
+        [HttpPut("UpdateAndFetch/{id}")]
         public async Task<ActionResult<string>> UpdateAndFetchAll(string id, VolunteerWork template)
         {
             return await volunteerWorkControl.UpdateAndFetchAll(id, template);
         }
 
-        [HttpDelete("{$id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
             return await volunteerWorkControl.Delete(id);

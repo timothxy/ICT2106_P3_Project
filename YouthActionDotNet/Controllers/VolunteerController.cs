@@ -37,6 +37,15 @@ namespace YouthActionDotNet.Controllers
             return await volunteerControl.Create(template);
         }
 
+        [HttpPost("Register")]
+        public async Task<ActionResult<String>> Register(Volunteer template)
+        {
+            
+            template.Role = "Volunteer";
+            template.ApprovalStatus = "Pending";
+            return await volunteerControl.Register(template);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<string>> Get(string id)
         {

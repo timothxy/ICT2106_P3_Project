@@ -14,8 +14,8 @@ namespace YouthActionDotNet.Control
 {
     public class VolunteerWorkControl : IUserInterfaceCRUD<VolunteerWork>
     {
-        private GenericRepositoryIn<VolunteerWork> VolunteerWorkRepositoryIn;
-        private GenericRepositoryOut<VolunteerWork> VolunteerWorkRepositoryOut;
+        private VolunteerWorkRepositoryIn VolunteerWorkRepositoryIn;
+        private VolunteerWorkRepositoryOut VolunteerWorkRepositoryOut;
         private GenericRepositoryIn<Volunteer> VolunteerRepositoryIn;
         private GenericRepositoryOut<Volunteer> VolunteerRepositoryOut;
         private GenericRepositoryIn<Employee> EmployeeRepositoryIn;
@@ -29,8 +29,8 @@ namespace YouthActionDotNet.Control
 
         public VolunteerWorkControl(DBContext context)
         {
-            VolunteerWorkRepositoryIn = new GenericRepositoryIn<VolunteerWork>(context);
-            VolunteerWorkRepositoryOut = new GenericRepositoryOut<VolunteerWork>(context);
+            VolunteerWorkRepositoryIn = new VolunteerWorkRepositoryIn(context);
+            VolunteerWorkRepositoryOut = new VolunteerWorkRepositoryOut(context);
             VolunteerRepositoryIn = new GenericRepositoryIn<Volunteer>(context);
             VolunteerRepositoryOut = new GenericRepositoryOut<Volunteer>(context);
             EmployeeRepositoryIn = new GenericRepositoryIn<Employee>(context);
@@ -48,6 +48,15 @@ namespace YouthActionDotNet.Control
         public async Task<ActionResult<string>> Get(string id)
         {
             var volunteerWork = await VolunteerWorkRepositoryOut.GetByIDAsync(id);
+            if (volunteerWork == null)
+            {
+                return JsonConvert.SerializeObject(new { success = false, message = "Volunteer Work Not Found" }, settings);
+            }
+            return JsonConvert.SerializeObject(new { success = true, data = volunteerWork, message = "Volunteer Work Successfully Retrieved" }, settings);
+        }
+
+        public async Task<ActionResult<string>> GetByVolunteerId(string id){
+            var volunteerWork = await VolunteerWorkRepositoryOut.GetByVolunteerId(id);
             if (volunteerWork == null)
             {
                 return JsonConvert.SerializeObject(new { success = false, message = "Volunteer Work Not Found" }, settings);

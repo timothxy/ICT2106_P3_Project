@@ -25,6 +25,9 @@ import Project from './Pages/Project/Project';
 import Expense from './Pages/Expense/Expense';
 import Permissions from './Pages/Admin/Permissions';
 
+import Home  from "./Pages/Home"
+import VolunteerHome from "./Pages/Volunteer/volunteerHome"
+
 
 /* function getToken() {  
   const tokenString = sessionStorage.getItem('token');
@@ -71,13 +74,13 @@ export default function App() {
               <Route path="/" element={
                 <Login setToken={setToken} setPerms={setPerms}></Login>}></Route>
               <Route path="/Register" element={<Register />}></Route>
-              <Route path="/volunteer-registration" element={<VolunteerRegistration />}></Route>
+              <Route path="/volunteer-registration" element={<VolunteerRegistration setToken={setToken} setPerms={setPerms}/>}></Route>
             </Routes>
           </div>
         </div>
     )
   } else {
-    
+    const parsedPerms = JSON.parse(perms);
     return (
         <div className="App" style={{maxHeight: height}}>
           <LoggedInNav user={token.data} logout={logout} toggle={drawerToggleClickHandler} show={drawerOpen}></LoggedInNav>
@@ -87,31 +90,77 @@ export default function App() {
               
               <DrawerSection label={"Modules"}>
                 <DrawerItem label="Users" to={"/"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="Employees" to={"/Employees"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="Volunteers" to={"/Volunteers"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="Volunteer Work" to={"/VolunteerWork"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="Donors" to={"/Donors"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="Donations" to={"/Donations"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="Service Center" to={"/ServiceCenters"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="Project" to={"/Project"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="Expense" to={"/Expense"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
-                <DrawerItem label="Permissions" to={"/Permissions"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                
+                {parsedPerms.map((perm)=>{<DrawerItem label="Employees" to={"/Employees"} logo={userImg} currentActive = {active} setActive={setActive}></DrawerItem>
+                const currMod = perm.Module;
+                const toTextUrl = perm.Module.replace(" ", "-");
+                if(perm.Read){
+                  return <DrawerItem label={currMod} to={"/" + toTextUrl} logo={userImg}></DrawerItem>
+                }
+                })}
                 <DrawerItem label="Logout" to={"/Logout"} logo={logoutImg}></DrawerItem>
               </DrawerSection>
             </SlideDrawer>
             
             <Routes>
-              <Route path="/" element={<Users user={token} permissions = {JSON.parse(perms)}/>}/>
-              <Route path="/Employees" element={<Employees user={token} permissions = {JSON.parse(perms)}/>}/>
-              <Route path="/Volunteers" element={<Volunteer user={token} permissions = {JSON.parse(perms)}/>}/>
-              <Route path="/volunteer-registration" element={<VolunteerRegistration user={token} permissions = {JSON.parse(perms)}/>}/>
-              <Route path="/Donors" element={<Donors user={token} permissions = {JSON.parse(perms)}></Donors>}/>
-              <Route path="/Donations" element={<Donations user={token} permissions = {JSON.parse(perms)}></Donations>}/>
-              <Route path="/VolunteerWork" element={<VolunteerWork user={token} permissions = {JSON.parse(perms)}/>}/>
-              <Route path="/ServiceCenters" element={<ServiceCenters user={token} permissions = {JSON.parse(perms)}/>}/>
-              <Route path="/Project" element={<Project user={token} permissions = {JSON.parse(perms)}/>}/>
-              <Route path="/Expense" element={<Expense user={token} permissions = {JSON.parse(perms)}/>}/>
-              <Route path="/Permissions" element={<Permissions user={token} permissions = {JSON.parse(perms)}/>}/>
+              {token.data.Role == "Admin" &&
+                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
+              }
+              {token.data.Role == "Donor" &&
+                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
+              }
+              {token.data.Role == "Volunteer" &&
+                <Route path="/" element={<VolunteerHome user={token} permissions = {parsedPerms}/>}/>
+              }
+              {token.data.Role == "Employee" &&
+                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
+              }
+              {token.data.EmployeeRole == "Regional Director" &&
+                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
+              }
+
+              {token.data.EmployeeRole == "Service Center Manager" &&
+                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
+              }
+              
+              {token.data.EmployeeRole == "Chief Executive" &&
+                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
+              }
+              
+              {token.data.EmployeeRole == "Finance Director" &&
+                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
+              }
+              
+              {token.data.EmployeeRole == "Operating Manager" &&
+                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
+              }
+              
+              {token.data.EmployeeRole == "Marketing Manager" &&
+                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
+              }
+              
+              {token.data.EmployeeRole == "Chief Executive" &&
+                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
+              }
+              
+              {token.data.EmployeeRole == "Chief Executive" &&
+                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
+              }
+              
+              {token.data.EmployeeRole == "Chief Executive" &&
+                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
+              }
+              <Route path="/Users" element={<Users user={token} permissions = {parsedPerms}/>}/>  
+              <Route path="/Employees" element={<Employees user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Volunteers" element={<Volunteer user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/volunteer-Registration" element={<VolunteerRegistration user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Donors" element={<Donors user={token} permissions = {parsedPerms}></Donors>}/>
+              <Route path="/Donations" element={<Donations user={token} permissions = {parsedPerms}></Donations>}/>
+              <Route path="/Volunteer-Work" element={<VolunteerWork user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Service-Centers" element={<ServiceCenters user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Project" element={<Project user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Expenses" element={<Expense user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Permissions" element={<Permissions user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Logout" element={<Logout logout={logout} clearPerms={clearPerms}></Logout>}/>
 
             </Routes>

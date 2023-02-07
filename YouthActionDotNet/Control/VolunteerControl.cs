@@ -47,6 +47,28 @@ namespace YouthActionDotNet.Control
             return JsonConvert.SerializeObject(new { success = true, data = template, message = "Volunteer Successfully Created" });
         }
 
+        public async Task<ActionResult<string>> Register(Volunteer template){
+            var volunteers = await VolunteerRepositoryOut.GetAllAsync();
+            var existingVolunteer = volunteers.FirstOrDefault(d => 
+                d.username == template.username
+            );
+            if(existingVolunteer != null){
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "User name already exists"});
+            }
+
+            existingVolunteer = volunteers.FirstOrDefault(d =>
+                d.Email == template.Email
+            );
+            if(existingVolunteer != null){
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Email already exists"});
+            }
+
+            template.Password = Utils.hashpassword(template.Password);
+            await VolunteerRepositoryIn.InsertAsync(template);
+            var createdVolunteer = await VolunteerRepositoryOut.GetByIDAsync(template.UserId);
+            return JsonConvert.SerializeObject(new { success = true, data = createdVolunteer, message = "Volunteer successfully created"});
+        }
+
         public async Task<ActionResult<string>> Get(string id)
         {
             var volunteer = await VolunteerRepositoryOut.GetByIDAsync(id);
