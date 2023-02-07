@@ -37,7 +37,7 @@ namespace YouthActionDotNet.Controllers
         {
             return await serviceCenterControl.Create(template);
         }
-        [HttpGet("{$id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<string>> Get(string id)
         {
             return await serviceCenterControl.Get(id);
@@ -48,7 +48,7 @@ namespace YouthActionDotNet.Controllers
         {
             return await serviceCenterControl.All();
         }
-        [HttpPut("{$id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<string>> Update(string id, ServiceCenter template)
         {
             return await serviceCenterControl.Update(id, template);
@@ -58,7 +58,7 @@ namespace YouthActionDotNet.Controllers
         {
             return await serviceCenterControl.UpdateAndFetchAll(id, template);
         }
-        [HttpDelete("{$id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
             return await serviceCenterControl.Delete(id);
