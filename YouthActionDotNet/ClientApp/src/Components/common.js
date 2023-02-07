@@ -1581,3 +1581,38 @@ export class DayView extends React.Component{
         )
     }
 }
+
+export class Shimmer extends React.Component{
+    state={
+        shimmerType : "content-line "
+    }
+    componentDidMount(){
+        switch(this.props.type){
+            case "content":
+                this.setState({
+                    shimmerType: "content-line "
+                });
+                break;
+            case "title":
+                this.setState({
+                    shimmerType: "title-line "
+                });
+                break;
+        }
+    }
+    render(){
+        return(
+            <div className={
+                "shimmer " + 
+                this.state.shimmerType + 
+                (this.props.end ? "end ": "") +
+                (this.props.noPadding ? "no-padding ": "")
+            } style={{
+                "--maxWidth": this.props.maxWidth,
+                "--maxHeight": this.props.maxHeight,
+                "--minWidth": this.props.minWidth,
+                "--minHeight": this.props.minHeight,
+            }}></div>
+        )
+    }
+}

@@ -57,6 +57,7 @@ namespace YouthActionDotNet.Controllers
         {
             return await volunteerControl.Update(id, template);
         }
+
         [HttpPut("UpdateAndFetch/{id}")]
         public async Task<ActionResult<string>> UpdateAndFetchAll(string id, Volunteer template)
         {

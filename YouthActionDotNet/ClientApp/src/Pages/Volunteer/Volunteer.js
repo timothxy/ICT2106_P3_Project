@@ -2,6 +2,7 @@
 import React from "react"
 import DatapageLayout from "../PageLayout"
 import { Loading } from "../../Components/appCommon"
+import { StdButton } from "../../Components/common"
 
 export default class Volunteer extends React.Component {
     state={
@@ -108,6 +109,7 @@ export default class Volunteer extends React.Component {
             });
         })
     }
+
     
     requestError = async (error) =>{
         this.setState({
