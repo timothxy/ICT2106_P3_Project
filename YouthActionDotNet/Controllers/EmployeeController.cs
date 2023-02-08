@@ -74,7 +74,6 @@ namespace YouthActionDotNet.Controllers
         {
             return employeeControl.Settings();    
         }
-
         public bool Exists(string id)
         {
             return employeeControl.Get(id) != null;

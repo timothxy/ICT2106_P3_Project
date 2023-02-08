@@ -45,6 +45,7 @@ namespace YouthActionDotNet.Models
     
     public class DropdownInputType : InputType{
         public List<DropdownOption> options { get; set; }
+        public bool allowEmpty { get; set; }
     }
 
     public class DropdownOption<T> where T : class{

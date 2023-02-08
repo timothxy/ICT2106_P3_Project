@@ -126,6 +126,28 @@ namespace YouthActionDotNet.Control
                 }
             }
         }
+        
+        public async Task<ActionResult<string>> Approve(string id, Employee template){
+            var volunteer = await VolunteerRepositoryOut.GetByIDAsync(id);
+            if(volunteer == null){
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Not Found" });
+            }
+            volunteer.ApprovalStatus = "Approved";
+            volunteer.ApprovedBy = template.UserId;
+            await VolunteerRepositoryIn.UpdateAsync(volunteer);
+            return JsonConvert.SerializeObject(new { success = true, data = volunteer, message = "Volunteer Successfully Approved" });
+        }
+
+        public async Task<ActionResult<string>> RevokeApproval(string id){
+            var volunteer = await VolunteerRepositoryOut.GetByIDAsync(id);
+            if(volunteer == null){
+                return JsonConvert.SerializeObject(new { success = false, data = "", message = "Volunteer Not Found" });
+            }
+            volunteer.ApprovalStatus = "Pending";
+            volunteer.ApprovedBy = null;
+            await VolunteerRepositoryIn.UpdateAsync(volunteer);
+            return JsonConvert.SerializeObject(new { success = true, data = volunteer, message = "Volunteer Approval Successfully Revoked" });
+        }
 
         public async Task<ActionResult<string>> Delete(string id)
         {
@@ -184,7 +206,7 @@ namespace YouthActionDotNet.Control
             {
                 type = "dropdown",
                 displayLabel = "Volunteer Status",
-                editable = true,
+                editable = false,
                 primaryKey = false,
                 options = new List<DropdownOption> {
                 new DropdownOption { value = "Approved", label = "Approved" },
@@ -197,8 +219,9 @@ namespace YouthActionDotNet.Control
             {
                 type = "dropdown",
                 displayLabel = "Approved By",
-                editable = true,
+                editable = false,
                 primaryKey = false,
+                allowEmpty = true,
                 options = allEmployees.Select(
                     e => new DropdownOption
                     {

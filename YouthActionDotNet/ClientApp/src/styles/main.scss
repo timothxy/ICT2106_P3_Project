@@ -3514,8 +3514,8 @@ nav {
             background-color: $secondary;
         }
 
-        color: $secondary;
         border: solid 1px $secondary;
+        background-color: $secondary;
         transition: 0.3s;
 
         &:hover {

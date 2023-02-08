@@ -64,6 +64,19 @@ namespace YouthActionDotNet.Controllers
             return await volunteerControl.UpdateAndFetchAll(id, template);
         }
 
+        [HttpPut("Approve/{id}")]
+        public async Task<ActionResult<string>> Approve(string id, Employee template)
+        {
+            return await volunteerControl.Approve(id, template);
+        }
+
+        [HttpPut("Revoke/{id}")]
+        public async Task<ActionResult<string>> RevokeApproval(string id)
+        {
+            return await volunteerControl.RevokeApproval(id);
+        }
+
+
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {

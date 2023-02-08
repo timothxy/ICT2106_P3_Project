@@ -3,7 +3,7 @@ import React from "react"
 import DatapageLayout from "../PageLayout"
 import { Loading } from "../../Components/appCommon"
 import { StdButton } from "../../Components/common"
-
+import "../../styles/volunteer.scss"
 export default class Volunteer extends React.Component {
     state={
         content:null,
@@ -86,6 +86,66 @@ export default class Volunteer extends React.Component {
             if(content.success){
                 this.setState({
                     error:"",
+                });
+                return true;
+            }else{
+                this.setState({
+                    error:content.message,
+                })
+                return false;
+            }
+        })
+    }
+
+    approve = async (volunteerId, employee) =>{
+        console.log(volunteerId);
+        console.log(employee);
+        return fetch(this.settings.api + "Approve/" + volunteerId , {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(employee)
+        }).then(async res => {
+            return res.json();
+        });
+    }
+
+    handleApprove = async (volunteerId, employee) =>{
+        await this.approve(volunteerId, employee).then(async (content)=>{
+            if(content.success){
+                await this.requestRefresh();
+                this.setState({
+                    error:"",
+                })
+                return true;
+            }else{
+                this.setState({
+                    error:content.message,
+                })
+                return false;
+            }
+        })
+    }
+
+    revoke = async (volunteerId) =>{
+        console.log(volunteerId);
+        return fetch(this.settings.api + "Revoke/" + volunteerId , {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }).then(async res => {
+            return res.json();
+        });
+    }
+
+    handleRevoke = async (volunteerId) =>{
+        await this.revoke(volunteerId).then(async (content)=>{
+            if(content.success){
+                await this.requestRefresh();
+                this.setState({
+                    error:"",
                 })
                 return true;
             }else{
@@ -135,6 +195,31 @@ export default class Volunteer extends React.Component {
                 permissions={this.props.permissions}
                 requestError={this.requestError}
                 >
+                {this.state.content.data.map((item, index) => {
+                    if(item.ApprovalStatus === "Approved"){
+                        
+                        
+                        return(
+                            <div className="volunteer-extended">
+                                <StdButton key={index} className={"secondary"} onClick={()=>{
+                                    this.handleRevoke(item.UserId)
+                                }}>Revoke</StdButton>
+                            </div>
+                        )
+                    }else if(item.ApprovalStatus === "Pending"){
+                        
+                        
+                        return (
+                            <div className="volunteer-extended">
+                                <StdButton key={index} onClick={()=>{
+                                    this.handleApprove(item.UserId, this.props.user.data)
+                                }}>Approve</StdButton>
+                            </div>
+                        )
+                    }else{
+                        return null;
+                    }
+                })}
             </DatapageLayout>
             )
         }
