@@ -157,7 +157,7 @@ export default function App() {
               <Route path="/Donors" element={<Donors user={token} permissions = {parsedPerms}></Donors>}/>
               <Route path="/Donations" element={<Donations user={token} permissions = {parsedPerms}></Donations>}/>
               <Route path="/Volunteer-Work" element={<VolunteerWork user={token} permissions = {parsedPerms}/>}/>
-              <Route path="/Service-Centers" element={<ServiceCenters user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Service-Center" element={<ServiceCenters user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Project" element={<Project user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Expenses" element={<Expense user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Permissions" element={<Permissions user={token} permissions = {parsedPerms}/>}/>
