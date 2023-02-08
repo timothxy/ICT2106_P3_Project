@@ -112,43 +112,32 @@ export default function App() {
               {token.data.Role == "Volunteer" &&
                 <Route path="/" element={<VolunteerHome user={token} permissions = {parsedPerms}/>}/>
               }
-              {token.data.Role == "Employee" &&
+              {token.data.Role == "Employee" ?
+                
+              token.data.EmployeeRole == "Regional Director" ?
                 <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
-              }
-              {token.data.EmployeeRole == "Regional Director" &&
+              :
+              token.data.EmployeeRole == "Service Center Manager" ?
                 <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
-              }
-
-              {token.data.EmployeeRole == "Service Center Manager" &&
+              :
+              token.data.EmployeeRole == "Chief Executive" ?
                 <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
-              }
-              
-              {token.data.EmployeeRole == "Chief Executive" &&
+              :
+              token.data.EmployeeRole == "Finance Director" ?
                 <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
-              }
-              
-              {token.data.EmployeeRole == "Finance Director" &&
+              :
+              token.data.EmployeeRole == "Operating Manager" ?
                 <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
-              }
-              
-              {token.data.EmployeeRole == "Operating Manager" &&
+              :
+              token.data.EmployeeRole == "Marketing Manager" ?
                 <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
-              }
-              
-              {token.data.EmployeeRole == "Marketing Manager" &&
+              :
+              token.data.EmployeeRole == "Director Of New Business" ?
                 <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
-              }
-              
-              {token.data.EmployeeRole == "Chief Executive" &&
-                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
-              }
-              
-              {token.data.EmployeeRole == "Chief Executive" &&
-                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
-              }
-              
-              {token.data.EmployeeRole == "Chief Executive" &&
-                <Route path="/" element={<Home user={token} permissions = {parsedPerms}/>}/>
+              :
+              ""
+              :
+              ""
               }
               <Route path="/Users" element={<Users user={token} permissions = {parsedPerms}/>}/>  
               <Route path="/Employees" element={<Employees user={token} permissions = {parsedPerms}/>}/>
