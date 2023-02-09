@@ -68,5 +68,12 @@
     "Read": true,
     "Update": true,
     "Delete": true
+  },
+  {
+    "Module": "Sample",
+    "Create": true,
+    "Read": true,
+    "Update": true,
+    "Delete": true
   }
 ]

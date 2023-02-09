@@ -28,6 +28,8 @@ import Permissions from './Pages/Admin/Permissions';
 import Home  from "./Pages/Home"
 import VolunteerHome from "./Pages/Volunteer/volunteerHome"
 
+import Sample from './Pages/Sample';
+
 
 /* function getToken() {  
   const tokenString = sessionStorage.getItem('token');
@@ -150,6 +152,7 @@ export default function App() {
               <Route path="/Project" element={<Project user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Expenses" element={<Expense user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Permissions" element={<Permissions user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Sample" element={<Sample user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Logout" element={<Logout logout={logout} clearPerms={clearPerms}></Logout>}/>
 
             </Routes>
