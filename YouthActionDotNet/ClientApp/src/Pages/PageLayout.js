@@ -343,7 +343,7 @@ export default class DatapageLayout extends React.Component {
         )
     }
 }
-PageLayout.defaultProps = {
+DatapageLayout.defaultProps = {
     hasFields: true
 }
 
