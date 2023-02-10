@@ -1,5 +1,16 @@
 # ICT2106_P3_Project
 For lab group P3's project integration repository
+
+# MODULE 1 TEAM 6
+
+Sample Donor
+username: testDonor  
+password: 1234  
+
+Sample Admin
+username: testAdmin  
+password: 1234  
+
 # ICT2101-2201-Team-Project
 
 Welcome to the ict2102-team05-2022 wiki!
@@ -50,3 +61,4 @@ password: 1234
 Sample admin  
 username: testadmin  
 password: 1234  
+
