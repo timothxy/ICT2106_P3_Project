@@ -7,9 +7,9 @@ namespace YouthActionDotNet.Models{
         
         public string questionContent  { get; set; }
         
-        public override void setAnswer()
-        {
-          // To be implemented
-        }
+        // public override void setAnswer()
+        // {
+        //   // To be implemented
+        // }
     }
 }

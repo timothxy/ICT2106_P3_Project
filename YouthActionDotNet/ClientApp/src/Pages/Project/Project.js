@@ -122,19 +122,20 @@ export default class Project extends React.Component {
         }else{
             
         return(
-            <DatapageLayout 
-                settings={this.settings}
-                fieldSettings={this.state.settings.data.FieldSettings} 
-                headers={this.state.settings.data.ColumnSettings} 
-                data={this.state.content.data}
-                updateHandle = {this.handleUpdate}
-                requestRefresh = {this.requestRefresh}
-                error={this.state.error}
-                permissions={this.props.permissions}
-                requestError={this.requestError}
-                >
+            // <DatapageLayout 
+            //     settings={this.settings}
+            //     fieldSettings={this.state.settings.data.FieldSettings} 
+            //     headers={this.state.settings.data.ColumnSettings} 
+            //     data={this.state.content.data}
+            //     updateHandle = {this.handleUpdate}
+            //     requestRefresh = {this.requestRefresh}
+            //     error={this.state.error}
+            //     permissions={this.props.permissions}
+            //     requestError={this.requestError}
+            //     >
                     
-            </DatapageLayout>
+            // </DatapageLayout>
+            <h1>Hello world</h1>
             )
         }
     }

@@ -118,9 +118,23 @@ namespace YouthActionDotNet.Control
             {
                 return JsonConvert.SerializeObject(new { success = false, data = "", message = "Project Not Found" });
             }
+            //store the project using the id (temp variable)
+            // var temp = await ProjectRepositoryIn.InsertAsync(template);
             await ProjectRepositoryIn.DeleteAsync(template);
             return JsonConvert.SerializeObject(new { success = true, data = "", message = "Project Successfully Deleted" });
+            // return JsonConvert.SerializeObject(new { success = true, data = "", message = "Project Deleted. Undo", });
         }
+
+        //Creation of an Undo function
+        // public async Task<ActionResult<string>> Undo(string id, Project temp)
+        // {
+        //     var tempVar = await ProjectRepositoryOut.GetByIDAsync(temp.ProjectId);
+        //     if (tempVar == null)
+        //     {
+        //         return JsonConvert.SerializeObject(new { success = false, data = "", message = "Project Not Found" });
+        //     }
+        //     return JsonConvert.SerializeObject(new { success = true, data = "", message = "Project Successfully Recovered" });
+        // }
 
         public async Task<ActionResult<string>> All()
         {

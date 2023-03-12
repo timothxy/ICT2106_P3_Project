@@ -16,21 +16,29 @@ namespace YouthActionDotNet.Models
 
         public string ProjectDescription { get; set; }
 
-        public string ProjectStartDate { get; set; }
+        //public string ProjectStartDate { get; set; }
 
-        public string ProjectEndDate { get; set; }
+        //public string ProjectEndDate { get; set; }
 
-        public string ProjectCompletionDate { get; set; }
+        ////public string ProjectCompletionDate { get; set; }
 
-        public string ProjectStatus { get; set; }
+        //public string ProjectStatus { get; set; }
 
-        public string ProjectType { get; set; }
+        //public string ProjectType { get; set; }
 
-        public double ProjectBudget { get; set; }
+        //public double ProjectBudget { get; set; }
 
-        public string ServiceCenterId {get; set;}
+        //public string ServiceCenterId {get; set;}
         
         [JsonIgnore]
         public virtual ServiceCenter ServiceCenter { get; set;}
+
+        public virtual Timeline Timeline{get;set;}
+
+        public virtual Budget Budget{get; }
+
+        public Volunteer[] Volunteer;
+
+        public CustomerFeedbackForm[] CustomerFeedbackForm;
     }
 }
