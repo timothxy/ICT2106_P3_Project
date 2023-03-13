@@ -106,13 +106,46 @@ namespace YouthActionDotNet.Migrations
                     b.Property<string>("ProjectId")
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("ProjectBudget")
-                        .HasColumnType("REAL");
+                    // b.Property<double>("ProjectBudget")
+                    //     .HasColumnType("REAL");
 
-                    b.Property<string>("ProjectCompletionDate")
-                        .HasColumnType("TEXT");
+                    // b.Property<string>("ProjectCompletionDate")
+                    //     .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectDescription")
+                        .HasColumnType("TEXT");
+
+                    // b.Property<string>("ProjectEndDate")
+                    //     .HasColumnType("TEXT");
+
+                    b.Property<string>("ProjectName")
+                        .HasColumnType("TEXT");
+
+                    // b.Property<string>("ProjectStartDate")
+                    //     .HasColumnType("TEXT");
+
+                    // b.Property<string>("ProjectStatus")
+                    //     .HasColumnType("TEXT");
+
+                    // b.Property<string>("ProjectType")
+                    //     .HasColumnType("TEXT");
+
+                    // b.Property<string>("ServiceCenterId")
+                    //     .HasColumnType("TEXT");
+
+                    b.HasKey("ProjectId");
+
+                    // b.HasIndex("ServiceCenterId");
+
+                    b.ToTable("Project", (string)null);
+                });
+
+            modelBuilder.Entity("YouthActionDotNet.Models.Timeline", b =>
+                {
+                    b.Property<string>("ProjectStatus")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ProjectStartDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectEndDate")
@@ -121,21 +154,20 @@ namespace YouthActionDotNet.Migrations
                     b.Property<string>("ProjectName")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ProjectStartDate")
+                    b.Property<string>("ProjectCompletionDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ProjectStatus")
+                    // b.HasKey("ProjectId");
+
+                    b.ToTable("Project", (string)null);
+                });
+
+            modelBuilder.Entity("YouthActionDotNet.Models.Budget", b =>
+                {
+                    b.Property<string>("ActualExpenses")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ProjectType")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ServiceCenterId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ProjectId");
-
-                    b.HasIndex("ServiceCenterId");
+                    // b.HasKey("ProjectId");
 
                     b.ToTable("Project", (string)null);
                 });

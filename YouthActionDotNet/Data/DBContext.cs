@@ -44,10 +44,10 @@ namespace YouthActionDotNet.Data{
             .HasOne(e => e.project)
             .WithMany()
             .HasForeignKey(e => e.projectId);
-        modelBuilder.Entity<Project>().ToTable("Project")
-            .HasOne(e => e.ServiceCenter)
-            .WithMany()
-            .HasForeignKey(e => e.ServiceCenterId);
+        // modelBuilder.Entity<Project>().ToTable("Project")
+        //     .HasOne(e => e.ServiceCenter)
+        //     .WithMany()
+        //     .HasForeignKey(e => e.ServiceCenterId);
         modelBuilder.Entity<Expense>().ToTable("Expense")
             .HasOne(e => e.project)
             .WithMany()

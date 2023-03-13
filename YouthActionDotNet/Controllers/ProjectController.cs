@@ -16,7 +16,7 @@ namespace YouthActionDotNet.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectController : ControllerBase, IUserInterfaceCRUD<Project>
+    public class ProjectController : ControllerBase, IUserInterfaceCRUD<Project>, IVolunteer<Project>
     {
       private ProjectControl projectControl;
         JsonSerializerSettings settings = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
