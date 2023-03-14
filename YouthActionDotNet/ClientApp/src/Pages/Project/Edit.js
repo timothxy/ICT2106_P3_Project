@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 import { Loading } from "../../Components/appCommon";
 import DatapageLayout from "../PageLayoutEmpty";
 import Table from "react-bootstrap/Table";
+import { Routes, Route, useParams } from "react-router-dom";
 
-export default class Project extends React.Component {
+export default class Edit extends React.Component {
   state = {
     content: null,
     headers: [],
@@ -147,6 +148,8 @@ export default class Project extends React.Component {
   };
 
   render() {
+    const id = this.props.match.params.id;
+    console.log(id);
     if (this.state.loading) {
       return <Loading></Loading>;
     } else {
@@ -163,11 +166,7 @@ export default class Project extends React.Component {
           requestError={this.requestError}
           has={this.has}
         >
-          <ProjectTable
-            data={this.state.content.data}
-            delete={this.delete}
-            requestRefresh={this.requestRefresh}
-          />
+          <h1>Hello</h1>
         </DatapageLayout>
       );
     }

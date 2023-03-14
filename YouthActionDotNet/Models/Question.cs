@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace YouthActionDotNet.Models{
 
-    public class Question {
+    public abstract class Question {
         public Question(){
             this.questionID = Guid.NewGuid().ToString();
         }
@@ -12,6 +12,6 @@ namespace YouthActionDotNet.Models{
 
         public string questionContent  { get; set; }
         
-        public void setAnswer() {}
+        public abstract void setAnswer();
     }
 }
