@@ -174,9 +174,15 @@ export default class Project extends React.Component {
   }
 }
 
+
+import { useNavigate } from "react-router-dom";
 const ProjectTable = (props) => {
   const data = props.data;
-  const deleteFn = props.delete;
+  let navigate = useNavigate(); 
+  const routeChange = (id) =>{ 
+    let path = `/Project/Edit/${id}`; 
+    navigate(path);
+  }
   return (
     <Table striped bordered hover>
       <thead>
@@ -204,12 +210,10 @@ const ProjectTable = (props) => {
               <td>{item.ProjectStatus}</td>
               <td>
                 <button
-                  onClick={() => {
-                    deleteFn(item.ProjectId);
-                    // requestRefresh();
-                  }}
+                  onClick={() => routeChange(item.ProjectId)}
+                  
                 >
-                  Delete
+                  View
                 </button>
               </td>
             </tr>

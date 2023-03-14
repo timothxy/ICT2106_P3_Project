@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Loading } from "../../Components/appCommon";
 import DatapageLayout from "../PageLayoutEmpty";
 import Table from "react-bootstrap/Table";
-import { Routes, Route, useParams } from "react-router-dom";
 
 export default class Edit extends React.Component {
   state = {
@@ -92,7 +91,7 @@ export default class Edit extends React.Component {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     }).then(async (res) => {
-      return res.json();
+      location.href = `/Project`;
     });
   };
 
@@ -148,17 +147,20 @@ export default class Edit extends React.Component {
   };
 
   render() {
-    const id = this.props.match.params.id;
-    console.log(id);
     if (this.state.loading) {
       return <Loading></Loading>;
     } else {
+      console.log(this.state.content.data);
+      const id = window.location.href.split("/")[5];
+      const data = this.state.content.data.filter((item) => {
+        return item.ProjectId == id;
+      });
       return (
         <DatapageLayout
           settings={this.settings}
           fieldSettings={this.state.settings.data.FieldSettings}
           headers={this.state.settings.data.ColumnSettings}
-          data={this.state.content.data}
+          data={data}
           updateHandle={this.handleUpdate}
           requestRefresh={this.requestRefresh}
           error={this.state.error}
@@ -166,7 +168,11 @@ export default class Edit extends React.Component {
           requestError={this.requestError}
           has={this.has}
         >
-          <h1>Hello</h1>
+          <ProjectTable
+            data={data[0]}
+            delete={this.delete}
+            requestRefresh={this.requestRefresh}
+          />
         </DatapageLayout>
       );
     }
@@ -175,6 +181,7 @@ export default class Edit extends React.Component {
 
 const ProjectTable = (props) => {
   const data = props.data;
+  console.log(data)
   const deleteFn = props.delete;
   return (
     <Table striped bordered hover>
@@ -190,31 +197,26 @@ const ProjectTable = (props) => {
           <th></th>
         </tr>
       </thead>
-      {data.map((item, key) => {
-        return (
-          <tbody key={key}>
-            <tr>
-              <td>{key + 1}</td>
-              <td>{item.ProjectName}</td>
-              <td colSpan={2}>{item.ProjectDescription}</td>
-              <td>{item.ProjectBudget}</td>
-              <td>{item.ProjectStartDate}</td>
-              <td>{item.ProjectEndDate}</td>
-              <td>{item.ProjectStatus}</td>
-              <td>
-                <button
-                  onClick={() => {
-                    deleteFn(item.ProjectId);
-                    // requestRefresh();
-                  }}
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        );
-      })}
+      <tbody>
+        <tr>
+          <td></td>
+          <td>{data.ProjectName}</td>
+          <td colSpan={2}>{data.ProjectDescription}</td>
+          <td>{data.ProjectBudget}</td>
+          <td>{data.ProjectStartDate}</td>
+          <td>{data.ProjectEndDate}</td>
+          <td>{data.ProjectStatus}</td>
+          <td>
+            <button
+              onClick={() => {
+                deleteFn(data.ProjectId);
+              }}
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
     </Table>
   );
 };
