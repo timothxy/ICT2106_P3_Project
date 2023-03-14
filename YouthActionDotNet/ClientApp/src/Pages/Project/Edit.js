@@ -86,14 +86,17 @@ export default class Edit extends React.Component {
     });
   };
 
-  delete = async (data) => {
-    await fetch(`https://localhost:5001/api/Project/Delete/${data}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    }).then(async (res) => {
-      location.href = `/Project`;
-    });
-  };
+//   delete = async (data) => {
+//     await fetch(`https://localhost:5001/api/Project/Delete/${data}`, {
+//       method: "DELETE",
+//       headers: { "Content-Type": "application/json" },
+//     }).then(async (res) => {
+//       location.href = `/Project`;
+//     });
+//   };
+  delete = (data) =>{
+    location.href = `/Project/${data}`;
+  }
 
   handleUpdate = async (data) => {
     await this.update(data).then((content) => {
@@ -171,7 +174,6 @@ export default class Edit extends React.Component {
           <ProjectTable
             data={data[0]}
             delete={this.delete}
-            requestRefresh={this.requestRefresh}
           />
         </DatapageLayout>
       );

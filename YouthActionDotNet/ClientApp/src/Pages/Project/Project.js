@@ -1,8 +1,12 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Loading } from "../../Components/appCommon";
 import DatapageLayout from "../PageLayoutEmpty";
 import Table from "react-bootstrap/Table";
+import { useParams } from "react-router-dom";
+import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default class Project extends React.Component {
   state = {
@@ -85,7 +89,17 @@ export default class Project extends React.Component {
       return res.json();
     });
   };
-
+  create = async (data) => {
+    return fetch("https://localhost:5001/api/Project/Create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then(function (res) {
+      return res.json();
+    });
+  };
   delete = async (data) => {
     await fetch(`https://localhost:5001/api/Project/Delete/${data}`, {
       method: "DELETE",
@@ -166,6 +180,7 @@ export default class Project extends React.Component {
           <ProjectTable
             data={this.state.content.data}
             delete={this.delete}
+            create={this.create}
             requestRefresh={this.requestRefresh}
           />
         </DatapageLayout>
@@ -177,33 +192,143 @@ export default class Project extends React.Component {
 import { useNavigate } from "react-router-dom";
 const ProjectTable = (props) => {
   const data = props.data;
+  const deleteFn = props.delete;
+  const createFn = props.create;
   let navigate = useNavigate();
   const routeChange = (id) => {
     let path = `/Project/Edit/${id}`;
     navigate(path);
   };
+  const routeReturn = () => {
+    let path = `/Project`;
+    navigate(path);
+  };
+
+  const countRef = useRef();
   const [projects, setProjects] = useState([]);
+  const [projRef, setProjRef] = useState();
+  const [undo, setUndo] = useState(false);
   const [sorting, setSorting] = useState({
     field: "ProjectName",
-    ascending: false,
+    ascending: true,
   });
+  const params = useParams();
+  console.log(params);
+  if (params.id) {
+    console.log(params.id);
+  } else {
+    console.log("no params");
+  }
+  const options = {
+    onClose: () => {
+      console.log(countRef);
+      if (countRef.current == null) {
+        deleteFn(params.id);
+      }
+    },
+    autoClose: 2000,
+    hideProgressBar: true,
+    theme: "dark",
+  };
 
   useEffect(() => {
     // setProjects(data);
     const projectsCopy = [...data];
-    console.log(projectsCopy)
-    // Apply sorting
-    const sortedProjects = projectsCopy.sort((a, b) => {
-      console.log(a[sorting.field])
-      console.log(b[sorting.field])
-      return a[sorting.field].localeCompare(b[sorting.field]);
+    const projectsFiltered = projectsCopy.filter((project) => {
+      return project.ProjectId != params.id;
     });
-    // Replace currentUsers with sorted currentUsers
+
+    console.log(projectsFiltered);
+    // Apply sorting
+    let sortedProjects = [];
+    if (undo == true) {
+      sortedProjects = projectsCopy
+        .sort((a, b) => {
+          console.log(a[sorting.field]);
+          console.log(b[sorting.field]);
+          if (typeof b[sorting.field] == "string") {
+            if (b) {
+              return a ? b[sorting.field]?.localeCompare(a[sorting.field]) : 1;
+            } else if (a) {
+              return b ? a[sorting.field]?.localeCompare(b[sorting.field]) : -1;
+            }
+          } else if (typeof b[sorting.field] == "number") {
+            if (b) {
+              return a ? b[sorting.field] - a[sorting.field] : 1;
+            } else if (a) {
+              return b ? a[sorting.field] - b[sorting.field] : -1;
+            }
+          }
+        })
+        .slice();
+    } else {
+      setProjRef(
+        projectsCopy.filter((project) => {
+          return project.ProjectId == params.id;
+        })
+      );
+      sortedProjects = projectsFiltered
+        .sort((a, b) => {
+          console.log(a[sorting.field]);
+          console.log(typeof b[sorting.field]);
+          if (typeof b[sorting.field] == "string") {
+            if (b) {
+              return a ? b[sorting.field]?.localeCompare(a[sorting.field]) : 1;
+            } else if (a) {
+              return b ? a[sorting.field]?.localeCompare(b[sorting.field]) : -1;
+            }
+          } else if (typeof b[sorting.field] == "number") {
+            if (b) {
+              return a ? b[sorting.field] - a[sorting.field] : 1;
+            } else if (a) {
+              return b ? a[sorting.field] - b[sorting.field] : -1;
+            }
+          }
+        })
+        .slice();
+    }
+    // Replace currentprojects with sorted currentprojects
     setProjects(
-      // Decide either currentUsers sorted by ascending or descending order
+      // Decide either currentprojects sorted by ascending or descending order
       sorting.ascending ? sortedProjects : sortedProjects.reverse()
     );
-  }, [data, sorting]);
+  }, [data, sorting, undo]);
+  useEffect(() => {
+    if (data.length > projects.length && projects.length != 0) {
+      notify();
+      //   console.log(data.length)
+      // console.log(projects.length)
+    }
+  }, [projects]);
+  const notify = () => {
+    toast.info(undoToastBtn, options);
+  };
+  const undoToastBtn = () => (
+    <button
+      ref={countRef}
+      onClick={() => {
+        setUndo(true);
+        const proj = {
+          ProjectName: projRef[0].ProjectName,
+          ProjectDescription: projRef[0].ProjectDescription,
+          ProjectBudget: projRef[0].ProjectBudget,
+          ProjectStartDate: projRef[0].ProjectStartDate,
+          ProjectEndDate: projRef[0].ProjectEndDate,
+          ProjectStatus: projRef[0].ProjectStatus,
+          ProjectCompletionDate: projRef[0].ProjectCompletionDate,
+          ProjectType: projRef[0].ProjectType,
+          ServiceCenterId: projRef[0].ServiceCenterId,
+        };
+        console.log(proj);
+        handleCreate(proj);
+        routeReturn();
+      }}
+    >
+      Undo
+    </button>
+  );
+
+  const handleCreate = async (proj) => await createFn(proj);
 
   function applySorting(key, ascending) {
     setSorting({ field: key, ascending: ascending });
@@ -218,11 +343,30 @@ const ProjectTable = (props) => {
           <th onClick={() => applySorting("ProjectName", !sorting.ascending)}>
             Project Name
           </th>
-          <th colSpan={2} onClick={() => applySorting("ProjectDescription", !sorting.ascending)}>Project Description</th>
-          <th onClick={() => applySorting("ProjectBudget", !sorting.ascending)}>Project Budget</th>
-          <th onClick={() => applySorting("ProjectStartDate", !sorting.ascending)}>Start Date</th>
-          <th onClick={() => applySorting("ProjectEndDate", !sorting.ascending)}>End Date</th>
-          <th onClick={() => applySorting("ProjectStatus", !sorting.ascending)}>Project Status</th>
+          <th
+            colSpan={2}
+            onClick={() =>
+              applySorting("ProjectDescription", !sorting.ascending)
+            }
+          >
+            Project Description
+          </th>
+          <th onClick={() => applySorting("ProjectBudget", !sorting.ascending)}>
+            Project Budget
+          </th>
+          <th
+            onClick={() => applySorting("ProjectStartDate", !sorting.ascending)}
+          >
+            Start Date
+          </th>
+          <th
+            onClick={() => applySorting("ProjectEndDate", !sorting.ascending)}
+          >
+            End Date
+          </th>
+          <th onClick={() => applySorting("ProjectStatus", !sorting.ascending)}>
+            Project Status
+          </th>
           <th></th>
         </tr>
       </thead>
@@ -241,11 +385,13 @@ const ProjectTable = (props) => {
                 <button onClick={() => routeChange(item.ProjectId)}>
                   View
                 </button>
+                {/* <button onClick={() => setUndo(true)}>Undo</button> */}
               </td>
             </tr>
           </tbody>
         );
       })}
+      <ToastContainer theme="dark" />
     </Table>
   );
 };
