@@ -9,7 +9,7 @@ namespace YouthActionDotNet.Models{
         
         public override void setAnswer()
         {
-          // To be implemented
+            Console.WriteLine("Radio answer set");
         }
     }
 }

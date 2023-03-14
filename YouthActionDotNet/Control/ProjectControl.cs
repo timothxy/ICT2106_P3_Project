@@ -146,7 +146,7 @@ namespace YouthActionDotNet.Control
 
             settings.FieldSettings.Add("ProjectId", new InputType { type = "text", displayLabel = "Project Id", editable = false, primaryKey = true });
             settings.FieldSettings.Add("ProjectName", new InputType { type = "text", displayLabel = "Project Name", editable = true, primaryKey = false });
-            settings.FieldSettings.Add("ProjectDescription", new InputType { type = "text", displayLabel = "EmaiProject Descriptionl", editable = true, primaryKey = false });
+            settings.FieldSettings.Add("ProjectDescription", new InputType { type = "text", displayLabel = "Project Description", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ProjectStartDate", new InputType { type = "datetime", displayLabel = "Project Start Date", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ProjectEndDate", new InputType { type = "datetime", displayLabel = "Project End Date", editable = true, primaryKey = false });
             settings.FieldSettings.Add("ProjectCompletionDate", new InputType { type = "datetime", displayLabel = "Project Completion Date", editable = true, primaryKey = false });

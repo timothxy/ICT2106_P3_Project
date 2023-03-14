@@ -4,7 +4,7 @@ import { Loading } from "../../Components/appCommon";
 import DatapageLayout from "../PageLayoutEmpty";
 import Table from "react-bootstrap/Table";
 
-export default class Project extends React.Component {
+export default class Edit extends React.Component {
   state = {
     content: null,
     headers: [],
@@ -91,7 +91,7 @@ export default class Project extends React.Component {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     }).then(async (res) => {
-      return res.json();
+      location.href = `/Project`;
     });
   };
 
@@ -150,12 +150,17 @@ export default class Project extends React.Component {
     if (this.state.loading) {
       return <Loading></Loading>;
     } else {
+      console.log(this.state.content.data);
+      const id = window.location.href.split("/")[5];
+      const data = this.state.content.data.filter((item) => {
+        return item.ProjectId == id;
+      });
       return (
         <DatapageLayout
           settings={this.settings}
           fieldSettings={this.state.settings.data.FieldSettings}
           headers={this.state.settings.data.ColumnSettings}
-          data={this.state.content.data}
+          data={data}
           updateHandle={this.handleUpdate}
           requestRefresh={this.requestRefresh}
           error={this.state.error}
@@ -164,7 +169,7 @@ export default class Project extends React.Component {
           has={this.has}
         >
           <ProjectTable
-            data={this.state.content.data}
+            data={data[0]}
             delete={this.delete}
             requestRefresh={this.requestRefresh}
           />
@@ -174,78 +179,44 @@ export default class Project extends React.Component {
   }
 }
 
-import { useNavigate } from "react-router-dom";
 const ProjectTable = (props) => {
   const data = props.data;
-  let navigate = useNavigate();
-  const routeChange = (id) => {
-    let path = `/Project/Edit/${id}`;
-    navigate(path);
-  };
-  const [projects, setProjects] = useState([]);
-  const [sorting, setSorting] = useState({
-    field: "ProjectName",
-    ascending: false,
-  });
-
-  useEffect(() => {
-    // setProjects(data);
-    const projectsCopy = [...data];
-    console.log(projectsCopy)
-    // Apply sorting
-    const sortedProjects = projectsCopy.sort((a, b) => {
-      console.log(a[sorting.field])
-      console.log(b[sorting.field])
-      return a[sorting.field].localeCompare(b[sorting.field]);
-    });
-    // Replace currentUsers with sorted currentUsers
-    setProjects(
-      // Decide either currentUsers sorted by ascending or descending order
-      sorting.ascending ? sortedProjects : sortedProjects.reverse()
-    );
-  }, [data, sorting]);
-
-  function applySorting(key, ascending) {
-    setSorting({ field: key, ascending: ascending });
-  }
-
-  console.log(projects);
+  console.log(data)
+  const deleteFn = props.delete;
   return (
     <Table striped bordered hover>
       <thead>
         <tr>
           <th>#</th>
-          <th onClick={() => applySorting("ProjectName", !sorting.ascending)}>
-            Project Name
-          </th>
-          <th colSpan={2} onClick={() => applySorting("ProjectDescription", !sorting.ascending)}>Project Description</th>
-          <th onClick={() => applySorting("ProjectBudget", !sorting.ascending)}>Project Budget</th>
-          <th onClick={() => applySorting("ProjectStartDate", !sorting.ascending)}>Start Date</th>
-          <th onClick={() => applySorting("ProjectEndDate", !sorting.ascending)}>End Date</th>
-          <th onClick={() => applySorting("ProjectStatus", !sorting.ascending)}>Project Status</th>
+          <th>Project Name</th>
+          <th colSpan={2}>Project Description</th>
+          <th>Project Budget</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Project Status</th>
           <th></th>
         </tr>
       </thead>
-      {projects.map((item, key) => {
-        return (
-          <tbody key={key}>
-            <tr>
-              <td>{key + 1}</td>
-              <td>{item.ProjectName}</td>
-              <td colSpan={2}>{item.ProjectDescription}</td>
-              <td>{item.ProjectBudget}</td>
-              <td>{item.ProjectStartDate}</td>
-              <td>{item.ProjectEndDate}</td>
-              <td>{item.ProjectStatus}</td>
-              <td>
-                <button onClick={() => routeChange(item.ProjectId)}>
-                  View
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        );
-      })}
+      <tbody>
+        <tr>
+          <td></td>
+          <td>{data.ProjectName}</td>
+          <td colSpan={2}>{data.ProjectDescription}</td>
+          <td>{data.ProjectBudget}</td>
+          <td>{data.ProjectStartDate}</td>
+          <td>{data.ProjectEndDate}</td>
+          <td>{data.ProjectStatus}</td>
+          <td>
+            <button
+              onClick={() => {
+                deleteFn(data.ProjectId);
+              }}
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
     </Table>
   );
 };

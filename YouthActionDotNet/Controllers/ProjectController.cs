@@ -18,7 +18,7 @@ namespace YouthActionDotNet.Controllers
     [ApiController]
     public class ProjectController : ControllerBase, IUserInterfaceCRUD<Project>
     {
-      private ProjectControl projectControl;
+        private ProjectControl projectControl;
         JsonSerializerSettings settings = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
 
         public ProjectController(DBContext context)
@@ -55,7 +55,7 @@ namespace YouthActionDotNet.Controllers
             return await projectControl.UpdateAndFetchAll(id, template);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<ActionResult<string>> Delete(string id)
         {
             return await projectControl.Delete(id);

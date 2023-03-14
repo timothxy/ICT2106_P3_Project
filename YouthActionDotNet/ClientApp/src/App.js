@@ -33,6 +33,7 @@ import Home  from "./Pages/Home"
 import VolunteerHome from "./Pages/Volunteer/volunteerHome"
 
 import Sample from './Pages/Sample';
+import Edit from './Pages/Project/Edit';
 
 
 /* function getToken() {  
@@ -159,6 +160,7 @@ export default function App() {
               <Route path="/Volunteer-Work" element={<VolunteerWork user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Service-Center" element={<ServiceCenters user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Project" element={<Project user={token} permissions = {parsedPerms}/>}/>
+              <Route path="/Project/Edit/:id" element={<Edit user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Expenses" element={<Expense user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Permissions" element={<Permissions user={token} permissions = {parsedPerms}/>}/>
               <Route path="/Sample" element={<Sample user={token} permissions = {parsedPerms}/>}/>
