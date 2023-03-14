@@ -174,30 +174,59 @@ export default class Project extends React.Component {
   }
 }
 
-
 import { useNavigate } from "react-router-dom";
 const ProjectTable = (props) => {
   const data = props.data;
-  let navigate = useNavigate(); 
-  const routeChange = (id) =>{ 
-    let path = `/Project/Edit/${id}`; 
+  let navigate = useNavigate();
+  const routeChange = (id) => {
+    let path = `/Project/Edit/${id}`;
     navigate(path);
+  };
+  const [projects, setProjects] = useState([]);
+  const [sorting, setSorting] = useState({
+    field: "ProjectName",
+    ascending: false,
+  });
+
+  useEffect(() => {
+    // setProjects(data);
+    const projectsCopy = [...data];
+    console.log(projectsCopy)
+    // Apply sorting
+    const sortedProjects = projectsCopy.sort((a, b) => {
+      console.log(a[sorting.field])
+      console.log(b[sorting.field])
+      return a[sorting.field].localeCompare(b[sorting.field]);
+    });
+    // Replace currentUsers with sorted currentUsers
+    setProjects(
+      // Decide either currentUsers sorted by ascending or descending order
+      sorting.ascending ? sortedProjects : sortedProjects.reverse()
+    );
+  }, [data, sorting]);
+
+  function applySorting(key, ascending) {
+    setSorting({ field: key, ascending: ascending });
   }
+
+  console.log(projects);
   return (
     <Table striped bordered hover>
       <thead>
         <tr>
           <th>#</th>
-          <th>Project Name</th>
-          <th colSpan={2}>Project Description</th>
-          <th>Project Budget</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-          <th>Project Status</th>
+          <th onClick={() => applySorting("ProjectName", !sorting.ascending)}>
+            Project Name
+          </th>
+          <th colSpan={2} onClick={() => applySorting("ProjectDescription", !sorting.ascending)}>Project Description</th>
+          <th onClick={() => applySorting("ProjectBudget", !sorting.ascending)}>Project Budget</th>
+          <th onClick={() => applySorting("ProjectStartDate", !sorting.ascending)}>Start Date</th>
+          <th onClick={() => applySorting("ProjectEndDate", !sorting.ascending)}>End Date</th>
+          <th onClick={() => applySorting("ProjectStatus", !sorting.ascending)}>Project Status</th>
           <th></th>
         </tr>
       </thead>
-      {data.map((item, key) => {
+      {projects.map((item, key) => {
         return (
           <tbody key={key}>
             <tr>
@@ -209,10 +238,7 @@ const ProjectTable = (props) => {
               <td>{item.ProjectEndDate}</td>
               <td>{item.ProjectStatus}</td>
               <td>
-                <button
-                  onClick={() => routeChange(item.ProjectId)}
-                  
-                >
+                <button onClick={() => routeChange(item.ProjectId)}>
                   View
                 </button>
               </td>
