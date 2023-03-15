@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 export default class Project extends React.Component {
   state = {
@@ -189,7 +190,6 @@ export default class Project extends React.Component {
   }
 }
 
-import { useNavigate } from "react-router-dom";
 const ProjectTable = (props) => {
   const data = props.data;
   const deleteFn = props.delete;
@@ -232,6 +232,7 @@ const ProjectTable = (props) => {
     position: toast.POSITION.BOTTOM_CENTER,
   };
 
+  //When delete is clicked, all details of the project will be copied and stored in temporary variable.
   useEffect(() => {
     // setProjects(data);
     const projectsCopy = [...data];
@@ -301,6 +302,7 @@ const ProjectTable = (props) => {
       // console.log(projects.length)
     }
   }, [projects]);
+  //Toast Message is created to allow users to undo deletion of project
   const notify = () => {
     toast.info(undoToastBtn, options);
   };
