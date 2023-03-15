@@ -228,7 +228,8 @@ const ProjectTable = (props) => {
     },
     autoClose: 2000,
     hideProgressBar: true,
-    theme: "dark",
+    className: "black-background",
+    position: toast.POSITION.BOTTOM_CENTER,
   };
 
   useEffect(() => {
@@ -336,6 +337,7 @@ const ProjectTable = (props) => {
 
   console.log(projects);
   return (
+    <>
     <Table striped bordered hover>
       <thead>
         <tr>
@@ -391,7 +393,9 @@ const ProjectTable = (props) => {
           </tbody>
         );
       })}
-      <ToastContainer theme="dark" />
+     
     </Table>
+     <ToastContainer theme="dark" /></>
+    
   );
 };
